@@ -1926,8 +1926,8 @@ body:             |
   ; GFX908: bb.0:
   ; GFX908-NEXT:   successors: %bb.1(0x80000000)
   ; GFX908-NEXT: {{  $}}
-  ; GFX908-NEXT:   [[V_CVT_I32_F64_e32_:%[0-9]+]]:vgpr_32 = nofpexcept V_CVT_I32_F64_e32 257, implicit $exec, implicit $mode
-  ; GFX908-NEXT:   [[V_CVT_I32_F64_e32_1:%[0-9]+]]:vgpr_32 = nofpexcept V_CVT_I32_F64_e32 258, implicit $exec, implicit $mode
+  ; GFX908-NEXT:   [[V_CVT_I32_F64_e32_:%[0-9]+]]:vgpr_32 = nofpexcept V_CVT_I32_F64_e32 258, implicit $exec, implicit $mode
+  ; GFX908-NEXT:   [[V_CVT_I32_F64_e32_1:%[0-9]+]]:vgpr_32 = nofpexcept V_CVT_I32_F64_e32 257, implicit $exec, implicit $mode
   ; GFX908-NEXT:   [[DEF:%[0-9]+]]:agpr_32 = IMPLICIT_DEF
   ; GFX908-NEXT:   [[DEF1:%[0-9]+]]:agpr_32 = IMPLICIT_DEF
   ; GFX908-NEXT:   [[DEF2:%[0-9]+]]:agpr_32 = IMPLICIT_DEF
