@@ -161,8 +161,8 @@ body: |
     ; CHECK-LABEL: name: sched_barrier_mask_4
     ; CHECK: [[DEF:%[0-9]+]]:sreg_64_xexec_xnull = IMPLICIT_DEF
     ; CHECK-NEXT: [[DEF1:%[0-9]+]]:vgpr_32 = IMPLICIT_DEF
-    ; CHECK-NEXT: [[DEF2:%[0-9]+]]:areg_128 = IMPLICIT_DEF
     ; CHECK-NEXT: [[GLOBAL_LOAD_DWORD_SADDR:%[0-9]+]]:vgpr_32 = GLOBAL_LOAD_DWORD_SADDR [[DEF]], [[DEF1]], 0, 0, implicit $exec :: (load (s32) from %ir.in, !alias.scope !0, addrspace 1)
+    ; CHECK-NEXT: [[DEF2:%[0-9]+]]:areg_128 = IMPLICIT_DEF
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[DEF2]], 0, 0, 0, implicit $mode, implicit $exec
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_1:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[V_MFMA_F32_4X4X1F32_e64_]], 0, 0, 0, implicit $mode, implicit $exec
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_2:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[V_MFMA_F32_4X4X1F32_e64_1]], 0, 0, 0, implicit $mode, implicit $exec
@@ -209,8 +209,8 @@ body: |
     ; CHECK-LABEL: name: sched_barrier_mask_8
     ; CHECK: [[DEF:%[0-9]+]]:sreg_64_xexec_xnull = IMPLICIT_DEF
     ; CHECK-NEXT: [[DEF1:%[0-9]+]]:vgpr_32 = IMPLICIT_DEF
-    ; CHECK-NEXT: [[DEF2:%[0-9]+]]:areg_128 = IMPLICIT_DEF
     ; CHECK-NEXT: [[GLOBAL_LOAD_DWORD_SADDR:%[0-9]+]]:vgpr_32 = GLOBAL_LOAD_DWORD_SADDR [[DEF]], [[DEF1]], 0, 0, implicit $exec :: (load (s32) from %ir.in, !alias.scope !0, addrspace 1)
+    ; CHECK-NEXT: [[DEF2:%[0-9]+]]:areg_128 = IMPLICIT_DEF
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[DEF2]], 0, 0, 0, implicit $mode, implicit $exec
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_1:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[V_MFMA_F32_4X4X1F32_e64_]], 0, 0, 0, implicit $mode, implicit $exec
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_2:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[V_MFMA_F32_4X4X1F32_e64_1]], 0, 0, 0, implicit $mode, implicit $exec
@@ -451,8 +451,8 @@ body: |
     ; CHECK-LABEL: name: sched_barrier_masks_8_12
     ; CHECK: [[DEF:%[0-9]+]]:sreg_64_xexec_xnull = IMPLICIT_DEF
     ; CHECK-NEXT: [[DEF1:%[0-9]+]]:vgpr_32 = IMPLICIT_DEF
-    ; CHECK-NEXT: [[DEF2:%[0-9]+]]:areg_128 = IMPLICIT_DEF
     ; CHECK-NEXT: [[GLOBAL_LOAD_DWORD_SADDR:%[0-9]+]]:vgpr_32 = GLOBAL_LOAD_DWORD_SADDR [[DEF]], [[DEF1]], 0, 0, implicit $exec :: (load (s32) from %ir.in, !alias.scope !0, addrspace 1)
+    ; CHECK-NEXT: [[DEF2:%[0-9]+]]:areg_128 = IMPLICIT_DEF
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[DEF2]], 0, 0, 0, implicit $mode, implicit $exec
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_1:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[V_MFMA_F32_4X4X1F32_e64_]], 0, 0, 0, implicit $mode, implicit $exec
     ; CHECK-NEXT: [[V_MFMA_F32_4X4X1F32_e64_2:%[0-9]+]]:areg_128 = V_MFMA_F32_4X4X1F32_e64 [[DEF1]], [[GLOBAL_LOAD_DWORD_SADDR]], [[V_MFMA_F32_4X4X1F32_e64_1]], 0, 0, 0, implicit $mode, implicit $exec

@@ -68,13 +68,10 @@ static cl::opt<bool> GCNTrackers(
     cl::desc("Use the AMDGPU specific RPTrackers during scheduling"),
     cl::init(false));
 
-static cl::opt<bool> ExaminePendingQueue(
-    "amdgpu-examine-pending-queue", cl::Hidden,
-    cl::desc(
-        "Examine instructions in the pending the pending queue when "
-        "scheduling. This makes instructions visible to heuristics that cannot "
-        "immediately be issued due to hardware resource constraints."),
-    cl::init(true));
+static cl::opt<unsigned> PendingQueueLimit(
+  "amdgpu-scheduler-pending-queue-limit", cl::Hidden,
+  cl::desc("Max (Available+Pending) size to inspect pending queue (0 disables)"),
+  cl::init(256));
 
 const unsigned ScheduleMetrics::ScaleFactor = 100;
 
@@ -329,30 +326,44 @@ void GCNSchedStrategy::initCandidate(SchedCandidate &Cand, SUnit *SU,
 
 static bool shouldCheckPending(SchedBoundary &Zone,
                                const TargetSchedModel *SchedModel) {
-  const unsigned ReadyListLimit = 256;
   bool HasBufferedModel =
       SchedModel->hasInstrSchedModel() && SchedModel->getMicroOpBufferSize();
-  return ExaminePendingQueue &&
-         Zone.Available.size() + Zone.Pending.size() <= ReadyListLimit &&
-         HasBufferedModel;
+  unsigned Combined = Zone.Available.size() + Zone.Pending.size();
+  return Combined <= PendingQueueLimit && HasBufferedModel;
 }
 
 static SUnit *pickOnlyChoice(SchedBoundary &Zone,
                              const TargetSchedModel *SchedModel) {
   if (!shouldCheckPending(Zone, SchedModel) || Zone.Pending.empty())
     return Zone.pickOnlyChoice();
+
+  if (Zone.Available.empty() && Zone.Pending.size() == 1) {
+    SUnit *PendingSU = *Zone.Pending.begin();
+    unsigned ReadyCycle = Zone.isTop() ? PendingSU->TopReadyCycle
+                                       : PendingSU->BotReadyCycle;
+    Zone.bumpCycle(ReadyCycle);
+    Zone.releasePending();
+    return PendingSU;
+  }
+
   return nullptr;
 }
 
-#ifndef NDEBUG
 void GCNSchedStrategy::printCandidateDecision(const SchedCandidate &Current,
                                               const SchedCandidate &Preferred) {
-  LLVM_DEBUG(dbgs() << "Prefer:\t\t"; DAG->dumpNode(*Preferred.SU));
-  if (Current.SU)
-    LLVM_DEBUG(dbgs() << "Not:\t"; DAG->dumpNode(*Current.SU));
-  LLVM_DEBUG(dbgs() << "Reason:\t\t"; traceCandidate(Preferred));
+  LLVM_DEBUG({
+    dbgs() << "Prefer:\t\t";
+    DAG->dumpNode(*Preferred.SU);
+
+    if (Current.SU) {
+      dbgs() << "Not:\t";
+      DAG->dumpNode(*Current.SU);
+    }
+
+    dbgs() << "Reason:\t\t";
+    traceCandidate(Preferred);
+  });
 }
-#endif
 
 // This function is mostly cut and pasted from
 // GenericScheduler::pickNodeFromQueue()
@@ -394,11 +405,9 @@ void GCNSchedStrategy::pickNodeFromQueue(SchedBoundary &Zone,
         TryCand.initResourceDelta(Zone.DAG, SchedModel);
       LLVM_DEBUG(printCandidateDecision(Cand, TryCand));
       Cand.setBest(TryCand);
-    }
-#ifndef NDEBUG
-    else
+    } else {
       printCandidateDecision(TryCand, Cand);
-#endif
+    }
   }
 
   if (!shouldCheckPending(Zone, SchedModel))
@@ -421,11 +430,9 @@ void GCNSchedStrategy::pickNodeFromQueue(SchedBoundary &Zone,
       LLVM_DEBUG(printCandidateDecision(Cand, TryCand));
       IsPending = true;
       Cand.setBest(TryCand);
-    }
-#ifndef NDEBUG
-    else
+    } else {
       printCandidateDecision(TryCand, Cand);
-#endif
+    }
   }
 }
 
