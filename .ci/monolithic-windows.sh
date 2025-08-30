@@ -21,6 +21,7 @@ targets="${2}"
 start-group "CMake"
 pip install -q -r "${MONOREPO_ROOT}"/.ci/all_requirements.txt
 pip install typing_extensions
+pip install "nanobind @ git+https://github.com/wjakob/nanobind" --force
 
 export CC=cl
 export CXX=cl
