@@ -126,6 +126,7 @@ void LangOptions::setLangDefaults(LangOptions &Opts, Language Lang,
   Opts.Digraphs = Std.hasDigraphs();
 
   Opts.HLSL = Lang == Language::HLSL;
+  Opts.LUA = Lang == Language::lua;
   if (Opts.HLSL && Opts.IncludeDefaultHeader)
     Includes.push_back("hlsl.h");
 

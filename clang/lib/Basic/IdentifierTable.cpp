@@ -110,10 +110,12 @@ namespace {
     KEYSYCL       = 0x800000,
     KEYCUDA       = 0x1000000,
     KEYHLSL       = 0x2000000,
-    KEYMAX        = KEYHLSL, // The maximum key
+    KEYLUA        = 0x4000000,
+    KEYMAX        = KEYLUA, // The maximum key
     KEYALLCXX = KEYCXX | KEYCXX11 | KEYCXX20,
     KEYALL = (KEYMAX | (KEYMAX-1)) & ~KEYNOMS18 &
-             ~KEYNOOPENCL // KEYNOMS18 and KEYNOOPENCL are used to exclude.
+             ~KEYNOOPENCL, // KEYNOMS18 and KEYNOOPENCL are used to exclude.
+    KEYNOLUA = KEYALL & ~KEYLUA,
   };
 
   /// How a keyword is treated in the selected standard. This enum is ordered
@@ -212,6 +214,8 @@ static KeywordStatus getKeywordStatusHelper(const LangOptions &LangOpts,
   case KEYNOMS18:
     // The disable behavior for this is handled in getKeywordStatus.
     return KS_Unknown;
+  case KEYLUA:
+    return LangOpts.LUA ? KS_Enabled : KS_Unknown;
   default:
     llvm_unreachable("Unknown KeywordStatus flag");
   }

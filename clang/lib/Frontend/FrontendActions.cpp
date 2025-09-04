@@ -1040,6 +1040,7 @@ void PrintPreambleAction::ExecuteAction() {
   case Language::Asm:
   case Language::LLVM_IR:
   case Language::RenderScript:
+  case Language::lua:
     // We can't do anything with these.
     return;
   }

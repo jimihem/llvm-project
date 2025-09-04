@@ -106,7 +106,8 @@ public:
     renderscript32, // 32-bit RenderScript
     renderscript64, // 64-bit RenderScript
     ve,             // NEC SX-Aurora Vector Engine
-    LastArchType = ve
+    luavm,
+    LastArchType = luavm
   };
   enum SubArchType {
     NoSubArch,
@@ -162,6 +163,7 @@ public:
     SPIRVSubArch_v13,
     SPIRVSubArch_v14,
     SPIRVSubArch_v15,
+    luavm_v53,
   };
   enum VendorType {
     UnknownVendor,
@@ -225,6 +227,7 @@ public:
     Emscripten,
     ShaderModel, // DirectX ShaderModel
     LiteOS,
+    luaInterp,
     LastOSType = LiteOS
   };
   enum EnvironmentType {

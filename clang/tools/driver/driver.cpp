@@ -362,7 +362,7 @@ static int ExecuteCC1Tool(SmallVectorImpl<const char *> &ArgV,
   }
   StringRef Tool = ArgV[1];
   void *GetExecutablePathVP = (void *)(intptr_t)GetExecutablePath;
-  if (Tool == "-cc1")
+  if (Tool == "-cc1" || Tool == "-lua")
     return cc1_main(ArrayRef(ArgV).slice(1), ArgV[0], GetExecutablePathVP);
   if (Tool == "-cc1as")
     return cc1as_main(ArrayRef(ArgV).slice(2), ArgV[0], GetExecutablePathVP);
@@ -403,7 +403,8 @@ int clang_main(int Argc, char **Argv, const llvm::ToolContext &ToolContext) {
   }
 
   // Handle -cc1 integrated tools.
-  if (Args.size() >= 2 && StringRef(Args[1]).startswith("-cc1"))
+  if (Args.size() >= 2 && (StringRef(Args[1]).startswith("-cc1") ||
+                           StringRef(Args[1]).startswith("-lua")))
     return ExecuteCC1Tool(Args, ToolContext);
 
   // Handle options that need handling before the real command line parsing in

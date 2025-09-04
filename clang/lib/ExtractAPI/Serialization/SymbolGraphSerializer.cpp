@@ -205,6 +205,8 @@ StringRef getLanguageName(Language Lang) {
   case Language::Asm:
   case Language::LLVM_IR:
     llvm_unreachable("Unsupported language kind");
+  case Language::lua:
+    return "lua";
   }
 
   llvm_unreachable("Unhandled language kind");

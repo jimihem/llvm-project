@@ -84,6 +84,7 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
   case x86_64:         return "x86_64";
   case xcore:          return "xcore";
   case xtensa:         return "xtensa";
+  case luavm:          return "luavm";
   }
 
   llvm_unreachable("Invalid ArchType!");
@@ -245,6 +246,7 @@ StringRef Triple::getOSTypeName(OSType Kind) {
   case ZOS: return "zos";
   case ShaderModel: return "shadermodel";
   case LiteOS: return "liteos";
+  case luaInterp: return "luaInterp";
   }
 
   llvm_unreachable("Invalid OSType");
@@ -538,6 +540,7 @@ static Triple::ArchType parseArch(StringRef ArchName) {
     .Case("loongarch64", Triple::loongarch64)
     .Case("dxil", Triple::dxil)
     .Case("xtensa", Triple::xtensa)
+    .Case("lua_v53", Triple::luavm)
     .Default(Triple::UnknownArch);
 
   // Some architectures require special parsing logic just to compute the
@@ -616,6 +619,7 @@ static Triple::OSType parseOS(StringRef OSName) {
     .StartsWith("emscripten", Triple::Emscripten)
     .StartsWith("shadermodel", Triple::ShaderModel)
     .StartsWith("liteos", Triple::LiteOS)
+    .StartsWith("luaInterp", Triple::luaInterp)    
     .Default(Triple::UnknownOS);
 }
 
@@ -701,6 +705,11 @@ static Triple::SubArchType parseSubArch(StringRef SubArchName) {
         .EndsWith("v1.4", Triple::SPIRVSubArch_v14)
         .EndsWith("v1.5", Triple::SPIRVSubArch_v15)
         .Default(Triple::NoSubArch);
+
+  if (SubArchName.startswith("lua"))
+    return StringSwitch<Triple::SubArchType>(SubArchName)
+        .EndsWith("v53", Triple::luavm_v53)
+        .Default(Triple::luavm_v53);
 
   StringRef ARMSubArch = ARM::getCanonicalArchName(SubArchName);
 
@@ -875,6 +884,8 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
 
   case Triple::dxil:
     return Triple::DXContainer;
+  case Triple::luavm:
+    return Triple::ELF;
   }
   llvm_unreachable("unknown architecture");
 }
@@ -1433,6 +1444,7 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::x86:
   case llvm::Triple::xcore:
   case llvm::Triple::xtensa:
+  case llvm::Triple::luavm:
     return 32;
 
   case llvm::Triple::aarch64:
@@ -1524,6 +1536,7 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::x86:
   case Triple::xcore:
   case Triple::xtensa:
+  case Triple::luavm:
     // Already 32-bit.
     break;
 
@@ -1575,6 +1588,7 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::tcele:
   case Triple::xcore:
   case Triple::xtensa:
+  case Triple::luavm:
     T.setArch(UnknownArch);
     break;
 
@@ -1786,6 +1800,7 @@ bool Triple::isLittleEndian() const {
   case Triple::x86_64:
   case Triple::xcore:
   case Triple::xtensa:
+  case Triple::luavm:
     return true;
   default:
     return false;

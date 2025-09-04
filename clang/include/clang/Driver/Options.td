@@ -7460,3 +7460,8 @@ def dxc_validator_path_EQ : Joined<["--"], "dxv-path=">, Group<dxc_Group>,
   HelpText<"DXIL validator installation path">;
 def dxc_disable_validation : DXCFlag<"Vd">,
   HelpText<"Disable validation">;
+  
+//===----------------------------------------------------------------------===//
+// clang-lua Options
+//===----------------------------------------------------------------------===//
+def lua : Flag<["-"], "lua">, Flags<[CC1Option]>;

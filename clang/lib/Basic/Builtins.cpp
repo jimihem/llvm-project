@@ -75,6 +75,8 @@ bool Builtin::Context::isBuiltinFunc(llvm::StringRef FuncName) {
 /// Is this builtin supported according to the given language options?
 static bool builtinIsSupported(const Builtin::Info &BuiltinInfo,
                                const LangOptions &LangOpts) {
+  if (LangOpts.LUA)
+    return false;
   /* Builtins Unsupported */
   if (LangOpts.NoBuiltin && strchr(BuiltinInfo.Attributes, 'f') != nullptr)
     return false;

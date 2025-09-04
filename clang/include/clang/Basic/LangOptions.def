@@ -467,7 +467,7 @@ LANGOPT(IncrementalExtensions, 1, 0, " True if we want to process statements"
         "-fincremental-extensions.")
 
 BENIGN_LANGOPT(CheckNew, 1, 0, "Do not assume C++ operator new may not return NULL")
-
+LANGOPT(LUA, 1, 0, "lua")
 #undef LANGOPT
 #undef COMPATIBLE_LANGOPT
 #undef BENIGN_LANGOPT

@@ -243,7 +243,10 @@ LANGSTANDARD(hlsl202x, "hlsl202x",
              HLSL, "High Level Shader Language 202x",
              LineComment | HLSL | CPlusPlus | CPlusPlus11)
 
-
+//lua
+LANGSTANDARD(lua53, "lua53",
+             lua, "lua",
+             LineComment | LUA)
 #undef LANGSTANDARD
 #undef LANGSTANDARD_ALIAS
 #undef LANGSTANDARD_ALIAS_DEPR

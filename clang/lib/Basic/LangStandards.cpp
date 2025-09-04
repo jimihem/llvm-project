@@ -71,6 +71,8 @@ LangStandard::Kind clang::getDefaultLanguageStandard(clang::Language Lang,
     return LangStandard::lang_c99;
   case Language::HLSL:
     return LangStandard::lang_hlsl2021;
+  case Language::lua:
+    return LangStandard::lang_lua53;
   }
   llvm_unreachable("unhandled Language kind!");
 }

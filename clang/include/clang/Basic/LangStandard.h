@@ -41,6 +41,7 @@ enum class Language : uint8_t {
   RenderScript,
   HIP,
   HLSL,
+  lua,
   ///@}
 };
 
@@ -61,7 +62,8 @@ enum LangFeatures {
   GNUMode = (1 << 13),
   HexFloat = (1 << 14),
   OpenCL = (1 << 15),
-  HLSL = (1 << 16)
+  HLSL = (1 << 16),
+  LUA = (1 << 17),
 };
 
 /// LangStandard - Information about the properties of a particular language
