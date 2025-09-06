@@ -24,7 +24,13 @@ using namespace clang;
 namespace {
 /// Get comment kind and bool describing if it is a trailing comment.
 std::pair<RawComment::CommentKind, bool> getCommentKind(StringRef Comment,
-                                                        bool ParseAllComments) {
+                                                        bool ParseAllComments, bool ParseLuaComment) {
+  if (ParseLuaComment) {
+    if ((Comment.size() < 2) || Comment[0] != '-' || Comment[1] != '-')
+      return std::make_pair(RawComment::RCK_Invalid, false);
+    else
+      return std::make_pair(RawComment::RCK_Lua, true);
+  }
   const size_t MinCommentLength = ParseAllComments ? 2 : 3;
   if ((Comment.size() < MinCommentLength) || Comment[0] != '/')
     return std::make_pair(RawComment::RCK_Invalid, false);
@@ -120,7 +126,7 @@ RawComment::RawComment(const SourceManager &SourceMgr, SourceRange SR,
 
   // Guess comment kind.
   std::pair<CommentKind, bool> K =
-      getCommentKind(RawText, CommentOpts.ParseAllComments);
+      getCommentKind(RawText, CommentOpts.ParseAllComments, CommentOpts.ParseLuaComments);
 
   // Guess whether an ordinary comment is trailing.
   if (CommentOpts.ParseAllComments && isOrdinaryKind(K.first)) {

@@ -159,6 +159,8 @@ class Lexer : public PreprocessorLexer {
 
   void InitLexer(const char *BufStart, const char *BufPtr, const char *BufEnd);
 
+  unsigned DashCountOfLuaBlockComment = 0;
+
 public:
   /// Lexer constructor - Create a new lexer object for the specified buffer
   /// with the specified preprocessor managing the lexing process.  This lexer
@@ -808,6 +810,8 @@ private:
   /// \return \c true if a UTF-8 sequence mapping to an acceptable identifier
   ///         character was lexed, \c false otherwise.
   bool tryConsumeIdentifierUTF8Char(const char *&CurPtr);
+
+  bool IsStartOfLuaBlockComment(const char *CurPtr);
 };
 
 } // namespace clang

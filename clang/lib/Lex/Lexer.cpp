@@ -2469,7 +2469,8 @@ bool Lexer::SkipLineComment(Token &Result, const char *CurPtr,
       C = *++CurPtr;
       UnicodeDecodingAlreadyDiagnosed = false;
     }
-
+    if (LangOpts.LUA)
+      break;
     if (!isASCII(C)) {
       unsigned Length = llvm::getUTF8SequenceSize(
           (const llvm::UTF8 *)CurPtr, (const llvm::UTF8 *)BufferEnd);
@@ -3977,6 +3978,22 @@ LexStart:
     Char = getCharAndSize(CurPtr, SizeTmp);
     if (Char == '-') {      // --
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
+      if (LangOpts.LUA){
+        if (IsStartOfLuaBlockComment(CurPtr)) {
+          if (SkipBlockComment(Result, ConsumeChar(CurPtr, SizeTmp, Result),
+                               TokAtPhysicalStartOfLine))
+            return true; // There is a token to return.
+
+          // We only saw whitespace, so just try again with this lexer.
+          // (We manually eliminate the tail call to avoid recursion.)
+          goto LexNextToken;
+        } else {
+          if (SkipLineComment(Result, CurPtr, TokAtPhysicalStartOfLine))
+            return true; // There is a token to return.
+          else
+            goto LexNextToken;
+        }
+      }
       Kind = tok::minusminus;
     } else if (Char == '>' && LangOpts.CPlusPlus &&
                getCharAndSize(CurPtr+SizeTmp, SizeTmp2) == '*') {  // C++ ->*
@@ -4520,5 +4537,28 @@ bool Lexer::LexDependencyDirectiveTokenWhileSkipping(Token &Result) {
   NextDepDirectiveTokenIndex = 1;
 
   convertDependencyDirectiveToken(DDTok, Result);
+  return false;
+}
+
+bool Lexer::IsStartOfLuaBlockComment(const char *CurPtr) {
+  const char *p = CurPtr;
+  if (p[0] == '[') {
+    if (p[1] == '[') {
+      return true;
+    } else {
+      p++;
+      unsigned DashCount = 0;
+      while (*p == '-') {
+        DashCount++;
+        p++;
+      }
+      if (*p == '[') {
+        DashCountOfLuaBlockComment = DashCount;
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
   return false;
 }

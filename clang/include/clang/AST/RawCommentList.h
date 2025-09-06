@@ -39,7 +39,8 @@ public:
     RCK_BCPLExcl,     ///< \code //! stuff \endcode
     RCK_JavaDoc,      ///< \code /** stuff */ \endcode
     RCK_Qt,           ///< \code /*! stuff */ \endcode, also used by HeaderDoc
-    RCK_Merged        ///< Two or more documentation comments merged together
+    RCK_Merged,       ///< Two or more documentation comments merged together
+    RCK_Lua           ///lua comment
   };
 
   RawComment() : Kind(RCK_Invalid), IsAlmostTrailingComment(false) { }
@@ -178,7 +179,7 @@ private:
   mutable bool RawTextValid : 1;   ///< True if RawText is valid
   mutable bool BriefTextValid : 1; ///< True if BriefText is valid
 
-  unsigned Kind : 3;
+  unsigned Kind : 4;
 
   /// True if comment is attached to a declaration in ASTContext.
   bool IsAttached : 1;

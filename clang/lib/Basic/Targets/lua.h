@@ -29,6 +29,7 @@ public:
   virtual std::string_view getClobbers() const;
   virtual ArrayRef<const char *> getGCCRegNames() const;
   virtual ArrayRef<GCCRegAlias> getGCCRegAliases() const;
+  virtual LangOptions::FPEvalMethodKind getFPEvalMethod() const;
 };
 
 } // namespace targets

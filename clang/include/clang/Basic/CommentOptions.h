@@ -30,6 +30,7 @@ struct CommentOptions {
   /// Treat ordinary comments as documentation comments.
   bool ParseAllComments = false;
 
+  bool ParseLuaComments = false;
   CommentOptions() = default;
 };
 

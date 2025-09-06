@@ -43,3 +43,7 @@ ArrayRef<const char*> LuaTargetInfo::getGCCRegNames() const {
 ArrayRef<TargetInfo::GCCRegAlias> LuaTargetInfo::getGCCRegAliases() const {
   return std::nullopt;
 }
+
+LangOptions::FPEvalMethodKind LuaTargetInfo::getFPEvalMethod() const {
+  return LangOptions::FPEvalMethodKind::FEM_Double;
+}

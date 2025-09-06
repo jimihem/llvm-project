@@ -1348,7 +1348,8 @@ void clang::InitializePreprocessor(
   // Emit line markers for various builtin sections of the file. The 3 here
   // marks <built-in> as being a system header, which suppresses warnings when
   // the same macro is defined multiple times.
-  Builder.append("# 1 \"<built-in>\" 3");
+  if (!LangOpts.LUA)
+    Builder.append("# 1 \"<built-in>\" 3");
 
   // Install things like __POWERPC__, __GNUC__, etc into the macro table.
   if (InitOpts.UsePredefines) {
@@ -1382,12 +1383,14 @@ void clang::InitializePreprocessor(
   // Even with predefines off, some macros are still predefined.
   // These should all be defined in the preprocessor according to the
   // current language configuration.
-  InitializeStandardPredefinedMacros(PP.getTargetInfo(), PP.getLangOpts(),
+  if (!LangOpts.LUA)
+    InitializeStandardPredefinedMacros(PP.getTargetInfo(), PP.getLangOpts(),
                                      FEOpts, Builder);
 
   // Add on the predefines from the driver.  Wrap in a #line directive to report
   // that they come from the command line.
-  Builder.append("# 1 \"<command line>\" 1");
+  if (!LangOpts.LUA)
+    Builder.append("# 1 \"<command line>\" 1");
 
   // Process #define's and #undef's in the order they are given.
   for (unsigned i = 0, e = InitOpts.Macros.size(); i != e; ++i) {
@@ -1399,7 +1402,8 @@ void clang::InitializePreprocessor(
   }
 
   // Exit the command line and go back to <built-in> (2 is LC_LEAVE).
-  Builder.append("# 1 \"<built-in>\" 2");
+  if (!LangOpts.LUA)
+    Builder.append("# 1 \"<built-in>\" 2");
 
   // If -imacros are specified, include them now.  These are processed before
   // any -include directives.

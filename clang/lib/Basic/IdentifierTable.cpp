@@ -227,6 +227,11 @@ static KeywordStatus getKeywordStatus(const LangOptions &LangOpts,
                                       unsigned Flags) {
   // KEYALL means always enabled, so special case this one.
   if (Flags == KEYALL) return KS_Enabled;
+  if (LangOpts.LUA)
+    if (Flags & KEYLUA)
+        return KS_Enabled;
+    else
+        return KS_Disabled;
   // These are tests that need to 'always win', as they are special in that they
   // disable based on certain conditions.
   if (LangOpts.OpenCL && (Flags & KEYNOOPENCL)) return KS_Disabled;
@@ -310,7 +315,8 @@ void IdentifierTable::AddKeywords(const LangOptions &LangOpts) {
   if (LangOpts.ObjC)           \
     AddObjCKeyword(StringRef(#NAME), tok::objc_##NAME, *this);
 #define INTERESTING_IDENTIFIER(NAME)                                           \
-  AddInterestingIdentifier(StringRef(#NAME), tok::NAME, *this);
+  if (!LangOpts.LUA)           \
+    AddInterestingIdentifier(StringRef(#NAME), tok::NAME, *this);
 
 #define TESTING_KEYWORD(NAME, FLAGS)
 #include "clang/Basic/TokenKinds.def"
@@ -326,7 +332,8 @@ void IdentifierTable::AddKeywords(const LangOptions &LangOpts) {
     AddKeyword("__ieee128", tok::kw___float128, KEYALL, LangOpts, *this);
 
   // Add the 'import' contextual keyword.
-  get("import").setModulesImport(true);
+  if (!LangOpts.LUA)
+    get("import").setModulesImport(true);
 }
 
 /// Checks if the specified token kind represents a keyword in the

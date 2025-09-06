@@ -275,11 +275,14 @@ void Sema::Initialize() {
 
   // This needs to happen after ExternalSemaSource::InitializeSema(this) or we
   // will not be able to merge any duplicate __va_list_tag decls correctly.
-  VAListTagName = PP.getIdentifierInfo("__va_list_tag");
+  if (!getLangOpts().LUA)
+    VAListTagName = PP.getIdentifierInfo("__va_list_tag");
 
   if (!TUScope)
     return;
-
+  if (getLangOpts().LUA) {
+    return;
+  }
   // Initialize predefined 128-bit integer types, if needed.
   if (Context.getTargetInfo().hasInt128Type() ||
       (Context.getAuxTargetInfo() &&
