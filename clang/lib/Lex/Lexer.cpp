@@ -2719,169 +2719,61 @@ static bool isEndOfBlockCommentWithEscapedNewLine(const char *CurPtr, Lexer *L,
 /// some tokens, this will store the first token and return true.
 bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr,
                              bool &TokAtPhysicalStartOfLine) {
-  // Scan one character past where we should, looking for a '/' character.  Once
-  // we find it, check to see if it was preceded by a *.  This common
-  // optimization helps people who like to put a lot of * characters in their
-  // comments.
+  if (LangOpts.LUA) {
+    while (*CurPtr != 0) {
+      while (*CurPtr != ']' && *CurPtr != 0)
+        CurPtr++;
 
-  // The first character we get with newlines and trigraphs skipped to handle
-  // the degenerate /*/ case below correctly if the * has an escaped newline
-  // after it.
-  unsigned CharSize;
-  unsigned char C = getCharAndSize(CurPtr, CharSize);
-  CurPtr += CharSize;
-  if (C == 0 && CurPtr == BufferEnd+1) {
-    if (!isLexingRawMode())
-      Diag(BufferPtr, diag::err_unterminated_block_comment);
-    --CurPtr;
-
-    // KeepWhitespaceMode should return this broken comment as a token.  Since
-    // it isn't a well formed comment, just return it as an 'unknown' token.
-    if (isKeepWhitespaceMode()) {
-      FormTokenWithChars(Result, CurPtr, tok::unknown);
-      return true;
-    }
-
-    BufferPtr = CurPtr;
-    return false;
-  }
-
-  // Check to see if the first character after the '/*' is another /.  If so,
-  // then this slash does not end the block comment, it is part of it.
-  if (C == '/')
-    C = *CurPtr++;
-
-  // C++23 [lex.phases] p1
-  // Diagnose invalid UTF-8 if the corresponding warning is enabled, emitting a
-  // diagnostic only once per entire ill-formed subsequence to avoid
-  // emiting to many diagnostics (see http://unicode.org/review/pr-121.html).
-  bool UnicodeDecodingAlreadyDiagnosed = false;
-
-  while (true) {
-    // Skip over all non-interesting characters until we find end of buffer or a
-    // (probably ending) '/' character.
-    if (CurPtr + 24 < BufferEnd &&
-        // If there is a code-completion point avoid the fast scan because it
-        // doesn't check for '\0'.
-        !(PP && PP->getCodeCompletionFileLoc() == FileLoc)) {
-      // While not aligned to a 16-byte boundary.
-      while (C != '/' && (intptr_t)CurPtr % 16 != 0) {
-        if (!isASCII(C))
-          goto MultiByteUTF8;
-        C = *CurPtr++;
+      if (*CurPtr == 0) {
+        Diag(BufferPtr, diag::err_unterminated_block_comment);
+        --CurPtr;
+        BufferPtr = CurPtr;
+        return false;
       }
-      if (C == '/') goto FoundSlash;
-
-#ifdef __SSE2__
-      __m128i Slashes = _mm_set1_epi8('/');
-      while (CurPtr + 16 < BufferEnd) {
-        int Mask = _mm_movemask_epi8(*(const __m128i *)CurPtr);
-        if (LLVM_UNLIKELY(Mask != 0)) {
-          goto MultiByteUTF8;
+      CurPtr++;
+      bool FoundBlockCommentEnd = false;
+      for (unsigned i = 0; i < DashCountOfLuaBlockComment + 1; i++) {
+        if (*CurPtr == 0) {
+          Diag(BufferPtr, diag::err_unterminated_block_comment);
+          --CurPtr;
+          BufferPtr = CurPtr;
+          return false;
         }
-        // look for slashes
-        int cmp = _mm_movemask_epi8(_mm_cmpeq_epi8(*(const __m128i*)CurPtr,
-                                    Slashes));
-        if (cmp != 0) {
-          // Adjust the pointer to point directly after the first slash. It's
-          // not necessary to set C here, it will be overwritten at the end of
-          // the outer loop.
-          CurPtr += llvm::countr_zero<unsigned>(cmp) + 1;
-          goto FoundSlash;
-        }
-        CurPtr += 16;
-      }
-#elif __ALTIVEC__
-      __vector unsigned char LongUTF = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                                        0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                                        0x80, 0x80, 0x80, 0x80};
-      __vector unsigned char Slashes = {
-        '/', '/', '/', '/',  '/', '/', '/', '/',
-        '/', '/', '/', '/',  '/', '/', '/', '/'
-      };
-      while (CurPtr + 16 < BufferEnd) {
-        if (LLVM_UNLIKELY(
-                vec_any_ge(*(const __vector unsigned char *)CurPtr, LongUTF)))
-          goto MultiByteUTF8;
-        if (vec_any_eq(*(const __vector unsigned char *)CurPtr, Slashes)) {
+        if (i < DashCountOfLuaBlockComment && *CurPtr != '-') {
           break;
         }
-        CurPtr += 16;
-      }
-
-#else
-      while (CurPtr + 16 < BufferEnd) {
-        bool HasNonASCII = false;
-        for (unsigned I = 0; I < 16; ++I)
-          HasNonASCII |= !isASCII(CurPtr[I]);
-
-        if (LLVM_UNLIKELY(HasNonASCII))
-          goto MultiByteUTF8;
-
-        bool HasSlash = false;
-        for (unsigned I = 0; I < 16; ++I)
-          HasSlash |= CurPtr[I] == '/';
-        if (HasSlash)
+        if (i == DashCountOfLuaBlockComment && *CurPtr == ']') {
+          FoundBlockCommentEnd = true;
           break;
-        CurPtr += 16;
+        }
+        CurPtr++;
       }
-#endif
-
-      // It has to be one of the bytes scanned, increment to it and read one.
-      C = *CurPtr++;
-    }
-
-    // Loop to scan the remainder, warning on invalid UTF-8
-    // if the corresponding warning is enabled, emitting a diagnostic only once
-    // per sequence that cannot be decoded.
-    while (C != '/' && C != '\0') {
-      if (isASCII(C)) {
-        UnicodeDecodingAlreadyDiagnosed = false;
-        C = *CurPtr++;
-        continue;
-      }
-    MultiByteUTF8:
-      // CurPtr is 1 code unit past C, so to decode
-      // the codepoint, we need to read from the previous position.
-      unsigned Length = llvm::getUTF8SequenceSize(
-          (const llvm::UTF8 *)CurPtr - 1, (const llvm::UTF8 *)BufferEnd);
-      if (Length == 0) {
-        if (!UnicodeDecodingAlreadyDiagnosed && !isLexingRawMode())
-          Diag(CurPtr - 1, diag::warn_invalid_utf8_in_comment);
-        UnicodeDecodingAlreadyDiagnosed = true;
-      } else {
-        UnicodeDecodingAlreadyDiagnosed = false;
-        CurPtr += Length - 1;
-      }
-      C = *CurPtr++;
-    }
-
-    if (C == '/') {
-  FoundSlash:
-      if (CurPtr[-2] == '*')  // We found the final */.  We're done!
+      if (FoundBlockCommentEnd)
         break;
+    }
+    if (*CurPtr == 0) {
+      Diag(BufferPtr, diag::err_unterminated_block_comment);
+      --CurPtr;
+      BufferPtr = CurPtr;
+      return false;
+    }
+    CurPtr++;
+  } else {
+    // Scan one character past where we should, looking for a '/' character.
+    // Once
+    // we find it, check to see if it was preceded by a *.  This common
+    // optimization helps people who like to put a lot of * characters in their
+    // comments.
 
-      if ((CurPtr[-2] == '\n' || CurPtr[-2] == '\r')) {
-        if (isEndOfBlockCommentWithEscapedNewLine(CurPtr - 2, this,
-                                                  LangOpts.Trigraphs)) {
-          // We found the final */, though it had an escaped newline between the
-          // * and /.  We're done!
-          break;
-        }
-      }
-      if (CurPtr[0] == '*' && CurPtr[1] != '/') {
-        // If this is a /* inside of the comment, emit a warning.  Don't do this
-        // if this is a /*/, which will end the comment.  This misses cases with
-        // embedded escaped newlines, but oh well.
-        if (!isLexingRawMode())
-          Diag(CurPtr-1, diag::warn_nested_block_comment);
-      }
-    } else if (C == 0 && CurPtr == BufferEnd+1) {
+    // The first character we get with newlines and trigraphs skipped to handle
+    // the degenerate /*/ case below correctly if the * has an escaped newline
+    // after it.
+    unsigned CharSize;
+    unsigned char C = getCharAndSize(CurPtr, CharSize);
+    CurPtr += CharSize;
+    if (C == 0 && CurPtr == BufferEnd + 1) {
       if (!isLexingRawMode())
         Diag(BufferPtr, diag::err_unterminated_block_comment);
-      // Note: the user probably forgot a */.  We could continue immediately
-      // after the /*, but this would involve lexing a lot of what really is the
-      // comment, which surely would confuse the parser.
       --CurPtr;
 
       // KeepWhitespaceMode should return this broken comment as a token.  Since
@@ -2893,15 +2785,166 @@ bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr,
 
       BufferPtr = CurPtr;
       return false;
-    } else if (C == '\0' && isCodeCompletionPoint(CurPtr-1)) {
-      PP->CodeCompleteNaturalLanguage();
-      cutOffLexing();
-      return false;
     }
 
-    C = *CurPtr++;
-  }
+    // Check to see if the first character after the '/*' is another /.  If so,
+    // then this slash does not end the block comment, it is part of it.
+    if (C == '/')
+      C = *CurPtr++;
 
+    // C++23 [lex.phases] p1
+    // Diagnose invalid UTF-8 if the corresponding warning is enabled, emitting
+    // a diagnostic only once per entire ill-formed subsequence to avoid emiting
+    // to many diagnostics (see http://unicode.org/review/pr-121.html).
+    bool UnicodeDecodingAlreadyDiagnosed = false;
+
+    while (true) {
+      // Skip over all non-interesting characters until we find end of buffer or
+      // a (probably ending) '/' character.
+      if (CurPtr + 24 < BufferEnd &&
+          // If there is a code-completion point avoid the fast scan because it
+          // doesn't check for '\0'.
+          !(PP && PP->getCodeCompletionFileLoc() == FileLoc)) {
+        // While not aligned to a 16-byte boundary.
+        while (C != '/' && (intptr_t)CurPtr % 16 != 0) {
+          if (!isASCII(C))
+            goto MultiByteUTF8;
+          C = *CurPtr++;
+        }
+        if (C == '/')
+          goto FoundSlash;
+
+#ifdef __SSE2__
+        __m128i Slashes = _mm_set1_epi8('/');
+        while (CurPtr + 16 < BufferEnd) {
+          int Mask = _mm_movemask_epi8(*(const __m128i *)CurPtr);
+          if (LLVM_UNLIKELY(Mask != 0)) {
+            goto MultiByteUTF8;
+          }
+          // look for slashes
+          int cmp = _mm_movemask_epi8(
+              _mm_cmpeq_epi8(*(const __m128i *)CurPtr, Slashes));
+          if (cmp != 0) {
+            // Adjust the pointer to point directly after the first slash. It's
+            // not necessary to set C here, it will be overwritten at the end of
+            // the outer loop.
+            CurPtr += llvm::countr_zero<unsigned>(cmp) + 1;
+            goto FoundSlash;
+          }
+          CurPtr += 16;
+        }
+#elif __ALTIVEC__
+        __vector unsigned char LongUTF = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+                                          0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+                                          0x80, 0x80, 0x80, 0x80};
+        __vector unsigned char Slashes = {'/', '/', '/', '/', '/', '/',
+                                          '/', '/', '/', '/', '/', '/',
+                                          '/', '/', '/', '/'};
+        while (CurPtr + 16 < BufferEnd) {
+          if (LLVM_UNLIKELY(
+                  vec_any_ge(*(const __vector unsigned char *)CurPtr, LongUTF)))
+            goto MultiByteUTF8;
+          if (vec_any_eq(*(const __vector unsigned char *)CurPtr, Slashes)) {
+            break;
+          }
+          CurPtr += 16;
+        }
+
+#else
+        while (CurPtr + 16 < BufferEnd) {
+          bool HasNonASCII = false;
+          for (unsigned I = 0; I < 16; ++I)
+            HasNonASCII |= !isASCII(CurPtr[I]);
+
+          if (LLVM_UNLIKELY(HasNonASCII))
+            goto MultiByteUTF8;
+
+          bool HasSlash = false;
+          for (unsigned I = 0; I < 16; ++I)
+            HasSlash |= CurPtr[I] == '/';
+          if (HasSlash)
+            break;
+          CurPtr += 16;
+        }
+#endif
+
+        // It has to be one of the bytes scanned, increment to it and read one.
+        C = *CurPtr++;
+      }
+
+      // Loop to scan the remainder, warning on invalid UTF-8
+      // if the corresponding warning is enabled, emitting a diagnostic only
+      // once per sequence that cannot be decoded.
+      while (C != '/' && C != '\0') {
+        if (isASCII(C)) {
+          UnicodeDecodingAlreadyDiagnosed = false;
+          C = *CurPtr++;
+          continue;
+        }
+      MultiByteUTF8:
+        // CurPtr is 1 code unit past C, so to decode
+        // the codepoint, we need to read from the previous position.
+        unsigned Length = llvm::getUTF8SequenceSize(
+            (const llvm::UTF8 *)CurPtr - 1, (const llvm::UTF8 *)BufferEnd);
+        if (Length == 0) {
+          if (!UnicodeDecodingAlreadyDiagnosed && !isLexingRawMode())
+            Diag(CurPtr - 1, diag::warn_invalid_utf8_in_comment);
+          UnicodeDecodingAlreadyDiagnosed = true;
+        } else {
+          UnicodeDecodingAlreadyDiagnosed = false;
+          CurPtr += Length - 1;
+        }
+        C = *CurPtr++;
+      }
+
+      if (C == '/') {
+      FoundSlash:
+        if (CurPtr[-2] == '*') // We found the final */.  We're done!
+          break;
+
+        if ((CurPtr[-2] == '\n' || CurPtr[-2] == '\r')) {
+          if (isEndOfBlockCommentWithEscapedNewLine(CurPtr - 2, this,
+                                                    LangOpts.Trigraphs)) {
+            // We found the final */, though it had an escaped newline between
+            // the
+            // * and /.  We're done!
+            break;
+          }
+        }
+        if (CurPtr[0] == '*' && CurPtr[1] != '/') {
+          // If this is a /* inside of the comment, emit a warning.  Don't do
+          // this if this is a /*/, which will end the comment.  This misses
+          // cases with embedded escaped newlines, but oh well.
+          if (!isLexingRawMode())
+            Diag(CurPtr - 1, diag::warn_nested_block_comment);
+        }
+      } else if (C == 0 && CurPtr == BufferEnd + 1) {
+        if (!isLexingRawMode())
+          Diag(BufferPtr, diag::err_unterminated_block_comment);
+        // Note: the user probably forgot a */.  We could continue immediately
+        // after the /*, but this would involve lexing a lot of what really is
+        // the comment, which surely would confuse the parser.
+        --CurPtr;
+
+        // KeepWhitespaceMode should return this broken comment as a token.
+        // Since it isn't a well formed comment, just return it as an 'unknown'
+        // token.
+        if (isKeepWhitespaceMode()) {
+          FormTokenWithChars(Result, CurPtr, tok::unknown);
+          return true;
+        }
+
+        BufferPtr = CurPtr;
+        return false;
+      } else if (C == '\0' && isCodeCompletionPoint(CurPtr - 1)) {
+        PP->CodeCompleteNaturalLanguage();
+        cutOffLexing();
+        return false;
+      }
+
+      C = *CurPtr++;
+    }
+  }
   // Notify comment handlers about the comment unless we're in a #if 0 block.
   if (PP && !isLexingRawMode() &&
       PP->HandleComment(Result, SourceRange(getSourceLocation(BufferPtr),
@@ -3980,8 +4023,7 @@ LexStart:
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
       if (LangOpts.LUA){
         if (IsStartOfLuaBlockComment(CurPtr)) {
-          if (SkipBlockComment(Result, ConsumeChar(CurPtr, SizeTmp, Result),
-                               TokAtPhysicalStartOfLine))
+          if (SkipBlockComment(Result, CurPtr + 2, TokAtPhysicalStartOfLine))
             return true; // There is a token to return.
 
           // We only saw whitespace, so just try again with this lexer.
@@ -4548,6 +4590,7 @@ bool Lexer::IsStartOfLuaBlockComment(const char *CurPtr) {
     } else {
       p++;
       unsigned DashCount = 0;
+      DashCountOfLuaBlockComment = 0;
       while (*p == '-') {
         DashCount++;
         p++;
