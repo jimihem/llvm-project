@@ -2085,38 +2085,81 @@ bool Lexer::LexStringLiteral(Token &Result, const char *CurPtr,
        Kind == tok::utf32_string_literal))
     Diag(BufferPtr, LangOpts.CPlusPlus ? diag::warn_cxx98_compat_unicode_literal
                                        : diag::warn_c99_compat_unicode_literal);
-
-  char C = getAndAdvanceChar(CurPtr, Result);
-  while (C != '"') {
-    // Skip escaped characters.  Escaped newlines will already be processed by
-    // getAndAdvanceChar.
-    if (C == '\\')
-      C = getAndAdvanceChar(CurPtr, Result);
-
-    if (C == '\n' || C == '\r' ||             // Newline.
-        (C == 0 && CurPtr-1 == BufferEnd)) {  // End of file.
-      if (!isLexingRawMode() && !LangOpts.AsmPreprocessor)
-        Diag(BufferPtr, diag::ext_unterminated_char_or_string) << 1;
-      FormTokenWithChars(Result, CurPtr-1, tok::unknown);
-      return true;
+  if (LexingLuaBlockString) {
+    while (*CurPtr != 0) {
+      while (*CurPtr != ']' && *CurPtr != 0)
+        CurPtr++;
+      if (*CurPtr == 0) {
+        Diag(BufferPtr, diag::ext_unterminated_char_or_string);
+        --CurPtr;
+        BufferPtr = CurPtr;
+        return false;
+      }
+      CurPtr++;
+      bool FoundBlockStringEnd = false;
+      for (unsigned i = 0; i < DashCountOfLuaBlockCommentOrString + 1; i++) {
+        if (*CurPtr == 0) {
+          Diag(BufferPtr, diag::ext_unterminated_char_or_string);
+          --CurPtr;
+          BufferPtr = CurPtr;
+          return false;
+        }
+        if (i < DashCountOfLuaBlockCommentOrString && *CurPtr != '=') {
+          break;
+        }
+        if (i == DashCountOfLuaBlockCommentOrString && *CurPtr == ']') {
+          FoundBlockStringEnd = true;
+          break;
+        }
+        CurPtr++;
+      }
+      if (FoundBlockStringEnd)
+        break;
     }
+    if (*CurPtr == 0) {
+      Diag(BufferPtr, diag::err_unterminated_block_comment);
+      --CurPtr;
+      BufferPtr = CurPtr;
+      return false;
+    }
+    CurPtr++;
+    LexingLuaBlockString = false;
+  } else {
+    char PreC = '"';
+    if (LangOpts.LUA)
+      PreC = *(CurPtr - 1);
+    char C = getAndAdvanceChar(CurPtr, Result);
+    while (C != PreC) {
+      // Skip escaped characters.  Escaped newlines will already be processed by
+      // getAndAdvanceChar.
+      if (C == '\\')
+        C = getAndAdvanceChar(CurPtr, Result);
 
-    if (C == 0) {
-      if (isCodeCompletionPoint(CurPtr-1)) {
-        if (ParsingFilename)
-          codeCompleteIncludedFile(AfterQuote, CurPtr - 1, /*IsAngled=*/false);
-        else
-          PP->CodeCompleteNaturalLanguage();
+      if (C == '\n' || C == '\r' ||              // Newline.
+          (C == 0 && CurPtr - 1 == BufferEnd)) { // End of file.
+        if (!isLexingRawMode() && !LangOpts.AsmPreprocessor)
+          Diag(BufferPtr, diag::ext_unterminated_char_or_string) << 1;
         FormTokenWithChars(Result, CurPtr - 1, tok::unknown);
-        cutOffLexing();
         return true;
       }
 
-      NulCharacter = CurPtr-1;
-    }
-    C = getAndAdvanceChar(CurPtr, Result);
-  }
+      if (C == 0) {
+        if (isCodeCompletionPoint(CurPtr - 1)) {
+          if (ParsingFilename)
+            codeCompleteIncludedFile(AfterQuote, CurPtr - 1,
+                                     /*IsAngled=*/false);
+          else
+            PP->CodeCompleteNaturalLanguage();
+          FormTokenWithChars(Result, CurPtr - 1, tok::unknown);
+          cutOffLexing();
+          return true;
+        }
 
+        NulCharacter = CurPtr - 1;
+      }
+      C = getAndAdvanceChar(CurPtr, Result);
+    }
+  }
   // If we are in C++11, lex the optional ud-suffix.
   if (LangOpts.CPlusPlus)
     CurPtr = LexUDSuffix(Result, CurPtr, true);
@@ -2732,17 +2775,17 @@ bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr,
       }
       CurPtr++;
       bool FoundBlockCommentEnd = false;
-      for (unsigned i = 0; i < DashCountOfLuaBlockComment + 1; i++) {
+      for (unsigned i = 0; i < DashCountOfLuaBlockCommentOrString + 1; i++) {
         if (*CurPtr == 0) {
           Diag(BufferPtr, diag::err_unterminated_block_comment);
           --CurPtr;
           BufferPtr = CurPtr;
           return false;
         }
-        if (i < DashCountOfLuaBlockComment && *CurPtr != '-') {
+        if (i < DashCountOfLuaBlockCommentOrString && *CurPtr != '=') {
           break;
         }
-        if (i == DashCountOfLuaBlockComment && *CurPtr == ']') {
+        if (i == DashCountOfLuaBlockCommentOrString && *CurPtr == ']') {
           FoundBlockCommentEnd = true;
           break;
         }
@@ -3932,10 +3975,11 @@ LexStart:
 
   // C99 6.4.4: Character Constants.
   case '\'':
-    // Notify MIOpt that we read a non-whitespace/non-comment token.
-    MIOpt.ReadToken();
-    return LexCharConstant(Result, CurPtr, tok::char_constant);
-
+    if (!LangOpts.LUA) {
+      // Notify MIOpt that we read a non-whitespace/non-comment token.
+      MIOpt.ReadToken();
+      return LexCharConstant(Result, CurPtr, tok::char_constant);
+    }
   // C99 6.4.5: String Literals.
   case '"':
     // Notify MIOpt that we read a non-whitespace/non-comment token.
@@ -3949,6 +3993,13 @@ LexStart:
     Kind = tok::question;
     break;
   case '[':
+    if (LangOpts.LUA && IsStartOfLuaBlockString(CurPtr)) {
+      // Notify MIOpt that we read a non-whitespace/non-comment token.
+      MIOpt.ReadToken();
+      return LexStringLiteral(Result, CurPtr,
+                              ParsingFilename ? tok::header_name
+                                              : tok::string_literal);
+    }
     Kind = tok::l_square;
     break;
   case ']':
@@ -4590,17 +4641,40 @@ bool Lexer::IsStartOfLuaBlockComment(const char *CurPtr) {
     } else {
       p++;
       unsigned DashCount = 0;
-      DashCountOfLuaBlockComment = 0;
-      while (*p == '-') {
+      DashCountOfLuaBlockCommentOrString = 0;
+      while (*p == '=') {
         DashCount++;
         p++;
       }
       if (*p == '[') {
-        DashCountOfLuaBlockComment = DashCount;
+        DashCountOfLuaBlockCommentOrString = DashCount;
         return true;
       } else {
         return false;
       }
+    }
+  }
+  return false;
+}
+
+bool Lexer::IsStartOfLuaBlockString(const char *CurPtr) {
+  const char *p = CurPtr;
+  if (p[0] == '[') {
+    LexingLuaBlockString = true;
+    return true;
+  } else {
+    unsigned DashCount = 0;
+    DashCountOfLuaBlockCommentOrString = 0;
+    while (*p == '=') {
+      DashCount++;
+      p++;
+    }
+    if (*p == '[') {
+      DashCountOfLuaBlockCommentOrString = DashCount;
+      LexingLuaBlockString = true;
+      return true;
+    } else {
+      return false;
     }
   }
   return false;

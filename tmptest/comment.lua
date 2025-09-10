@@ -3,10 +3,10 @@
 multi line comment1
 ]]
 
---[---[
+--[===[
 multi line comment2
-]---]
+]===]
 
---[---[
+--[===[
 multi line comment2
---]----]---]
+--]===]===]
