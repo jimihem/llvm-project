@@ -1206,6 +1206,14 @@ RecordDecl *ASTContext::buildImplicitRecord(StringRef Name,
   return NewDecl;
 }
 
+RecordDecl *
+ASTContext::buildLuaRecord(StringRef Name,
+                           RecordDecl::TagKind TK = TTK_Class) const {
+  SourceLocation Loc;
+  return CXXRecordDecl::Create(*this, TK, getTranslationUnitDecl(), Loc, Loc,
+                                  &Idents.get(Name));
+}
+
 TypedefDecl *ASTContext::buildImplicitTypedef(QualType T,
                                               StringRef Name) const {
   TypeSourceInfo *TInfo = getTrivialTypeSourceInfo(T);
@@ -7446,6 +7454,85 @@ QualType ASTContext::getBlockDescriptorType() const {
   BlockDescriptorType = RD;
 
   return getTagDeclType(BlockDescriptorType);
+}
+
+RecordDecl* ASTContext::getCharArrayDecl() {
+  RecordDecl *CharArray;
+  SourceLocation Loc;
+  QualType charT = SignedCharTy;
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstCharT = getQualifiedType(charT, Qs);
+  QualType charPtrT = getPointerType(SignedCharTy);
+  QualType charRef = getLValueReferenceType(charT);
+  QualType ConstCharRefT = getLValueReferenceType(ConstCharT);
+  QualType uintT = UnsignedIntTy;
+
+  CharArray = buildLuaRecord("CharArray");
+  CharArray->startDefinition();
+
+
+  FieldDecl *data =
+      FieldDecl::Create(*this, CharArray, Loc, Loc, &Idents.get("data"),
+                        SignedCharTy, nullptr, nullptr, false, ICIS_NoInit);
+  data->setAccess(AS_private);
+  CharArray->addDecl(data);
+
+  FieldDecl *capacity =
+      FieldDecl::Create(*this, CharArray, Loc, Loc, &Idents.get("capacity"),
+                        uintT, nullptr, nullptr, false, ICIS_NoInit);
+  capacity->setAccess(AS_private);
+  CharArray->addDecl(capacity);
+
+  FieldDecl *size =
+      FieldDecl::Create(*this, CharArray, Loc, Loc, &Idents.get("size"), uintT,
+                        nullptr, nullptr, false, ICIS_NoInit);
+  size->setAccess(AS_private);
+  CharArray->addDecl(size);
+
+  QualType CharArrayT = getTypeDeclType(CharArray);
+  DeclarationNameInfo NameInfo;
+  QualType constructorT = getFunctionNoProtoType(VoidTy);
+
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(CharArrayT)));
+  CXXConstructorDecl *constructor = CXXConstructorDecl::Create(
+      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, constructorT,
+      nullptr, ExplicitSpecifier(), false, false, false,
+      ConstexprSpecKind::Unspecified);
+  CharArray->addDecl(constructor);
+  constructor->setAccess(AS_public);
+
+  NameInfo.setName(
+      DeclarationNames.getCXXDestructorName(getCanonicalType(CharArrayT)));
+  CXXDestructorDecl *destructor = CXXDestructorDecl::Create(
+      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, constructorT,
+      nullptr, false, false, false, ConstexprSpecKind::Unspecified);
+  CharArray->addDecl(destructor);
+  destructor->setAccess(AS_public);
+
+  FunctionProtoType::ExtProtoInfo EPI;
+  QualType push_backT = getFunctionType(VoidTy, {ConstCharRefT}, EPI);
+  NameInfo.setName(&Idents.get("push_back"));
+  CXXMethodDecl *push_back = CXXMethodDecl::Create(
+      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, push_backT, nullptr,
+      StorageClass::SC_None, false, false, ConstexprSpecKind::Unspecified, Loc);
+  CharArray->addDecl(push_back);
+  push_back->setAccess(AS_public);
+
+  QualType pop_backT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(&Idents.get("pop_back"));
+  CXXMethodDecl *pop_back = CXXMethodDecl::Create(
+      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, pop_backT, nullptr,
+      StorageClass::SC_None, false, false, ConstexprSpecKind::Unspecified, Loc);
+  CharArray->addDecl(pop_back);
+  pop_back->setAccess(AS_public);
+
+  QualType operatorT = getFunctionType(charRef, {uintT}, EPI);
+
+
+  CharArray->completeDefinition();
+  return CharArray;
 }
 
 QualType ASTContext::getBlockDescriptorExtendedType() const {

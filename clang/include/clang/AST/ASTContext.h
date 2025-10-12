@@ -1191,6 +1191,9 @@ public:
   RecordDecl *buildImplicitRecord(StringRef Name,
                                   RecordDecl::TagKind TK = TTK_Struct) const;
 
+  RecordDecl *buildLuaRecord(StringRef Name,
+                             RecordDecl::TagKind TK = TTK_Class) const;
+
   /// Create a new implicit TU-level typedef declaration.
   TypedefDecl *buildImplicitTypedef(QualType T, StringRef Name) const;
 
@@ -1372,6 +1375,8 @@ public:
   /// Gets the struct used to keep track of the extended descriptor for
   /// pointer to blocks.
   QualType getBlockDescriptorExtendedType() const;
+
+  RecordDecl *getCharArrayDecl();
 
   /// Map an AST Type to an OpenCLTypeKind enum value.
   OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;

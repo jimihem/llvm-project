@@ -281,6 +281,9 @@ void Sema::Initialize() {
   if (!TUScope)
     return;
   if (getLangOpts().LUA) {
+    DeclarationName ClassCharArray = &Context.Idents.get("CharArray");
+    if (IdResolver.begin(ClassCharArray) == IdResolver.end())
+      PushOnScopeChains(Context.getCharArrayDecl(), TUScope);
     return;
   }
   // Initialize predefined 128-bit integer types, if needed.
