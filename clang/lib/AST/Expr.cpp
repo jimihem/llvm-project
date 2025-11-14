@@ -1728,7 +1728,7 @@ MemberExpr::MemberExpr(Expr *Base, bool IsArrow, SourceLocation OperatorLoc,
                        ExprValueKind VK, ExprObjectKind OK,
                        NonOdrUseReason NOUR)
     : Expr(MemberExprClass, T, VK, OK), Base(Base), MemberDecl(MemberDecl),
-      MemberDNLoc(NameInfo.getInfo()), MemberLoc(NameInfo.getLoc()) {
+      MemberDNLoc(NameInfo.getInfo()), MemberLoc(NameInfo.getLoc()), MemberDN(NameInfo) {
   assert(!NameInfo.getName() ||
          MemberDecl->getDeclName() == NameInfo.getName());
   MemberExprBits.IsArrow = IsArrow;

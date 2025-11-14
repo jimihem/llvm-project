@@ -7,8 +7,13 @@ void ObjectPtr::release() {
   }
 }
 
+ObjectPtr::ObjectPtr()
+    : ptr(0), ref_count(0) {
+
+}
+
 ObjectPtr::ObjectPtr(Object *p)
-    : ptr(p), ref_count(new unsigned int(1)) {}
+    : ptr(p), ref_count(p ? new unsigned int(1) : 0) {}
 
 ObjectPtr::ObjectPtr(const ObjectPtr &other)
     : ptr(other.ptr), ref_count(other.ref_count) {
@@ -27,10 +32,8 @@ ObjectPtr &ObjectPtr::operator=(const ObjectPtr &other) {
   return *this;
 }
 
-Object &ObjectPtr::operator*() const { return *ptr; }
-Object *ObjectPtr::operator->() const { return ptr; }
-Object *ObjectPtr::get() const { return ptr; }
+Object * ObjectPtr::operator->() const{ return ptr; }
 
-unsigned ObjectPtr::use_count() const { return ref_count ? *ref_count : 0; }
+Object &ObjectPtr::operator *() const { return *ptr; }
 
-ObjectPtr::operator bool() const { return ptr != nullptr; }
+ObjectPtr::operator bool() const { return ptr->Kind != Object::TNIL; }

@@ -122,7 +122,15 @@ using namespace clang;
 ///         assignment-expression ...[opt]
 ///         expression ',' assignment-expression ...[opt]
 /// \endverbatim
-ExprResult Parser::ParseExpression(TypeCastState isTypeCast) {
+ExprResult Parser::ParseExpression(TypeCastState isTypeCast,
+                                   StmtVector *Stmts,
+                                   ParsedStmtContext StmtCtx) {
+  if (getLangOpts().LUA) {
+    if (Tok.is(tok::l_brace))
+      return ParseTableConstructor(*Stmts, StmtCtx);
+    ExprResult LHS(ParseCastExpression(AnyCastExpr));
+    return ParseRHSOfBinaryExpression(LHS, prec::Conditional);
+  }
   ExprResult LHS(ParseAssignmentExpression(isTypeCast));
   return ParseRHSOfBinaryExpression(LHS, prec::Comma);
 }
@@ -666,6 +674,105 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
       Actions.CorrectDelayedTyposInExpr(RHS);
     }
   }
+}
+
+MultiExprArg Parser::ParseTableField(StmtVector &Stmts,
+                                     ParsedStmtContext StmtCtx) {
+  SmallVector<Expr *, 4> Fields;
+  if (Tok.is(tok::l_square)) {
+    BalancedDelimiterTracker T(*this, tok::l_square);
+    T.consumeOpen();
+    Fields.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    T.consumeClose();
+    ConsumeToken();
+  } else if (Tok.is(tok::identifier) && NextToken().is(tok::equal)) {
+    UnqualifiedId Id;
+    Id.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
+    Fields.push_back(Actions.ActOnTableFieldName(Id).get());
+    ConsumeToken();
+    ConsumeToken();
+  } else {
+    Fields.push_back(Actions.ActOnNil(Tok.getLocation()).get());
+  }
+  Fields.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
+  return Fields;
+}
+
+//tableconstructor ::= ‘{’ [fieldlist] ‘}’
+//       fieldlist ::= field {fieldsep field} [fieldsep]
+//           field ::= ‘[’ exp ‘]’ ‘=’ exp | Name ‘=’ exp | exp
+//        fieldsep ::= ‘,’ | ‘;’
+
+ExprResult Parser::ParseTableConstructor(StmtVector &Stmts,
+                                         ParsedStmtContext StmtCtx) { 
+  BalancedDelimiterTracker T(*this, tok::l_brace);
+  T.consumeOpen();
+  SmallVector<Expr *, 4> Fields;
+  if (Tok.isNot(tok::r_brace)) {
+    MultiExprArg Ret = ParseTableField(Stmts, StmtCtx);
+
+    Fields.push_back(Ret.front());
+    Fields.push_back(Ret.back());
+
+    while (Tok.isOneOf(tok::comma, tok::semi)) {
+      ConsumeToken();
+      Ret = ParseTableField(Stmts, StmtCtx);
+
+      Fields.push_back(Ret.front());
+      Fields.push_back(Ret.back());
+    }
+  }
+  T.consumeClose();
+  SmallVector<Expr*> Exprs = Actions.ActOnTableConstructor(Fields);
+  if (Exprs.size() > 1) {
+    for (size_t i = 0; i < Exprs.size() - 1; i++) {
+      Stmts.push_back(handleExprStmt(Exprs[i], StmtCtx).get());
+    }
+  }
+  return Exprs.back();
+}
+
+//funcbody ::= ‘(’ [parlist] ‘)’ block end
+// parlist ::= namelist [‘,’ ‘...’] | ‘...’
+ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
+                                   ParsedStmtContext StmtCtx) {
+  BalancedDelimiterTracker T(*this, tok::l_paren);
+  SmallVector<UnqualifiedId> parlist;
+  UnqualifiedId Par;
+  T.consumeOpen();
+  bool IsVar = false;
+  if (Tok.isNot(tok::r_paren)) {
+    if (Tok.is(tok::identifier)) {
+      Par.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
+      parlist.push_back(Par);
+      while (Tok.is(tok::comma)) {
+        ConsumeToken();
+        if (Tok.is(tok::ellipsis)) {
+          IsVar = true;
+          Par.setIdentifier(&Actions.Context.Idents.get("VarList"),
+                            Tok.getLocation());
+          parlist.push_back(Par);
+          break;
+        } else {
+          Par.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
+          parlist.push_back(Par);
+        }
+      }
+    } else {
+      IsVar = true;
+      Par.setIdentifier(&Actions.Context.Idents.get("VarList"),
+                        Tok.getLocation());
+      parlist.push_back(Par);
+    }
+  }
+  T.consumeClose();
+
+  ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
+                                 Scope::CompoundStmtScope);
+  Decl *FD = Actions.ActOnStartOfLuaFunctionDef(getCurScope());
+
+
+  return ExprResult();
 }
 
 /// Parse a cast-expression, unary-expression or primary-expression, based

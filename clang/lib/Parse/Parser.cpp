@@ -615,6 +615,19 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result,
                                Sema::ModuleImportState &ImportState) {
   DestroyTemplateIdAnnotationsRAIIObj CleanupRAII(*this);
 
+  if (getLangOpts().LUA) {
+    if (Tok.is(tok::eof)) {
+      Actions.ActOnEndOfTranslationUnit();
+      return true;
+    }
+    ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
+                                   Scope::CompoundStmtScope);
+    Decl *TopFunc = Actions.ActOnStartOfLuaFunctionDef(getCurScope());
+    TopFunc = ParseFunctionStatementBody(TopFunc, BodyScope);
+    Result = Actions.ConvertDeclToDeclGroup(TopFunc);
+    return false;
+  }
+
   Result = nullptr;
   switch (Tok.getKind()) {
   case tok::annot_pragma_unused:

@@ -276,7 +276,7 @@ Retry:
       }
       [[fallthrough]];
     default:
-      return ParseExprStatement(StmtCtx);
+      return ParseExprStatement(Stmts, StmtCtx);
     }
   }
 
@@ -520,12 +520,49 @@ Retry:
 }
 
 /// Parse an expression statement.
-StmtResult Parser::ParseExprStatement(ParsedStmtContext StmtCtx) {
+StmtResult Parser::ParseExprStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
   // If a case keyword is missing, this is where it should be inserted.
   Token OldToken = Tok;
 
   ExprStatementTokLoc = Tok.getLocation();
+  if (getLangOpts().LUA) {
+    // varlist ‘=’ explist |
+    // functioncall |
 
+    ExprResult PreFixExp = ParseCastExpression(PrimaryExprOnly);
+
+    if (Tok.isOneOf(tok::l_paren, tok::l_brace, tok::string_literal)) {
+
+    } else {
+      SmallVector<Expr*, 4> VarList;
+      VarList.push_back(ParsePostfixExpressionSuffix(PreFixExp).get());
+      while (Tok.is(tok::comma)) {
+        ConsumeToken();
+        VarList.push_back(ParseCastExpression(AnyCastExpr).get());
+      }
+
+      SourceLocation OpLoc = Tok.getLocation();
+      ConsumeToken();
+
+      SmallVector<Expr*, 4> ExprList;
+      ExprList.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
+      while (Tok.is(tok::comma)) {
+        ConsumeToken();
+        ExprList.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
+      }
+
+      MultiExprArg Vars(VarList);
+      MultiExprArg Exprs(ExprList);
+      SmallVector<Expr*> AssignExprs =
+          Actions.ActOnVarsAssign(getCurScope(), OpLoc, Vars, Exprs);
+
+      for (uint32_t i = 0; i < AssignExprs.size() - 1; i++) {
+        Stmts.push_back(handleExprStmt(AssignExprs[i], StmtCtx).get());
+      }
+
+      return handleExprStmt(AssignExprs.back(), StmtCtx);
+    }
+  }
   // expression[opt] ';'
   ExprResult Expr(ParseExpression());
   if (Expr.isInvalid()) {
@@ -556,7 +593,7 @@ StmtResult Parser::ParseExprStatement(ParsedStmtContext StmtCtx) {
   // Note we shouldn't eat the token since the callback needs it.
   if (Tok.is(tok::annot_repl_input_end) && Actions.getLangOpts().CPlusPlus)
     CurTok = &Tok;
-  else
+  else if (!Actions.getLangOpts().LUA)
     // Otherwise, eat the semicolon.
     ExpectAndConsumeSemi(diag::err_expected_semi_after_expr);
 
@@ -1143,9 +1180,11 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
   // compound statement.
   Sema::FPFeaturesStateRAII SaveFPFeatures(Actions);
 
+  bool IsLuaTopDecl = isLuaTopDeclContext();
+
   InMessageExpressionRAIIObject InMessage(*this, false);
   BalancedDelimiterTracker T(*this, tok::l_brace);
-  if (T.consumeOpen())
+  if (!IsLuaTopDecl && T.consumeOpen())
     return StmtError();
 
   Sema::CompoundScopeRAII CompoundScope(Actions, isStmtExpr);
@@ -1258,10 +1297,11 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
     Diag(Tok.getLocation(),
          diag::warn_no_support_for_eval_method_source_on_m32);
 
-  SourceLocation CloseLoc = Tok.getLocation();
+  SourceLocation CloseLoc =
+      IsLuaTopDecl ? T.getOpenLocation() : Tok.getLocation();
 
   // We broke out of the while loop because we found a '}' or EOF.
-  if (!T.consumeClose()) {
+  if (!IsLuaTopDecl && !T.consumeClose()) {
     // If this is the '})' of a statement expression, check that it's written
     // in a sensible way.
     if (isStmtExpr && Tok.is(tok::r_paren))
@@ -1271,7 +1311,7 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
     // instead of dropping everything and returning StmtError().
   }
 
-  if (T.getCloseLocation().isValid())
+  if (!IsLuaTopDecl && T.getCloseLocation().isValid())
     CloseLoc = T.getCloseLocation();
 
   return Actions.ActOnCompoundStmt(T.getOpenLocation(), CloseLoc,
@@ -2449,8 +2489,11 @@ StmtResult Parser::ParsePragmaLoopHint(StmtVector &Stmts,
 }
 
 Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
-  assert(Tok.is(tok::l_brace));
-  SourceLocation LBraceLoc = Tok.getLocation();
+  SourceLocation LBraceLoc;
+  if (!isLuaTopDeclContext()) {
+    assert(Tok.is(tok::l_brace));
+    LBraceLoc = Tok.getLocation();
+  }
 
   PrettyDeclStackTraceEntry CrashInfo(Actions.Context, Decl, LBraceLoc,
                                       "parsing function body");

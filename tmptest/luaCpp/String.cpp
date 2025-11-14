@@ -1,10 +1,14 @@
 #include "String.hpp"
+String::String() {
+  length = 0;
+  data = 0;
+}
 
-String::String(CharArray &array) {
-  length = array.get_size();
+String::String(char* d, unsigned l) {
+  length = l;
   data = new char[length];
   for (unsigned i = 0; i < length; ++i) {
-    data[i] = array[i];
+    data[i] = d[i];
   }
 }
 
@@ -26,8 +30,9 @@ unsigned String::hash() {
   return hash & 0xFFFFFFFF;
 }
 
-char String::operator[](unsigned index) { return data[index]; }
-
 unsigned String::size() { return length; }
 
-String::~String() { delete data; }
+String::~String() {
+  if (data)
+    delete data;
+}

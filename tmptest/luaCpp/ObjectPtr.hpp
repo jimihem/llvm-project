@@ -8,7 +8,9 @@ private:
   void release();
 
 public:
-  explicit ObjectPtr(Object *p = nullptr);
+  ObjectPtr();
+
+  ObjectPtr(Object *p);
 
   ObjectPtr(const ObjectPtr &other);
 
@@ -16,11 +18,9 @@ public:
 
   ObjectPtr &operator=(const ObjectPtr &other);
 
-  Object &operator*() const;
   Object *operator->() const;
-  Object *get() const;
 
-  unsigned use_count() const;
+  Object &operator*() const;
 
   explicit operator bool() const;
 };

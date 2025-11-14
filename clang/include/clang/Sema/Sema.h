@@ -1653,6 +1653,8 @@ public:
   /// Indicate RISC-V SiFive vector builtin functions enabled or not.
   bool DeclareRISCVSiFiveVectorBuiltins = false;
 
+  void AddLuaBuiltinFun();
+
 private:
   std::unique_ptr<sema::RISCVIntrinsicManager> RVIntrinsicManager;
 
@@ -1987,7 +1989,7 @@ public:
   void PushFunctionScope();
   void PushBlockScope(Scope *BlockScope, BlockDecl *Block);
   sema::LambdaScopeInfo *PushLambdaScope();
-
+  sema::CapturingScopeInfo *PushCaptureScope();
   /// This is used to inform Sema what the current TemplateParameterDepth
   /// is during Parsing.  Currently it is used to pass on the depth
   /// when parsing generic lambda 'auto' parameters.
@@ -3116,6 +3118,7 @@ public:
   Decl *ActOnStartOfFunctionDef(Scope *S, Decl *D,
                                 SkipBodyInfo *SkipBody = nullptr,
                                 FnBodyKind BodyKind = FnBodyKind::Other);
+  Decl *ActOnStartOfLuaFunctionDef(Scope *S);
   void SetFunctionBodyKind(Decl *D, SourceLocation Loc, FnBodyKind BodyKind);
   void ActOnStartTrailingRequiresClause(Scope *S, Declarator &D);
   ExprResult ActOnFinishTrailingRequiresClause(ExprResult ConstraintExpr);
@@ -5997,6 +6000,18 @@ private:
 public:
   ExprResult ActOnBinOp(Scope *S, SourceLocation TokLoc,
                         tok::TokenKind Kind, Expr *LHSExpr, Expr *RHSExpr);
+
+  SmallVector<Expr*> ActOnVarsAssign(Scope *S, SourceLocation TokLoc,
+                               MultiExprArg &VarList, MultiExprArg &ExprList);
+
+  ExprResult ActOnNil(SourceLocation TokLoc);
+
+  SmallVector<Expr*> ActOnTableConstructor(MultiExprArg Fields);
+
+  VarDecl* ActOnLocalVariable(UnqualifiedId &Id);
+
+  ExprResult ActOnTableFieldName(UnqualifiedId &Id);
+
   ExprResult BuildBinOp(Scope *S, SourceLocation OpLoc,
                         BinaryOperatorKind Opc, Expr *LHSExpr, Expr *RHSExpr);
   ExprResult CreateBuiltinBinOp(SourceLocation OpLoc, BinaryOperatorKind Opc,
@@ -6169,6 +6184,46 @@ public:
 
   CXXRecordDecl *getStdBadAlloc() const;
   EnumDecl *getStdAlignValT() const;
+
+  NamedDecl *getDeclByName(std::string Name);
+
+  NamedDecl *getMemberDeclByName(std::string MemberName, std::string ClassName);
+
+  void getGlobalOperatorNewAndDelete(FunctionDecl *&OpNew,
+                                     FunctionDecl *&OpDelete);
+
+  ExprResult BuildImplCastExpr(Expr *E, QualType ToType, CastKind Kind,
+                               SourceRange LocRange);
+
+  ExprResult BuildLuaNew(QualType RecordType, MultiExprArg &MulExpr,
+                         SourceRange LocRange);
+
+  ExprResult BuildConstructExpr(QualType ClassType, MultiExprArg &MulExpr,
+                                SourceRange LocRange);
+
+  ExprResult BuildStringFromId(UnqualifiedId &Id);
+
+  ExprResult BuildNil(SourceRange LR = SourceRange());
+
+  ExprResult BuildStringFromLitera(StringLiteral &Str);
+
+  ExprResult BuildObjectPtr(Expr *arg, SourceRange LR = SourceRange());
+
+  ExprResult BuildIntLiteral(unsigned ival, SourceRange LocRange);
+
+  ExprResult BuildInt64Literal(unsigned long long ival, SourceRange LocRange);
+
+  ExprResult BuildMemberFunCallExpr(Expr *Base, UnqualifiedId &Fun,
+                                    MultiExprArg &MulExpr);
+
+  ExprResult BuildObjectPtrArrowRefExpr(std::string BaseName, SourceLocation Loc);
+
+  ExprResult BuildENVMemberRefExpr(UnqualifiedId &Id);
+
+  ExprResult BuildMemberRefExpr(Expr *Base, Expr *Field);
+
+  ExprResult BuildLuaBuiltinCallExpr(std::string Fn, SmallVector<Expr*> Args,
+                                     SourceRange SR);
 
 private:
   // A cache representing if we've fully checked the various comparison category

@@ -15,6 +15,8 @@ public:
 
   void push_back(const ObjectPtr &value);
 
+  void push_back(const ObjectPtrArray &values);
+
   void pop_back();
 
   ObjectPtr &operator[](unsigned index) const;

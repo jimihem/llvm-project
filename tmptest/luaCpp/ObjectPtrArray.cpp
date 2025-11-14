@@ -21,6 +21,12 @@ void ObjectPtrArray::push_back(const ObjectPtr &value) {
   data[size++] = value;
 }
 
+void ObjectPtrArray::push_back(const ObjectPtrArray &values) {
+  for (unsigned i = 0; i < values.get_size(); i++) {
+    this->push_back(values[i]);
+  }
+}
+
 void ObjectPtrArray::pop_back() {
   if (size > 0) {
     size--;

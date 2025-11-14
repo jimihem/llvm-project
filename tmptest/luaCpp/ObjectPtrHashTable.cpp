@@ -5,8 +5,9 @@ unsigned ObjectPtrHashTable::getBucketIndex(const ObjectPtr &key) {
 }
 
 unsigned ObjectPtrHashTable::HashFunc(const ObjectPtr& key) {
-  return key.get()->hash();
+  return key->hash();
 }
+
 bool ObjectPtrHashTable::KeyEqual(const ObjectPtr& key1,
     const ObjectPtr& key2) {
   return *key1 == *key2;

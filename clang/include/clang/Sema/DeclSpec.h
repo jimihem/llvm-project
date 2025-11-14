@@ -255,7 +255,8 @@ public:
     SCS_auto,
     SCS_register,
     SCS_private_extern,
-    SCS_mutable
+    SCS_mutable,
+    SCS_local
   };
 
   // Import thread storage class specifier enumeration and constants.

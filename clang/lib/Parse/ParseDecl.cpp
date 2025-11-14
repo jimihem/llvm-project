@@ -1831,11 +1831,35 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(DeclaratorContext Context,
                                                 SourceLocation &DeclEnd,
                                                 ParsedAttributes &DeclAttrs,
                                                 ParsedAttributes &DeclSpecAttrs,
-                                                SourceLocation *DeclSpecStart) {
+                                                SourceLocation *DeclSpecStart,
+                                                StmtVector *Stmts,
+                                                ParsedStmtContext StmtCtx) {
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
   // Must temporarily exit the objective-c container scope for
   // parsing c none objective-c decls.
   ObjCDeclContextSwitch ObjCDC(*this);
+
+  // function funcname funcbody | 
+  // local function Name funcbody |
+  // local namelist[‘=’ explist] 
+  if (getLangOpts().LUA) {
+    if (Tok.is(tok::kw_local) && NextToken().is(tok::kw_function)) {
+      ConsumeToken();
+      ConsumeToken();
+      assert(Tok.is(tok::identifier));
+      UnqualifiedId Id;
+      CXXScopeSpec SS;
+      ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false, nullptr, Id);
+      VarDecl* LocalVar = Actions.ActOnLocalVariable(Id);
+      ExprResult Body = ParseLuaFunBody(*Stmts, StmtCtx);
+      Actions.AddInitializerToDecl(LocalVar, Body.get(), false);
+      return Actions.ConvertDeclToDeclGroup(LocalVar);
+    } else if (Tok.is(tok::kw_function)) {
+
+    } else {
+
+    }
+  }
 
   Decl *SingleDecl = nullptr;
   switch (Tok.getKind()) {
@@ -4449,7 +4473,14 @@ void Parser::ParseDeclarationSpecifiers(
       // NOTE: ParseHLSLQualifiers will consume the qualifier token.
       ParseHLSLQualifiers(DS.getAttributes());
       continue;
-
+    case tok::kw_local:
+      if (getLangOpts().LUA) {
+        isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_local, Loc,
+                                           PrevSpec, DiagID, Policy);
+        isStorageClass = true;
+        break;
+      }
+      goto DoneWithDeclSpec;
     case tok::less:
       // GCC ObjC supports types like "<SomeProtocol>" as a synonym for
       // "id<SomeProtocol>".  This is hopelessly old fashioned and dangerous,
@@ -5678,6 +5709,10 @@ bool Parser::isDeclarationSpecifier(
     // C11 _Atomic
   case tok::kw__Atomic:
     return true;
+    // Lua
+  case tok::kw_function:
+  case tok::kw_local:
+    return getLangOpts().LUA;
 
     // GNU ObjC bizarre protocol extension: <proto1,proto2> with implicit 'id'.
   case tok::less:

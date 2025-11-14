@@ -493,6 +493,7 @@ const char *DeclSpec::getSpecifierName(DeclSpec::SCS S) {
   case DeclSpec::SCS_register:    return "register";
   case DeclSpec::SCS_private_extern: return "__private_extern__";
   case DeclSpec::SCS_mutable:     return "mutable";
+  case DeclSpec::SCS_local:       return "local";
   }
   llvm_unreachable("Unknown typespec!");
 }

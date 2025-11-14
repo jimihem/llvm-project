@@ -1771,7 +1771,10 @@ public:
     IsTypeCast
   };
 
-  ExprResult ParseExpression(TypeCastState isTypeCast = NotTypeCast);
+  ExprResult
+  ParseExpression(TypeCastState isTypeCast = NotTypeCast,
+                  StmtVector *Stmts = nullptr, 
+                  ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
   ExprResult ParseConstantExpressionInExprEvalContext(
       TypeCastState isTypeCast = NotTypeCast);
   ExprResult ParseConstantExpression();
@@ -2046,6 +2049,14 @@ private:
   }
   bool MayBeDesignationStart();
   ExprResult ParseBraceInitializer();
+
+  MultiExprArg ParseTableField(StmtVector &Stmts, ParsedStmtContext StmtCtx);
+
+  ExprResult ParseTableConstructor(StmtVector &Stmts, ParsedStmtContext StmtCtx);
+
+  ExprResult ParseLuaFunBody(StmtVector &Stmts,
+                                   ParsedStmtContext StmtCtx);
+
   struct DesignatorCompletionInfo {
     SmallVectorImpl<Expr *> &InitExprs;
     QualType PreferredBaseType;
@@ -2097,7 +2108,7 @@ private:
       StmtVector &Stmts, ParsedStmtContext StmtCtx,
       SourceLocation *TrailingElseLoc, ParsedAttributes &DeclAttrs,
       ParsedAttributes &DeclSpecAttrs);
-  StmtResult ParseExprStatement(ParsedStmtContext StmtCtx);
+  StmtResult ParseExprStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx);
   StmtResult ParseLabeledStatement(ParsedAttributes &Attrs,
                                    ParsedStmtContext StmtCtx);
   StmtResult ParseCaseStatement(ParsedStmtContext StmtCtx,
@@ -2386,11 +2397,12 @@ private:
     StmtResult LoopVar;
   };
 
-  DeclGroupPtrTy ParseDeclaration(DeclaratorContext Context,
-                                  SourceLocation &DeclEnd,
-                                  ParsedAttributes &DeclAttrs,
-                                  ParsedAttributes &DeclSpecAttrs,
-                                  SourceLocation *DeclSpecStart = nullptr);
+  DeclGroupPtrTy
+  ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
+                   ParsedAttributes &DeclAttrs, ParsedAttributes &DeclSpecAttrs,
+                   SourceLocation *DeclSpecStart = nullptr,
+                   StmtVector *Stmts = nullptr,
+                   ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
   DeclGroupPtrTy
   ParseSimpleDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
                          ParsedAttributes &DeclAttrs,
@@ -2515,6 +2527,11 @@ private:
 
   /// Determine whether this is a C++1z for-range-identifier.
   bool isForRangeIdentifier();
+
+  bool isLuaTopDeclContext() {
+    return getLangOpts().LUA &&
+           Actions.getCurFunctionDecl() == Actions.Context.getTopFunctionDecl();
+  }
 
   /// Determine whether we are currently at the start of an Objective-C
   /// class message that appears to be missing the open bracket '['.

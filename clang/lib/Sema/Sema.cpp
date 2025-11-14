@@ -264,6 +264,234 @@ void Sema::addImplicitTypedef(StringRef Name, QualType T) {
     PushOnScopeChains(Context.buildImplicitTypedef(T, Name), TUScope);
 }
 
+void Sema::AddLuaBuiltinFun() {
+  CXXRecordDecl *ObjectPtr = cast<CXXRecordDecl>(getDeclByName("ObjectPtr"));
+  QualType ObjectPtrT = Context.getTypeDeclType(ObjectPtr);
+  QualType ObjectPtrRefT = Context.getLValueReferenceType(ObjectPtrT);
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstObjectPtrRefT = Context.getQualifiedType(ObjectPtrRefT, Qs);
+  
+  CXXRecordDecl *ObjectPtrArray =
+      cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray"));
+  QualType ObjectPtrArrayT = Context.getTypeDeclType(ObjectPtrArray);
+  QualType ObjectPtrArrayRefT = Context.getLValueReferenceType(ObjectPtrArrayT);
+  QualType ConstObjectPtrArrayRefT =
+      Context.getQualifiedType(ObjectPtrArrayRefT, Qs);
+
+  TypeDecl *MethodTyDecl = cast<TypeDecl>(getDeclByName("MethodTy"));
+  QualType MethodTyT = Context.getTypeDeclType(MethodTyDecl);
+  QualType MethodTyRefT = Context.getLValueReferenceType(MethodTyT);
+  QualType ConstMethodTyRefT = Context.getQualifiedType(MethodTyRefT, Qs);
+  
+  SourceLocation Loc;
+  DeclarationNameInfo NameInfo;
+  FunctionProtoType::ExtProtoInfo EPI;
+  IdentifierTable &Idents = Context.Idents;
+
+
+#define DefFun(Name, T)                                                        \
+  NameInfo.setName(&Idents.get(#Name));                                        \
+  FunctionDecl *Name =                                                    \
+      FunctionDecl::Create(Context, Context.getTranslationUnitDecl(), Loc,     \
+                           NameInfo, T, nullptr, SC_Extern, false, false,      \
+                           false, ConstexprSpecKind::Unspecified, nullptr);
+
+ #define DefParm(Name, T, DC)                                                   \
+  ParmVarDecl *Name =                                                          \
+      ParmVarDecl::Create(Context, DC, Loc, Loc, &Idents.get(#Name), T,        \
+                          nullptr, SC_None, nullptr);
+
+  //ObjectPtr GetMember(const ObjectPtr& Base, const ObjectPtr& Name, unsigned long long OpLoc);
+  {
+    QualType GetMemberT = Context.getFunctionType(
+        ObjectPtrT, {ConstObjectPtrRefT, ConstObjectPtrRefT, Context.UnsignedLongLongTy}, EPI);
+    DefFun(GetMember, GetMemberT);
+    DefParm(Base, ConstObjectPtrRefT, GetMember);
+    DefParm(Name, ConstObjectPtrRefT, GetMember);
+    DefParm(OpLoc, Context.UnsignedLongLongTy, GetMember);
+    GetMember->setParams({Base, Name, OpLoc});
+    PushOnScopeChains(GetMember, getCurScope());
+  }
+
+  //ObjectPtr GetMemberFromName(const ObjectPtr& Base, char* Name, unsigned NameLen, unsigned long long OpLoc);
+  {
+    QualType GetMemberFromNameT = Context.getFunctionType(
+        ObjectPtrT,
+        {ConstObjectPtrRefT, Context.getPointerType(Context.CharTy),
+         Context.UnsignedIntTy, Context.UnsignedLongLongTy},
+        EPI);
+    DefFun(GetMemberFromName, GetMemberFromNameT);
+    DefParm(Base, ConstObjectPtrRefT, GetMemberFromName);
+    DefParm(Name, Context.getPointerType(Context.CharTy), GetMemberFromName);
+    DefParm(NameLen, Context.UnsignedIntTy, GetMemberFromName);
+    DefParm(OpLoc, Context.UnsignedLongLongTy, GetMemberFromName);
+    GetMemberFromName->setParams({Base, Name, NameLen, OpLoc});
+    PushOnScopeChains(GetMemberFromName, getCurScope());
+  }
+
+  //void SetMember(const ObjectPtr &Base, const ObjectPtr &Field, const ObjectPtr &Value, unsigned long long OpLoc)
+  {
+    QualType SetMemberT = Context.getFunctionType(
+        Context.VoidTy,
+        {ConstObjectPtrRefT, ConstObjectPtrRefT, ConstObjectPtrRefT,
+         Context.UnsignedLongLongTy},
+        EPI);
+    DefFun(SetMember, SetMemberT);
+    DefParm(Base, ConstObjectPtrRefT, SetMember);
+    DefParm(Name, ConstObjectPtrRefT, SetMember);
+    DefParm(Value, ConstObjectPtrRefT, SetMember);
+    DefParm(OpLoc, Context.UnsignedLongLongTy, SetMember);
+    SetMember->setParams({Base, Name, Value, OpLoc});
+    PushOnScopeChains(SetMember, getCurScope());
+  }
+
+  //ObjectPtr BuildNil();
+  {
+    QualType BuildNilT = Context.getFunctionType(ObjectPtrT, {}, EPI);
+    DefFun(BuildNil, BuildNilT);
+    PushOnScopeChains(BuildNil, getCurScope());
+  }
+
+  //ObjectPtr BuildBool(bool bVal);
+  {
+    QualType BuildBoolT = Context.getFunctionType(ObjectPtrT, {Context.BoolTy}, EPI);
+    DefFun(BuildBool, BuildBoolT);
+    DefParm(bVal, Context.BoolTy, BuildBool);
+    BuildBool->setParams({bVal});
+    PushOnScopeChains(BuildBool, getCurScope());
+  }
+
+  //ObjectPtr BuildNumber(double dVal);
+  {
+    QualType BuildNumberT =
+        Context.getFunctionType(ObjectPtrT, {Context.DoubleTy}, EPI);
+    DefFun(BuildNumber, BuildNumberT);
+    DefParm(dVal, Context.DoubleTy, BuildNumber);
+    BuildNumber->setParams({dVal});
+    PushOnScopeChains(BuildNumber, getCurScope());
+  }
+
+  //ObjectPtr BuildString(char *data, unsigned length);
+  {
+    QualType BuildStringT = Context.getFunctionType(
+        ObjectPtrT, {Context.getPointerType(Context.CharTy), Context.UnsignedIntTy}, EPI);
+    DefFun(BuildString, BuildStringT);
+    DefParm(data, Context.getPointerType(Context.CharTy), BuildString);
+    DefParm(length, Context.UnsignedIntTy, BuildString);
+    BuildString->setParams({data, length});
+    PushOnScopeChains(BuildString, getCurScope());
+  }
+
+  //ObjectPtr BuildTable(const ObjectPtrArray &Values);
+  {
+    QualType BuildTableT = Context.getFunctionType(
+        ObjectPtrT, {ConstObjectPtrArrayRefT}, EPI);
+    DefFun(BuildTable, BuildTableT);
+    DefParm(Values, ConstObjectPtrArrayRefT, BuildTable);
+    BuildTable->setParams({Values});
+    PushOnScopeChains(BuildTable, getCurScope());
+  }
+
+  //ObjectPtr BuildFunction()
+  {
+    QualType BuildFunctionT =
+        Context.getFunctionType(ObjectPtrT, {}, EPI);
+    DefFun(BuildFunction, BuildFunctionT);
+    PushOnScopeChains(BuildFunction, getCurScope());
+  }
+
+  //ObjectPtr GetObjectPtrFromArray(const ObjectPtrArray &Values, , unsigned Index);
+  {
+    QualType GetObjectPtrFromArrayT =
+        Context.getFunctionType(ObjectPtrT, {ConstObjectPtrArrayRefT, Context.UnsignedIntTy}, EPI);
+    DefFun(GetObjectPtrFromArray, GetObjectPtrFromArrayT);
+    DefParm(Values, ConstObjectPtrArrayRefT, GetObjectPtrFromArray);
+    DefParm(Index, Context.UnsignedIntTy, GetObjectPtrFromArray);
+    GetObjectPtrFromArray->setParams({Values, Index});
+    PushOnScopeChains(GetObjectPtrFromArray, getCurScope());
+  }
+
+  // void PushObjPtrIntoArray(ObjectPtrArray &Arr1, const ObjectPtr &Value);
+  {
+    QualType PushObjPtrIntoArrayT = Context.getFunctionType(
+        Context.VoidTy, {ObjectPtrArrayRefT, ConstObjectPtrRefT}, EPI);
+    DefFun(PushObjPtrIntoArray, PushObjPtrIntoArrayT);
+    DefParm(Arr1, ObjectPtrArrayRefT, PushObjPtrIntoArray);
+    DefParm(Value, ConstObjectPtrRefT, PushObjPtrIntoArray);
+    PushObjPtrIntoArray->setParams({Arr1, Value});
+    PushOnScopeChains(PushObjPtrIntoArray, getCurScope());
+  }
+
+  //void PushArrayIntoArray(ObjectPtrArray & Arr1, const ObjectPtrArray &Arr2);
+  {
+    QualType PushArrayIntoArrayT = Context.getFunctionType(
+        Context.VoidTy, {ObjectPtrArrayRefT, ConstObjectPtrArrayRefT}, EPI);
+    DefFun(PushArrayIntoArray, PushArrayIntoArrayT);
+    DefParm(Arr1, ObjectPtrArrayRefT, PushArrayIntoArray);
+    DefParm(Arr2, ConstObjectPtrArrayRefT, PushArrayIntoArray);
+    PushArrayIntoArray->setParams({Arr1, Arr2});
+    PushOnScopeChains(PushArrayIntoArray, getCurScope());
+  }
+
+  //void SetAsLocal(ObjectPtr& LocalVar);
+  {
+    QualType SetAsLocalT = Context.getFunctionType(
+        Context.VoidTy, {ObjectPtrRefT}, EPI);
+    DefFun(SetAsLocal, SetAsLocalT);
+    DefParm(LocalVar, ObjectPtrRefT, SetAsLocal);
+    SetAsLocal->setParams({LocalVar});
+    PushOnScopeChains(SetAsLocal, getCurScope());
+  }
+
+  //void SetFunctionUpValues(ObjectPtr & Fun, const ObjectPtrArray &Arr);
+  {
+    QualType SetFunctionUpValuesT = Context.getFunctionType(
+        Context.VoidTy, {ObjectPtrRefT, ConstObjectPtrArrayRefT}, EPI);
+    DefFun(SetFunctionUpValues, SetFunctionUpValuesT);
+    DefParm(Fun, ObjectPtrRefT, SetFunctionUpValues);
+    DefParm(Arr, ConstObjectPtrArrayRefT, SetFunctionUpValues);
+    SetFunctionUpValues->setParams({Fun, Arr});
+    PushOnScopeChains(SetFunctionUpValues, getCurScope());
+  }
+
+  //void SetFunctionMethod(ObjectPtr & Fun, const MethodTy &Ptr);
+  {
+    QualType SetFunctionMethodT = Context.getFunctionType(
+        Context.VoidTy, {ObjectPtrRefT, ConstMethodTyRefT}, EPI);
+    DefFun(SetFunctionMethod, SetFunctionMethodT);
+    DefParm(Fun, ObjectPtrRefT, SetFunctionMethod);
+    DefParm(Ptr, ConstMethodTyRefT, SetFunctionMethod);
+    SetFunctionMethod->setParams({Fun, Ptr});
+    PushOnScopeChains(SetFunctionMethod, getCurScope());
+  }
+
+  //ObjectPtr GetUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);
+  {
+    QualType GetUpValueT = Context.getFunctionType(
+        ObjectPtrT,
+        {ConstObjectPtrRefT, ConstObjectPtrRefT, Context.UnsignedLongLongTy},
+        EPI);
+    DefFun(GetUpValue, GetUpValueT);
+    DefParm(Fun, ConstObjectPtrRefT, GetUpValue);
+    DefParm(Var, ConstObjectPtrRefT, GetUpValue);
+    DefParm(OpLoc, Context.UnsignedLongLongTy, GetUpValue);
+    GetUpValue->setParams({Fun, Var, OpLoc});
+    PushOnScopeChains(GetUpValue, getCurScope());
+  }
+
+  //void BuildModifyExpr(const ObjectPtr& LHS, const ObjectPtr& RHS);
+  {
+    QualType BuildModifyExprT = Context.getFunctionType(
+        Context.VoidTy, {ConstObjectPtrRefT, ConstObjectPtrRefT}, EPI);
+    DefFun(BuildModifyExpr, BuildModifyExprT);
+    DefParm(LHS, ConstObjectPtrRefT, BuildModifyExpr);
+    DefParm(RHS, ConstObjectPtrRefT, BuildModifyExpr);
+    BuildModifyExpr->setParams({LHS, RHS});
+    PushOnScopeChains(BuildModifyExpr, getCurScope());
+  }
+}
+
 void Sema::Initialize() {
   if (SemaConsumer *SC = dyn_cast<SemaConsumer>(&Consumer))
     SC->InitializeSema(*this);
@@ -281,9 +509,18 @@ void Sema::Initialize() {
   if (!TUScope)
     return;
   if (getLangOpts().LUA) {
-    DeclarationName ClassCharArray = &Context.Idents.get("CharArray");
-    if (IdResolver.begin(ClassCharArray) == IdResolver.end())
-      PushOnScopeChains(Context.getCharArrayDecl(), TUScope);
+    PushOnScopeChains(Context.getCharArrayDecl(), TUScope);
+    PushOnScopeChains(Context.getStringDecl(), TUScope);
+    PushOnScopeChains(Context.getObjectDecl(), TUScope);
+    PushOnScopeChains(Context.getObjectPtrDecl(), TUScope);
+    PushOnScopeChains(Context.getObjectPtrArrayDecl(), TUScope);
+    PushOnScopeChains(Context.getObjectPtrHashTableDecl(), TUScope);
+    PushOnScopeChains(Context.getTableDecl(), TUScope);
+    PushOnScopeChains(Context.getENVDecl(), TUScope);
+    PushOnScopeChains(Context.getGDecl(), TUScope);
+    PushOnScopeChains(Context.getTopFunctionDecl(), TUScope);
+    PushOnScopeChains(Context.getMethodDecl(), TUScope);
+    AddLuaBuiltinFun();
     return;
   }
   // Initialize predefined 128-bit integer types, if needed.
@@ -2146,6 +2383,14 @@ void Sema::PushBlockScope(Scope *BlockScope, BlockDecl *Block) {
   FunctionScopes.push_back(new BlockScopeInfo(getDiagnostics(),
                                               BlockScope, Block));
   CapturingFunctionScopes++;
+}
+
+sema::CapturingScopeInfo *Sema::PushCaptureScope() {
+  CapturingScopeInfo *const CSI =
+      new CapturingScopeInfo(getDiagnostics(), CapturingScopeInfo::ImpCap_None);
+  FunctionScopes.push_back(CSI);
+  CapturingFunctionScopes++;
+  return CSI;
 }
 
 LambdaScopeInfo *Sema::PushLambdaScope() {

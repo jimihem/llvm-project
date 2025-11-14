@@ -130,11 +130,6 @@ protected:
   /// Construct an empty expression.
   explicit Expr(StmtClass SC, EmptyShell) : ValueStmt(SC) { }
 
-  /// Each concrete expr subclass is expected to compute its dependence and call
-  /// this in the constructor.
-  void setDependence(ExprDependence Deps) {
-    ExprBits.Dependent = static_cast<unsigned>(Deps);
-  }
   friend class ASTImporter;   // Sets dependence directly.
   friend class ASTStmtReader; // Sets dependence directly.
 
@@ -151,6 +146,12 @@ public:
            "Expressions can't have reference type");
 
     TR = t;
+  }
+
+  /// Each concrete expr subclass is expected to compute its dependence and call
+  /// this in the constructor.
+  void setDependence(ExprDependence Deps) {
+    ExprBits.Dependent = static_cast<unsigned>(Deps);
   }
 
   ExprDependence getDependence() const {
@@ -3212,6 +3213,8 @@ class MemberExpr final
   /// MemberLoc - This is the location of the member name.
   SourceLocation MemberLoc;
 
+  DeclarationNameInfo MemberDN;
+
   size_t numTrailingObjects(OverloadToken<MemberExprNameQualifier>) const {
     return hasQualifierOrFoundDecl();
   }
@@ -3272,6 +3275,8 @@ public:
   /// static data members), a CXXMethodDecl, or an EnumConstantDecl.
   ValueDecl *getMemberDecl() const { return MemberDecl; }
   void setMemberDecl(ValueDecl *D);
+
+  void setMemberDN(DeclarationNameInfo &MDN) { MemberDN = MDN; }
 
   /// Retrieves the declaration found by lookup.
   DeclAccessPair getFoundDecl() const {

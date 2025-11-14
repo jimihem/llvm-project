@@ -5455,6 +5455,7 @@ StorageClassSpecToVarDeclStorageClass(const DeclSpec &DS) {
   case DeclSpec::SCS_register:       return SC_Register;
   case DeclSpec::SCS_private_extern: return SC_PrivateExtern;
     // Illegal SCSs map to None: error reporting is up to the caller.
+  case DeclSpec::SCS_local:
   case DeclSpec::SCS_mutable:        // Fall through.
   case DeclSpec::SCS_typedef:        return SC_None;
   }
@@ -15014,6 +15015,47 @@ void Sema::ActOnFinishKNRParamDeclarations(Scope *S, Declarator &D,
   }
 }
 
+Decl* Sema::ActOnStartOfLuaFunctionDef(Scope* S) {
+  Scope *ParentScope = S->getParent();
+  FunctionDecl *DP = 0;
+  if (ParentScope == TUScope) {
+    DP = Context.getTopFunctionDecl();
+  } else {
+    SourceLocation Loc;
+    QualType T = Context.getLuaMethodTy();
+    DP = FunctionDecl::Create(Context, CurContext, Loc, Loc, DeclarationName(),
+                              T, nullptr,
+                              SC_None);
+
+    QualType ObjectPtrArrayT =
+        Context.getTypeDeclType(cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray")));
+    QualType ObjectPtrArrayRefT =
+        Context.getLValueReferenceType(ObjectPtrArrayT);
+    Qualifiers Qs;
+    Qs.addConst();
+    QualType ConstObjectPtrArrayRefT =
+        Context.getQualifiedType(ObjectPtrArrayRefT, Qs);
+
+    QualType ObjectPtrT =
+        Context.getTypeDeclType(cast<CXXRecordDecl>(getDeclByName("ObjectPtr")));
+    QualType ObjectPtrRefT =
+        Context.getLValueReferenceType(ObjectPtrT);
+    QualType ConstObjectPtrRefT =
+        Context.getQualifiedType(ObjectPtrRefT, Qs);
+
+    ParmVarDecl *Base =
+        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("Base"),
+                            ConstObjectPtrArrayRefT, nullptr, SC_None, nullptr);
+    ParmVarDecl *Parms =
+        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("Parms"),
+                            ConstObjectPtrRefT, nullptr, SC_None, nullptr);
+    DP->setParams({Base, Parms});
+    PushOnScopeChains(DP, ParentScope);
+  }
+  Decl *Dcl = ActOnStartOfFunctionDef(S, DP, nullptr, FnBodyKind::Other);
+  return Dcl;
+}
+
 Decl *
 Sema::ActOnStartOfFunctionDef(Scope *FnBodyScope, Declarator &D,
                               MultiTemplateParamsArg TemplateParameterLists,
@@ -15323,7 +15365,10 @@ Decl *Sema::ActOnStartOfFunctionDef(Scope *FnBodyScope, Decl *D,
     RebuildLambdaScopeInfo(cast<CXXMethodDecl>(D), *this);
   } else {
     // Enter a new function scope
-    PushFunctionScope();
+    if (getLangOpts().LUA)
+      PushCaptureScope();
+    else
+      PushFunctionScope();
   }
 
   // Builtin functions cannot be defined.

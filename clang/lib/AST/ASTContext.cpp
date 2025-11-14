@@ -1206,12 +1206,11 @@ RecordDecl *ASTContext::buildImplicitRecord(StringRef Name,
   return NewDecl;
 }
 
-RecordDecl *
-ASTContext::buildLuaRecord(StringRef Name,
-                           RecordDecl::TagKind TK = TTK_Class) const {
+CXXRecordDecl *ASTContext::buildLuaRecord(StringRef Name,
+                                          RecordDecl::TagKind TK) const {
   SourceLocation Loc;
   return CXXRecordDecl::Create(*this, TK, getTranslationUnitDecl(), Loc, Loc,
-                                  &Idents.get(Name));
+                               Name.empty() ? nullptr : &Idents.get(Name));
 }
 
 TypedefDecl *ASTContext::buildImplicitTypedef(QualType T,
@@ -7456,8 +7455,50 @@ QualType ASTContext::getBlockDescriptorType() const {
   return getTagDeclType(BlockDescriptorType);
 }
 
+#define DefField(Name, Type, DC, AST)                                          \
+  FieldDecl *Name =                                                            \
+      FieldDecl::Create(*this, DC, Loc, Loc, &Idents.get(#Name), Type,       \
+                        nullptr, nullptr, false, ICIS_NoInit);                 \
+  Name->setAccess(AST);                                                        \
+  DC->addDecl(Name);
+
+#define DefCxxMethod(Name, NameInfo, Type, DC, AST)                            \
+  CXXMethodDecl *Name = CXXMethodDecl::Create(                                 \
+      *this, DC, Loc, NameInfo, Type, nullptr, StorageClass::SC_None, false,   \
+      false, ConstexprSpecKind::Unspecified, Loc);                             \
+  Name->setAccess(AST);
+
+#define DefConstructor(NameInfo, Type, DC, AST)                                \
+  CXXConstructorDecl *constructor = CXXConstructorDecl::Create(                \
+      *this, DC, Loc, NameInfo, Type, nullptr, ExplicitSpecifier(), false,     \
+      false, false, ConstexprSpecKind::Unspecified);                           \
+  constructor->setAccess(AST);
+
+#define DefDestructor(NameInfo, Type, DC, AST)                                 \
+  CXXDestructorDecl *destructor = CXXDestructorDecl::Create(\
+      *this, DC, Loc, NameInfo, Type,\
+      nullptr, false, false, false, ConstexprSpecKind::Unspecified);\
+      destructor->setAccess(AST);
+
+#define DefEnum(Name, DC, AST)                                                 \
+  EnumDecl *Name = EnumDecl::Create(*this, DC, Loc, Loc, &Idents.get(#Name), \
+                                    nullptr, false, false, false);             \
+  DC->addDecl(Name);                                                           \
+  Name->setAccess(AS_public);
+
+#define DefEnumField(field, DC)                                                \
+  EnumConstantDecl *field = EnumConstantDecl::Create(                          \
+      *this, DC, Loc, &Idents.get(#field), UnsignedIntTy, nullptr, EnumVal); \
+  field->setAccess(AS_public);                                                 \
+  DC->addDecl(field);                                                          \
+  ++EnumVal;
+
+#define DefParm(Name, Type, DC)                                                \
+  ParmVarDecl *Name =                                                          \
+      ParmVarDecl::Create(*this, DC, Loc, Loc, &Idents.get(#Name), Type,     \
+                          nullptr, SC_None, nullptr);
+
 RecordDecl* ASTContext::getCharArrayDecl() {
-  RecordDecl *CharArray;
   SourceLocation Loc;
   QualType charT = SignedCharTy;
   Qualifiers Qs;
@@ -7468,71 +7509,897 @@ RecordDecl* ASTContext::getCharArrayDecl() {
   QualType ConstCharRefT = getLValueReferenceType(ConstCharT);
   QualType uintT = UnsignedIntTy;
 
+  //class CharArray
   CharArray = buildLuaRecord("CharArray");
   CharArray->startDefinition();
 
+  //char *data;
+  DefField(data, SignedCharTy, CharArray, AS_private);
 
-  FieldDecl *data =
-      FieldDecl::Create(*this, CharArray, Loc, Loc, &Idents.get("data"),
-                        SignedCharTy, nullptr, nullptr, false, ICIS_NoInit);
-  data->setAccess(AS_private);
-  CharArray->addDecl(data);
+  //unsigned capacity;
+  DefField(capacity, uintT, CharArray, AS_private);
 
-  FieldDecl *capacity =
-      FieldDecl::Create(*this, CharArray, Loc, Loc, &Idents.get("capacity"),
-                        uintT, nullptr, nullptr, false, ICIS_NoInit);
-  capacity->setAccess(AS_private);
-  CharArray->addDecl(capacity);
-
-  FieldDecl *size =
-      FieldDecl::Create(*this, CharArray, Loc, Loc, &Idents.get("size"), uintT,
-                        nullptr, nullptr, false, ICIS_NoInit);
-  size->setAccess(AS_private);
-  CharArray->addDecl(size);
-
-  QualType CharArrayT = getTypeDeclType(CharArray);
-  DeclarationNameInfo NameInfo;
-  QualType constructorT = getFunctionNoProtoType(VoidTy);
-
-  NameInfo.setName(
-      DeclarationNames.getCXXConstructorName(getCanonicalType(CharArrayT)));
-  CXXConstructorDecl *constructor = CXXConstructorDecl::Create(
-      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, constructorT,
-      nullptr, ExplicitSpecifier(), false, false, false,
-      ConstexprSpecKind::Unspecified);
-  CharArray->addDecl(constructor);
-  constructor->setAccess(AS_public);
-
-  NameInfo.setName(
-      DeclarationNames.getCXXDestructorName(getCanonicalType(CharArrayT)));
-  CXXDestructorDecl *destructor = CXXDestructorDecl::Create(
-      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, constructorT,
-      nullptr, false, false, false, ConstexprSpecKind::Unspecified);
-  CharArray->addDecl(destructor);
-  destructor->setAccess(AS_public);
+  //unsigned size;
+  DefField(size, uintT, CharArray, AS_private);
 
   FunctionProtoType::ExtProtoInfo EPI;
+  DeclarationNameInfo NameInfo;
+
+  //void resize(unsigned new_capacity);
+  QualType resizeT = getFunctionType(VoidTy, {uintT}, EPI);
+  NameInfo.setName(&Idents.get("resize"));
+  DefCxxMethod(resize, NameInfo, resizeT, CharArray, AS_private);
+  DefParm(new_capacity, uintT, resize);
+  resize->setParams({new_capacity});
+  CharArray->addDecl(resize);
+
+  //CharArray();
+  QualType CharArrayT = getTypeDeclType(CharArray);
+  QualType constructorT = getFunctionNoProtoType(VoidTy);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(CharArrayT)));
+  DefConstructor(NameInfo, constructorT, CharArray, AS_public);
+  CharArray->addDecl(constructor);
+
+  // ~CharArray();
+  NameInfo.setName(
+      DeclarationNames.getCXXDestructorName(getCanonicalType(CharArrayT)));
+  DefDestructor(NameInfo, constructorT, CharArray, AS_public);
+  CharArray->addDecl(destructor);
+
+  // void push_back(const char &value);
   QualType push_backT = getFunctionType(VoidTy, {ConstCharRefT}, EPI);
   NameInfo.setName(&Idents.get("push_back"));
-  CXXMethodDecl *push_back = CXXMethodDecl::Create(
-      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, push_backT, nullptr,
-      StorageClass::SC_None, false, false, ConstexprSpecKind::Unspecified, Loc);
+  DefCxxMethod(push_back, NameInfo, push_backT, CharArray, AS_public);
+  DefParm(value, ConstCharRefT, push_back);
+  push_back->setParams({value});
   CharArray->addDecl(push_back);
-  push_back->setAccess(AS_public);
 
+  //void pop_back();
   QualType pop_backT = getFunctionType(VoidTy, {}, EPI);
   NameInfo.setName(&Idents.get("pop_back"));
-  CXXMethodDecl *pop_back = CXXMethodDecl::Create(
-      *this, cast<CXXRecordDecl>(CharArray), Loc, NameInfo, pop_backT, nullptr,
-      StorageClass::SC_None, false, false, ConstexprSpecKind::Unspecified, Loc);
+  DefCxxMethod(pop_back, NameInfo, pop_backT, CharArray, AS_public);
   CharArray->addDecl(pop_back);
-  pop_back->setAccess(AS_public);
 
+  // char &operator[](unsigned index);
   QualType operatorT = getFunctionType(charRef, {uintT}, EPI);
+  NameInfo.setName(DeclarationNames.getCXXOperatorName(
+      OverloadedOperatorKind::OO_Subscript));
+  DefCxxMethod(operatorSubscript, NameInfo, operatorT, CharArray, AS_public);
+  DefParm(index, uintT, operatorSubscript);
+  operatorSubscript->setParams({index});
+  CharArray->addDecl(operatorSubscript);
 
+  // unsigned get_size();
+  QualType get_sizeT = getFunctionType(uintT, {}, EPI);
+  NameInfo.setName(&Idents.get("get_size"));
+  DefCxxMethod(get_size, NameInfo, get_sizeT, CharArray, AS_public);
+  CharArray->addDecl(get_size);
+
+  //unsigned get_capacity();
+  QualType get_capacityT = getFunctionType(uintT, {}, EPI);
+  NameInfo.setName(&Idents.get("get_capacity"));
+  DefCxxMethod(get_capacity, NameInfo, get_capacityT, CharArray, AS_public);
+  CharArray->addDecl(get_capacity);
 
   CharArray->completeDefinition();
   return CharArray;
+}
+
+RecordDecl *ASTContext::getStringDecl() {
+  SourceLocation Loc;
+  QualType charT = SignedCharTy;
+  QualType charPtrT = getPointerType(SignedCharTy);
+  QualType uintT = UnsignedIntTy;
+
+  //class String
+  String = cast<CXXRecordDecl>(buildLuaRecord("String"));
+  String->startDefinition();
+
+  // char *data;
+  DefField(data, charPtrT, String, AS_private);
+
+  // char *length;
+  DefField(length, charPtrT, String, AS_private);
+
+  // String(CharArray &array);
+  DeclarationNameInfo NameInfo;
+  FunctionProtoType::ExtProtoInfo EPI;
+  QualType CharArrayT = getTypeDeclType(CharArray);
+  QualType StringT = getTypeDeclType(String);
+  QualType CharArrayRefT = getLValueReferenceType(CharArrayT);
+  QualType ContorT = getFunctionType(VoidTy, {CharArrayRefT}, EPI);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(StringT)));
+  {
+    DefConstructor(NameInfo, ContorT, String, AS_public);
+    DefParm(array, CharArrayRefT, constructor);
+    constructor->setParams({array});
+    String->addDecl(constructor);
+  }
+
+  //String(char *d, unsigned l);
+  ContorT = getFunctionType(VoidTy, {charPtrT, UnsignedIntTy}, EPI);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(StringT)));
+  {
+    DefConstructor(NameInfo, ContorT, String, AS_public);
+    DefParm(d, charPtrT, constructor);
+    DefParm(l, UnsignedIntTy, constructor);
+    constructor->setParams({d, l});
+    String->addDecl(constructor);
+  }
+
+  //~String();
+  NameInfo.setName(
+      DeclarationNames.getCXXDestructorName(getCanonicalType(StringT)));
+  QualType dectorT = getFunctionType(VoidTy, {}, EPI);
+  DefDestructor(NameInfo, dectorT, String, AS_public);
+  String->addDecl(destructor);
+
+  //char operator[](unsigned index);
+  NameInfo.setName(DeclarationNames.getCXXOperatorName(
+      OverloadedOperatorKind::OO_Subscript));
+  QualType operatorSubscriptT = getFunctionType(charT, {uintT}, EPI);
+  DefCxxMethod(operatorSubscript, NameInfo, operatorSubscriptT, String,
+               AS_public);
+  DefParm(index, uintT, operatorSubscript);
+  operatorSubscript->setParams({index});
+  String->addDecl(operatorSubscript);
+
+  //bool operator==(String &other);
+  NameInfo.setName(DeclarationNames.getCXXOperatorName(
+      OverloadedOperatorKind::OO_EqualEqual));
+  QualType StringRefT = getLValueReferenceType(StringT);
+  QualType operatorEqualEqualT = getFunctionType(BoolTy, {StringRefT}, EPI);
+  DefCxxMethod(operatorEqualEqual, NameInfo, operatorEqualEqualT, String,
+               AS_public);
+  DefParm(other, StringRefT, operatorEqualEqual);
+  operatorEqualEqual->setParams({other});
+  String->addDecl(operatorEqualEqual);
+
+  //unsigned size();
+  NameInfo.setName(&Idents.get("size"));
+  QualType sizeT = getFunctionType(uintT, {}, EPI);
+  DefCxxMethod(size, NameInfo, sizeT, String, AS_public);
+  String->addDecl(size);
+
+  //unsigned hash();
+  NameInfo.setName(&Idents.get("hash"));
+  QualType hashT = getFunctionType(uintT, {}, EPI);
+  DefCxxMethod(hash, NameInfo, hashT, String, AS_public);
+  String->addDecl(hash);
+
+  String->completeDefinition();
+  return String;
+}
+
+RecordDecl *ASTContext::getObjectDecl() {
+  SourceLocation Loc;
+
+  //class Function;
+  Function = buildLuaRecord("Function");
+
+  //class Thread;
+  Thread = buildLuaRecord("Thread");
+
+  //class UserData;
+  UserData = buildLuaRecord("UserData");
+
+  //class Table;
+  Table = buildLuaRecord("Table");
+
+  //class ObjectPtr;
+  ObjectPtr = buildLuaRecord("ObjectPtr");
+
+  //class Object
+  Object = buildLuaRecord("Object");
+  Object->startDefinition();
+
+  //enum Type
+  DefEnum(Type, Object, AS_public);
+
+  llvm::APSInt EnumVal(getIntWidth(UnsignedIntTy));
+
+  DefEnumField(TNIL, Type);
+  DefEnumField(TBOOLEAN, Type);
+  DefEnumField(TNUMBER, Type);
+  DefEnumField(TFUNCTION, Type);
+  DefEnumField(TSTRING, Type);
+  DefEnumField(TTABLE, Type);
+  DefEnumField(TUSERDATA, Type);
+  DefEnumField(TTHREAD, Type);
+  Type->completeDefinition(UnsignedIntTy, UnsignedIntTy, 32, 32);
+
+  QualType TypeT = getTypeDeclType(Type);
+  DefField(Kind, TypeT, Object, AS_public);
+
+  DefField(SourceLoc, UnsignedIntTy, Object, AS_public);
+
+  CXXRecordDecl *unionTemp = buildLuaRecord("", TTK_Union);
+  unionTemp->setAccess(AS_public);
+  unionTemp->setDeclContext(Object);
+  Object->addDecl(unionTemp);
+
+  unionTemp->startDefinition();
+  {
+    DefField(dval, DoubleTy, unionTemp, AS_public);
+    DefField(bval, BoolTy, unionTemp, AS_public);
+    DefField(table, getPointerType(getTypeDeclType(Table)), unionTemp,
+             AS_public);
+    DefField(thread, getPointerType(getTypeDeclType(Function)), unionTemp,
+             AS_public);
+    DefField(fun, getPointerType(getTypeDeclType(Thread)), unionTemp,
+             AS_public);
+    DefField(str, getPointerType(getTypeDeclType(String)), unionTemp,
+             AS_public);
+    DefField(udata, getPointerType(getTypeDeclType(UserData)), unionTemp,
+             AS_public);
+  }
+  unionTemp->completeDefinition();
+
+  // Object();
+  DeclarationNameInfo NameInfo;
+  FunctionProtoType::ExtProtoInfo EPI;
+  QualType ObjectT = getTypeDeclType(Object);
+  QualType ContorT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(ObjectT)));
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    Object->addDecl(constructor);
+  }
+
+  // Object(bool bval, unsigned long long L);
+  ContorT = getFunctionType(VoidTy, {BoolTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(bval, BoolTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({bval, L});
+    Object->addDecl(constructor);
+  }
+
+  // Object(double dval, unsigned long long L);
+  ContorT = getFunctionType(VoidTy, {DoubleTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(dval, DoubleTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({dval, L});
+    Object->addDecl(constructor);
+  }
+
+  // Object(Function* ptr, unsigned long long L);
+  QualType FunctionPtrTy = getPointerType(getTypeDeclType(Function));
+  ContorT = getFunctionType(VoidTy, {FunctionPtrTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(ptr, FunctionPtrTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({ptr, L});
+    Object->addDecl(constructor);
+  }
+
+  // Object(String* ptr, unsigned long long L);
+  QualType StringPtrTy = getPointerType(getTypeDeclType(String));
+  ContorT = getFunctionType(VoidTy, {StringPtrTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(ptr, StringPtrTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({ptr, L});
+    Object->addDecl(constructor);
+  }
+
+  // Object(Table* ptr, unsigned long long L);
+  QualType TablePtrTy = getPointerType(getTypeDeclType(Table));
+  ContorT = getFunctionType(VoidTy, {TablePtrTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(ptr, TablePtrTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({ptr, L});
+    Object->addDecl(constructor);
+  }
+
+  // Object(UserData* ptr, unsigned long long L);
+  QualType UserDataPtrTy = getPointerType(getTypeDeclType(UserData));
+  ContorT = getFunctionType(VoidTy, {UserDataPtrTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(ptr, UserDataPtrTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({ptr, L});
+    Object->addDecl(constructor);
+  }
+
+  // Object(Thread* ptr, unsigned long long L);
+  QualType ThreadPtrTy = getPointerType(getTypeDeclType(Thread));
+  ContorT = getFunctionType(VoidTy, {ThreadPtrTy, UnsignedLongLongTy}, EPI);
+  {
+    DefConstructor(NameInfo, ContorT, Object, AS_public);
+    DefParm(ptr, ThreadPtrTy, constructor);
+    DefParm(L, UnsignedLongLongTy, constructor);
+    constructor->setParams({ptr, L});
+    Object->addDecl(constructor);
+  }
+
+  //unsigned hash();
+  NameInfo.setName(&Idents.get("hash"));
+  QualType hashT = getFunctionType(UnsignedIntTy, {}, EPI);
+  DefCxxMethod(hash, NameInfo, hashT, Object, AS_public);
+  Object->addDecl(hash);
+
+  //bool operator==(Object &other);
+  NameInfo.setName(DeclarationNames.getCXXOperatorName(
+      OverloadedOperatorKind::OO_EqualEqual));
+  QualType ObjectRefT = getLValueReferenceType(ObjectT);
+  QualType operatorEqualEqualT = getFunctionType(BoolTy, {ObjectRefT}, EPI);
+  DefCxxMethod(operatorEqualEqual, NameInfo, operatorEqualEqualT, Object,
+               AS_public);
+  {
+    DefParm(other, ObjectRefT, operatorEqualEqual);
+    operatorEqualEqual->setParams({other});
+    Object->addDecl(operatorEqualEqual);
+  }
+
+  //ObjectPtr get(ObjectPtr field);
+  NameInfo.setName(&Idents.get("get"));
+  QualType ObjectPtrT = getTypeDeclType(ObjectPtr);
+  QualType getT = getFunctionType(ObjectPtrT, {ObjectPtrT}, EPI);
+  DefCxxMethod(get, NameInfo, getT, Object, AS_public);
+  {
+    DefParm(field, ObjectPtrT, get);
+    get->setParams({field});
+    Object->addDecl(get);
+  }
+
+  //void insert(ObjectPtr field, ObjectPtr value);
+  NameInfo.setName(&Idents.get("insert"));
+  QualType insertT = getFunctionType(VoidTy, {ObjectPtrT, ObjectPtrT}, EPI);
+  DefCxxMethod(insert, NameInfo, insertT, Object, AS_public);
+  {
+    DefParm(field, ObjectPtrT, insert);
+    DefParm(value, ObjectPtrT, insert);
+    insert->setParams({field, value});
+    Object->addDecl(insert);
+  }
+
+  //~Object();
+  NameInfo.setName(
+      DeclarationNames.getCXXDestructorName(getCanonicalType(ObjectT)));
+  QualType dectorT = getFunctionType(VoidTy, {}, EPI);
+  DefDestructor(NameInfo, dectorT, Object, AS_public);
+  Object->addDecl(destructor);
+
+  Object->completeDefinition();
+  return Object;
+}
+
+RecordDecl *ASTContext::getObjectPtrDecl() {
+  SourceLocation Loc;
+  QualType ObjectT = getTypeDeclType(Object);
+  QualType ObjectStarT = getPointerType(ObjectT);
+  QualType ObjectRefT = getLValueReferenceType(ObjectT);
+  QualType UnsignedIntPtrTy = getPointerType(UnsignedIntTy);
+
+  if (!ObjectPtr)
+    ObjectPtr = buildLuaRecord("ObjectPtr");
+  // class ObjectPtr
+  ObjectPtr->startDefinition();
+
+  // Object *ptr;
+  DefField(ptr, ObjectStarT, ObjectPtr, AS_private);
+
+  //unsigned int *ref_count;
+  DefField(ref_count, UnsignedIntPtrTy, ObjectPtr, AS_private);
+
+  //void release();
+  DeclarationNameInfo NameInfo;
+  FunctionProtoType::ExtProtoInfo EPI;
+  QualType releaseT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(&Idents.get("release"));
+  DefCxxMethod(release, NameInfo, releaseT, ObjectPtr, AS_private);
+  ObjectPtr->addDecl(release);
+
+  //ObjectPtr();
+  QualType ObjectPtrT = getTypeDeclType(ObjectPtr);
+  QualType ContorT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(ObjectPtrT)));
+  {
+    DefConstructor(NameInfo, ContorT, ObjectPtr, AS_public);
+    ObjectPtr->addDecl(constructor);
+  }
+
+  //explicit ObjectPtr(Object *p);
+  ContorT = getFunctionType(VoidTy, {ObjectStarT}, EPI);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(ObjectPtrT)));
+  {
+    DefConstructor(NameInfo, ContorT, ObjectPtr, AS_public);
+    DefParm(p, ObjectStarT, constructor);
+    constructor->setParams({p});
+    ObjectPtr->addDecl(constructor);
+  }
+
+  //ObjectPtr(const ObjectPtr &other);
+  QualType ObjectPtrRefT = getLValueReferenceType(ObjectPtrT);
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstObjectPtrRefT = getQualifiedType(ObjectPtrRefT, Qs);
+  ContorT = getFunctionType(VoidTy, {ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(
+      DeclarationNames.getCXXConstructorName(getCanonicalType(ObjectPtrT)));
+  {
+    DefConstructor(NameInfo, ContorT, ObjectPtr, AS_public);
+    DefParm(other, ConstObjectPtrRefT, constructor);
+    constructor->setParams({other});
+    ObjectPtr->addDecl(constructor);
+  }
+
+  // ObjectPtr &operator=(const ObjectPtr &other);
+  NameInfo.setName(
+      DeclarationNames.getCXXOperatorName(OverloadedOperatorKind::OO_Equal));
+  QualType operatorEqualT =
+      getFunctionType(ObjectPtrRefT, {ConstObjectPtrRefT}, EPI);
+  DefCxxMethod(operatorEqual, NameInfo, operatorEqualT, ObjectPtr, AS_public);
+  {
+    DefParm(other, ConstObjectPtrRefT, operatorEqual);
+    operatorEqual->setParams({other});
+    ObjectPtr->addDecl(operatorEqual);
+  }
+
+  // Object &operator*() const;
+  NameInfo.setName(
+      DeclarationNames.getCXXOperatorName(OverloadedOperatorKind::OO_Star));
+  QualType operatorStarT = getFunctionType(ObjectRefT, {}, EPI);
+  DefCxxMethod(operatorStar, NameInfo, operatorStarT, ObjectPtr, AS_public);
+  ObjectPtr->addDecl(operatorStar);
+  
+  // Object *operator->() const;
+  NameInfo.setName(
+      DeclarationNames.getCXXOperatorName(OverloadedOperatorKind::OO_Arrow));
+  QualType operatorArrowT = getFunctionType(ObjectStarT, {}, EPI);
+  DefCxxMethod(operatorArrow, NameInfo, operatorArrowT, ObjectPtr, AS_public);
+  ObjectPtr->addDecl(operatorArrow);
+
+  // explicit operator bool() const;
+  NameInfo.setName(
+      DeclarationNames.getCXXConversionFunctionName(BoolTy));
+  QualType operatorBoolT = getFunctionType(VoidTy, {}, EPI);
+  DefCxxMethod(operatorBool, NameInfo, operatorBoolT, ObjectPtr, AS_public);
+  ObjectPtr->addDecl(operatorBool);
+
+  ObjectPtr->completeDefinition();
+  return ObjectPtr;
+}
+
+RecordDecl *ASTContext::getObjectPtrArrayDecl() {
+  SourceLocation Loc;
+  QualType ObjectPtrT = getTypeDeclType(ObjectPtr);
+  QualType ObjectPtrStarT = getPointerType(ObjectPtrT);
+  QualType ObjectPtrRefT = getLValueReferenceType(ObjectPtrT);
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstObjectPtrRefT = getQualifiedType(ObjectPtrRefT, Qs);
+
+  //class ObjectPtrArray
+  ObjectPtrArray = buildLuaRecord("ObjectPtrArray");
+  ObjectPtrArray->startDefinition();
+
+  //ObjectPtr *data;
+  DefField(data, ObjectPtrStarT, ObjectPtrArray, AS_private);
+
+  // unsigned capacity;
+  DefField(capacity, UnsignedIntTy, ObjectPtrArray, AS_private);
+
+  // unsigned size;
+  DefField(size, UnsignedIntTy, ObjectPtrArray, AS_private);
+
+  FunctionProtoType::ExtProtoInfo EPI;
+  DeclarationNameInfo NameInfo;
+
+  // void resize(unsigned new_capacity);
+  QualType resizeT = getFunctionType(VoidTy, {UnsignedIntTy}, EPI);
+  NameInfo.setName(&Idents.get("resize"));
+  DefCxxMethod(resize, NameInfo, resizeT, ObjectPtrArray, AS_private);
+  {
+    DefParm(new_capacity, UnsignedIntTy, resize);
+    resize->setParams({new_capacity});
+    ObjectPtrArray->addDecl(resize);
+  }
+
+  //ObjectPtrArray();
+  QualType ObjectPtrArrayT = getTypeDeclType(ObjectPtrArray);
+  QualType ContorT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(DeclarationNames.getCXXConstructorName(
+      getCanonicalType(ObjectPtrArrayT)));
+  DefConstructor(NameInfo, ContorT, ObjectPtrArray, AS_public);
+  ObjectPtrArray->addDecl(constructor);
+
+  //~ObjectPtrArray();
+  NameInfo.setName(DeclarationNames.getCXXDestructorName(
+      getCanonicalType(ObjectPtrArrayT)));
+  DefDestructor(NameInfo, ContorT, ObjectPtrArray, AS_public);
+  ObjectPtrArray->addDecl(destructor);
+
+  //void push_back(const ObjectPtr &value);
+  QualType push_backT = getFunctionType(VoidTy, {ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("push_back"));
+  {
+    DefCxxMethod(push_back, NameInfo, push_backT, ObjectPtrArray, AS_public);
+    DefParm(value, ConstObjectPtrRefT, push_back);
+    push_back->setParams({value});
+    ObjectPtrArray->addDecl(push_back);
+  }
+
+  // void push_back(const ObjectPtrArray &values);
+  QualType ObjectPtrArrayRefT = getLValueReferenceType(ObjectPtrArrayT);
+  QualType ConstObjectPtrArrayRefT = getQualifiedType(ObjectPtrArrayRefT, Qs);
+  push_backT = getFunctionType(VoidTy, {ConstObjectPtrArrayRefT}, EPI);
+  {
+    DefCxxMethod(push_back, NameInfo, push_backT, ObjectPtrArray, AS_public);
+    DefParm(values, ConstObjectPtrArrayRefT, push_back);
+    push_back->setParams({values});
+    ObjectPtrArray->addDecl(push_back);
+  }
+
+  //void pop_back();
+  QualType pop_backT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(&Idents.get("pop_back"));
+  DefCxxMethod(pop_back, NameInfo, pop_backT, ObjectPtrArray, AS_public);
+  ObjectPtrArray->addDecl(pop_back);
+
+  //ObjectPtr &operator[](unsigned index) const;
+  QualType operatorT = getFunctionType(ObjectPtrRefT, {UnsignedIntTy}, EPI);
+  NameInfo.setName(DeclarationNames.getCXXOperatorName(
+      OverloadedOperatorKind::OO_Subscript));
+  DefCxxMethod(operatorSubscript, NameInfo, operatorT, ObjectPtrArray,
+               AS_public);
+  {
+    DefParm(index, UnsignedIntTy, operatorSubscript);
+    operatorSubscript->setParams({index});
+    ObjectPtrArray->addDecl(operatorSubscript);
+  }
+
+  //unsigned get_size() const;
+  QualType get_sizeT = getFunctionType(UnsignedIntTy, {}, EPI);
+  NameInfo.setName(&Idents.get("get_size"));
+  DefCxxMethod(get_size, NameInfo, get_sizeT, ObjectPtrArray, AS_public);
+  ObjectPtrArray->addDecl(get_size);
+
+  // unsigned get_capacity();
+  QualType get_capacityT = getFunctionType(UnsignedIntTy, {}, EPI);
+  NameInfo.setName(&Idents.get("get_capacity"));
+  DefCxxMethod(get_capacity, NameInfo, get_capacityT, ObjectPtrArray,
+               AS_public);
+  ObjectPtrArray->addDecl(get_capacity);
+
+  ObjectPtrArray->completeDefinition();
+  return ObjectPtrArray;
+}
+
+RecordDecl *ASTContext::getObjectPtrHashTableDecl() {
+  SourceLocation Loc;
+
+  // class ObjectPtrHashTable
+  ObjectPtrHashTable = buildLuaRecord("ObjectPtrHashTable");
+  ObjectPtrHashTable->startDefinition();
+
+  //struct Node
+  CXXRecordDecl* Node = buildLuaRecord("ObjectPtrHashTable", TTK_Struct);
+  Node->setAccess(AS_private);
+  Node->setDeclContext(ObjectPtrHashTable);
+  ObjectPtrHashTable->addDecl(Node);
+
+  FunctionProtoType::ExtProtoInfo EPI;
+  DeclarationNameInfo NameInfo;
+
+  QualType ObjectPtrT = getTypeDeclType(ObjectPtr);
+  QualType ObjectPtrStarT = getPointerType(ObjectPtrT);
+  QualType ObjectPtrRefT = getLValueReferenceType(ObjectPtrT);
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstObjectPtrRefT = getQualifiedType(ObjectPtrRefT, Qs);
+  QualType NodeT = getTypeDeclType(Node);
+  QualType NodePtrT = getPointerType(NodeT);
+
+  {
+    Node->startDefinition();
+
+    //ObjectPtr key;
+    DefField(key, ObjectPtrT, Node, AS_public);
+
+    // ObjectPtr value;
+    DefField(value, ObjectPtrT, Node, AS_public);
+
+    // Node *next;
+    DefField(next, NodePtrT, Node, AS_public);
+
+    //Node(const ObjectPtr &k, const ObjectPtr &v);
+    QualType ContorT =
+        getFunctionType(VoidTy, {ConstObjectPtrRefT, ConstObjectPtrRefT}, EPI);
+    NameInfo.setName(DeclarationNames.getCXXConstructorName(getCanonicalType(NodeT)));
+    DefConstructor(NameInfo, ContorT, Node, AS_public);
+    {
+      DefParm(k, ConstObjectPtrRefT, constructor);
+      DefParm(v, ConstObjectPtrRefT, constructor);
+      constructor->setParams({k, v});
+      Node->addDecl(constructor);
+    }
+
+    //~Node()
+    NameInfo.setName(
+        DeclarationNames.getCXXDestructorName(getCanonicalType(NodeT)));
+    DefDestructor(NameInfo, getFunctionType(VoidTy, {}, EPI), Node,
+                  AS_public);
+    Node->addDecl(destructor);
+
+    Node->completeDefinition();
+  }
+
+  // Node **buckets;
+  QualType NodePtrPtrT = getPointerType(NodePtrT);
+  DefField(buckets, NodePtrPtrT, ObjectPtrHashTable, AS_private);
+
+  //unsigned capacity;
+  DefField(capacity, UnsignedIntTy, ObjectPtrHashTable, AS_private);
+
+  // unsigned count;
+  DefField(count, UnsignedIntTy, ObjectPtrHashTable, AS_private);
+
+  //unsigned getBucketIndex(const ObjectPtr &key);
+  QualType getBucketIndexT =
+      getFunctionType(UnsignedIntTy, {ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("getBucketIndex"));
+  DefCxxMethod(getBucketIndex, NameInfo, getBucketIndexT, ObjectPtrHashTable,
+               AS_private);
+  {
+    DefParm(key, ConstObjectPtrRefT, getBucketIndex);
+    getBucketIndex->setParams({key});
+    ObjectPtrHashTable->addDecl(getBucketIndex);
+  }
+
+  //unsigned HashFunc(const ObjectPtr &key);
+  QualType HashFuncT =
+      getFunctionType(UnsignedIntTy, {ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("HashFunc"));
+  DefCxxMethod(HashFunc, NameInfo, HashFuncT, ObjectPtrHashTable, AS_private);
+  {
+    DefParm(key, ConstObjectPtrRefT, HashFunc);
+    HashFunc->setParams({key});
+    ObjectPtrHashTable->addDecl(HashFunc);
+  }
+
+  //bool KeyEqual(const ObjectPtr &key1, const ObjectPtr &key2);
+  QualType KeyEqualT =
+      getFunctionType(BoolTy, {ConstObjectPtrRefT, ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("KeyEqual"));
+  DefCxxMethod(KeyEqual, NameInfo, KeyEqualT, ObjectPtrHashTable, AS_private);
+  {
+    DefParm(key1, ConstObjectPtrRefT, KeyEqual);
+    DefParm(key2, ConstObjectPtrRefT, KeyEqual);
+    KeyEqual->setParams({key1, key2});
+    ObjectPtrHashTable->addDecl(KeyEqual);
+  }
+
+  //explicit ObjectPtrHashTable(unsigned initial_capacity = 16);
+  QualType ObjectPtrHashTableT = getTypeDeclType(ObjectPtrHashTable);
+  QualType ContorT = getFunctionType(VoidTy, {UnsignedIntTy}, EPI);
+  NameInfo.setName(DeclarationNames.getCXXConstructorName(
+      getCanonicalType(ObjectPtrHashTableT)));
+  DefConstructor(NameInfo, ContorT, ObjectPtrHashTable, AS_public);
+  {
+    DefParm(initial_capacity, UnsignedIntTy, constructor);
+    constructor->setParams({initial_capacity});
+    ObjectPtrHashTable->addDecl(constructor);
+  }
+
+  //~ObjectPtrHashTable()
+  NameInfo.setName(DeclarationNames.getCXXDestructorName(
+      getCanonicalType(ObjectPtrHashTableT)));
+  DefDestructor(NameInfo, getFunctionType(VoidTy, {}, EPI),
+                ObjectPtrHashTable, AS_public);
+  ObjectPtrHashTable->addDecl(destructor);
+
+  //void insert(const ObjectPtr &key, const ObjectPtr &value);
+  QualType insertT =
+      getFunctionType(VoidTy, {ConstObjectPtrRefT, ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("insert"));
+  DefCxxMethod(insert, NameInfo, insertT, ObjectPtrHashTable, AS_public);
+  {
+    DefParm(key, ConstObjectPtrRefT, insert);
+    DefParm(value, ConstObjectPtrRefT, insert);
+    insert->setParams({key, value});
+    ObjectPtrHashTable->addDecl(insert);
+  }
+
+  //bool get(const ObjectPtr &key, ObjectPtr &out_value);
+  QualType getT =
+      getFunctionType(BoolTy, {ConstObjectPtrRefT, ObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("get"));
+  DefCxxMethod(get, NameInfo, getT, ObjectPtrHashTable, AS_public);
+  {
+    DefParm(key, ConstObjectPtrRefT, get);
+    DefParm(out_value, ObjectPtrRefT, get);
+    get->setParams({key, out_value});
+    ObjectPtrHashTable->addDecl(get);
+  }
+
+  //bool remove(const ObjectPtr &key);
+  QualType removeT =
+      getFunctionType(BoolTy, {ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("remove"));
+  DefCxxMethod(remove, NameInfo, removeT, ObjectPtrHashTable, AS_public);
+  {
+    DefParm(key, ConstObjectPtrRefT, remove);
+    remove->setParams({key});
+    ObjectPtrHashTable->addDecl(remove);
+  }
+
+  //void clear();
+  QualType clearT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(&Idents.get("clear"));
+  DefCxxMethod(clear, NameInfo, clearT, ObjectPtrHashTable, AS_public);
+  ObjectPtrHashTable->addDecl(clear);
+
+  //unsigned size() const;
+  QualType sizeT = getFunctionType(UnsignedIntTy, {}, EPI);
+  NameInfo.setName(&Idents.get("size"));
+  DefCxxMethod(size, NameInfo, sizeT, ObjectPtrHashTable, AS_public);
+  ObjectPtrHashTable->addDecl(size);
+
+  //void rehash(unsigned new_capacity);
+  QualType rehashT = getFunctionType(VoidTy, {UnsignedIntTy}, EPI);
+  NameInfo.setName(&Idents.get("rehash"));
+  DefCxxMethod(rehash, NameInfo, rehashT, ObjectPtrHashTable, AS_private);
+  ObjectPtrHashTable->addDecl(rehash);
+
+  ObjectPtrHashTable->completeDefinition();
+  return ObjectPtrHashTable;
+}
+
+RecordDecl *ASTContext::getTableDecl() {
+  SourceLocation Loc;
+
+  // class Table
+  Table->startDefinition();
+
+  //ObjectPtrHashTable Fields;
+  QualType ObjectPtrHashTableT = getTypeDeclType(ObjectPtrHashTable);
+  DefField(Fields, ObjectPtrHashTableT, Table, AS_public);
+
+  //ObjectPtrArray array;
+  QualType ObjectPtrArrayT = getTypeDeclType(ObjectPtrArray);
+  DefField(array, ObjectPtrArrayT, Table, AS_public);
+  
+  //Table *metaTable;
+  QualType TableT = getTypeDeclType(Table);
+  QualType TablePtrT = getPointerType(TableT);
+  DefField(metaTable, TablePtrT, Table, AS_public);
+
+  FunctionProtoType::ExtProtoInfo EPI;
+  DeclarationNameInfo NameInfo;
+
+  //Table(ObjectPtrArray arr);
+  QualType ObjectPtrArrayRefT = getLValueReferenceType(ObjectPtrArrayT);
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstObjectPtrArrayRefT = getQualifiedType(ObjectPtrArrayRefT, Qs);
+  QualType ContorT = getFunctionType(VoidTy, {ObjectPtrArrayT}, EPI);
+  NameInfo.setName(DeclarationNames.getCXXConstructorName(getCanonicalType(TableT)));
+  DefConstructor(NameInfo, ContorT, Table, AS_public);
+  {
+    DefParm(arr, ObjectPtrArrayT, constructor);
+    constructor->setParams({arr});
+    Table->addDecl(constructor);
+  }
+
+  //~Table();
+  NameInfo.setName(
+      DeclarationNames.getCXXDestructorName(getCanonicalType(TableT)));
+  DefDestructor(NameInfo, getFunctionType(VoidTy, {}, EPI), Table,
+                AS_public);
+  Table->addDecl(destructor);
+
+  //void updateArray();
+  QualType updateArrayT = getFunctionType(VoidTy, {}, EPI);
+  NameInfo.setName(&Idents.get("updateArray"));
+  DefCxxMethod(updateArray, NameInfo, updateArrayT, Table, AS_public);
+  Table->addDecl(updateArray);
+
+  QualType ObjectPtrT = getTypeDeclType(ObjectPtr);
+  QualType ObjectPtrRefT = getLValueReferenceType(ObjectPtrT);
+  QualType ConstObjectPtrRefT = getQualifiedType(ObjectPtrRefT, Qs);
+
+  //void insert(const ObjectPtr &field, const ObjectPtr &value);
+  QualType insertT =
+      getFunctionType(VoidTy, {ConstObjectPtrRefT, ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("insert"));
+  DefCxxMethod(insert, NameInfo, insertT, Table, AS_public);
+  {
+    DefParm(field, ConstObjectPtrRefT, insert);
+    DefParm(value, ConstObjectPtrRefT, insert);
+    insert->setParams({field, value});
+    Table->addDecl(insert);
+  }
+
+  //ObjectPtr get(const ObjectPtr &field);
+  QualType getT = getFunctionType(ObjectPtrT, {ConstObjectPtrRefT}, EPI);
+  NameInfo.setName(&Idents.get("get"));
+  DefCxxMethod(get, NameInfo, getT, Table, AS_public);
+  {
+    DefParm(field, ConstObjectPtrRefT, get);
+    get->setParams({field});
+    Table->addDecl(get);
+  }
+
+  Table->completeDefinition();
+  return Table;
+}
+
+VarDecl *ASTContext::getENVDecl() {
+  SourceLocation Loc;
+  VarDecl *ENV = VarDecl::Create(
+      *this, getTranslationUnitDecl(), Loc, Loc, &Idents.get("_ENV"),
+      getTypeDeclType(ObjectPtr), nullptr, SC_Extern);
+  return ENV;
+}
+
+VarDecl *ASTContext::getGDecl() {
+  SourceLocation Loc;
+  VarDecl *G = VarDecl::Create(
+      *this, getTranslationUnitDecl(), Loc, Loc, &Idents.get("_G"),
+      getTypeDeclType(ObjectPtr), nullptr, SC_Extern);
+  return G;
+}
+
+TypeDecl *ASTContext::getMethodDecl() {
+  QualType T = getLuaMethodTy();
+  T = getParenType(T);
+  T = getPointerType(T);
+
+  return TypedefDecl::Create(*this, getTranslationUnitDecl(), SourceLocation(),
+                             SourceLocation(), &Idents.get("MethodTy"),
+                             nullptr);
+}
+
+QualType ASTContext::getLuaMethodTy() {
+  FunctionProtoType::ExtProtoInfo EPI;
+  QualType ObjectPtrArrayT = getTypeDeclType(ObjectPtrArray);
+  QualType ObjectPtrArrayRefT = getLValueReferenceType(ObjectPtrArrayT);
+  Qualifiers Qs;
+  Qs.addConst();
+  QualType ConstObjectPtrArrayRefT = getQualifiedType(ObjectPtrArrayRefT, Qs);
+
+  QualType ObjectPtrT = getTypeDeclType(ObjectPtr);
+  QualType ObjectPtrRefT = getLValueReferenceType(ObjectPtrT);
+  QualType ConstObjectPtrRefT = getQualifiedType(ObjectPtrRefT, Qs);
+
+  QualType T = ObjectPtrArrayT;
+  return getFunctionType(ObjectPtrArrayT,
+                         {ConstObjectPtrRefT, ConstObjectPtrArrayRefT}, EPI);
+}
+
+FunctionDecl *ASTContext::getTopFunctionDecl() {
+  if (LuaTopFun)
+    return LuaTopFun;
+  SourceLocation Loc;
+  FileID input = SourceMgr.getMainFileID();
+  std::string inputFilePath =
+      SourceMgr.getSLocEntry(input).getFile().getName().str();
+  unsigned start =
+      std::min(inputFilePath.rfind('\\'), inputFilePath.rfind('/')) + 1;
+  unsigned end = inputFilePath.rfind('.');
+  std::string fileName = inputFilePath.substr(start, end - start);
+
+  FunctionProtoType::ExtProtoInfo EPI;
+  LuaTopFun = FunctionDecl::Create(
+      *this, getTranslationUnitDecl(), Loc, Loc, &Idents.get(fileName),
+      getFunctionType(VoidTy, {}, EPI), nullptr, SC_None);
+  return LuaTopFun;
 }
 
 QualType ASTContext::getBlockDescriptorExtendedType() const {

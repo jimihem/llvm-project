@@ -1,32 +1,40 @@
 #include "Object.hpp"
 
-Object::Object(Type kind, double dval, bool bval, void *ptr) {
-  Kind = kind;
-  switch (Kind) {
-  case TNIL:
-    break;
-  case TBOOLEAN:
-    this->bval = bval;
-    break;
-  case TNUMBER:
-    this->dval = dval;
-    break;
-  case TFUNCTION:
-    fun = (Function *)ptr;
-    break;
-  case TSTRING:
-    str = (String *)ptr;
-    break;
-  case TTABLE:
-    table = (Table *)ptr;
-    break;
-  case TUSERDATA:
-    udata = (UserData *)ptr;
-    break;
-  case TTHREAD:
-    thread = (Thread *)ptr;
-    break;
-  }
+Object::Object() { Kind = TNIL; }
+
+Object::Object(bool bval) {
+  Kind = TBOOLEAN;
+  this->bval = bval;
+}
+
+Object::Object(double dval) {
+  Kind = TNUMBER;
+  this->dval = dval;
+}
+
+Object::Object(Function *ptr) {
+  Kind = TFUNCTION;
+  this->fun = ptr;
+}
+
+Object::Object(String *ptr) {
+  Kind = TSTRING;
+  this->str = ptr;
+}
+
+Object::Object(Table *ptr) {
+  Kind = TTABLE;
+  this->table = ptr;
+}
+
+Object::Object(UserData *ptr) {
+  Kind = TUSERDATA;
+  this->udata = ptr;
+}
+
+Object::Object(Thread *ptr) {
+  Kind = TTHREAD;
+  this->thread = ptr;
 }
 
 unsigned Object::hash() {

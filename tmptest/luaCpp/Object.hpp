@@ -20,15 +20,31 @@ public:
   union {
     double dval;
     bool bval;
+    String *str;
     Table *table;
     Function *fun;
     Thread *thread;
-    String *str;
     UserData *udata;
   };
 
-  Object(Type kind, double dval, bool bval, void *ptr);
+  bool bLocal;
 
+  Object();
+  
+  Object(bool bval);
+  
+  Object(double dval);
+  
+  Object(Function* ptr);
+  
+  Object(String* ptr);
+  
+  Object(Table* ptr);
+  
+  Object(UserData* ptr);
+  
+  Object(Thread* ptr);
+  
   unsigned hash();
 
   bool operator==(Object &other);
