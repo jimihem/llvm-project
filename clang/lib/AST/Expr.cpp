@@ -2656,6 +2656,8 @@ bool Expr::isUnusedResultAWarning(const Expr *&WarnE, SourceLocation &Loc,
       break;
     case UO_Extension:
       return UO->getSubExpr()->isUnusedResultAWarning(WarnE, Loc, R1, R2, Ctx);
+    case UO_hash:
+      assert(false);
     }
     WarnE = this;
     Loc = UO->getOperatorLoc();

@@ -190,11 +190,14 @@ Retry:
     cutOffParsing();
     Actions.CodeCompleteOrdinaryName(getCurScope(), Sema::PCC_Statement);
     return StmtError();
-
+  case tok::coloncolon:
+    ConsumeToken();
   case tok::identifier:
   ParseIdentifier: {
     Token Next = NextToken();
-    if (Next.is(tok::colon)) { // C99 6.8.1: labeled-statement
+    if (Next.is(tok::colon) ||
+        (getLangOpts().LUA && Kind == tok::coloncolon &&
+         Next.is(tok::coloncolon))) { // C99 6.8.1: labeled-statement
       // Both C++11 and GNU attributes preceding the label appertain to the
       // label, so put them in a single list to pass on to
       // ParseLabeledStatement().
@@ -204,7 +207,8 @@ Retry:
       // identifier ':' statement
       return ParseLabeledStatement(Attrs, StmtCtx);
     }
-
+    if (getLangOpts().LUA)
+      return ParseLuaExprStatement(Stmts, StmtCtx);
     // Look up the identifier, and typo-correct it to a keyword if it's not
     // found.
     if (Next.isNot(tok::coloncolon)) {
@@ -228,7 +232,12 @@ Retry:
     // Fall through
     [[fallthrough]];
   }
-
+  case tok::kw_local:
+  case tok::kw_function:
+    if (getLangOpts().LUA) {
+      ParseLuaDeclaration(Stmts, StmtCtx);
+      return StmtResult();
+    }
   default: {
     bool HaveAttrs = !CXX11Attrs.empty() || !GNUAttrs.empty();
     auto IsStmtAttr = [](ParsedAttr &Attr) { return Attr.isStmtAttr(); };
@@ -276,6 +285,8 @@ Retry:
       }
       [[fallthrough]];
     default:
+      if (getLangOpts().LUA)
+        return ParseLuaExprStatement(Stmts, StmtCtx);
       return ParseExprStatement(Stmts, StmtCtx);
     }
   }
@@ -299,18 +310,28 @@ Retry:
   }
 
   case tok::kw_if:                  // C99 6.8.4.1: if-statement
-    return ParseIfStatement(TrailingElseLoc);
+    return getLangOpts().LUA ? ParseLuaIfStatement(Stmts, StmtCtx) : ParseIfStatement(TrailingElseLoc);
   case tok::kw_switch:              // C99 6.8.4.2: switch-statement
     return ParseSwitchStatement(TrailingElseLoc);
 
   case tok::kw_while:               // C99 6.8.5.1: while-statement
     return ParseWhileStatement(TrailingElseLoc);
+  case tok::kw_repeat:
+    return ParseRepeatStatement();
   case tok::kw_do:                  // C99 6.8.5.2: do-statement
-    Res = ParseDoStatement();
-    SemiError = "do/while";
+    if (getLangOpts().LUA) {
+      ConsumeToken();// eat the 'do'.
+      Res = ParseCompoundStatement();
+      ConsumeToken(); // eat the 'end'.
+      return Res;
+    } else {
+      Res = ParseDoStatement();
+      SemiError = "do/while";
+    }
     break;
   case tok::kw_for:                 // C99 6.8.5.3: for-statement
-    return ParseForStatement(TrailingElseLoc);
+    return getLangOpts().LUA ? ParseLuaForStatement(Stmts, StmtCtx)
+                             : ParseForStatement(TrailingElseLoc);
 
   case tok::kw_goto:                // C99 6.8.6.1: goto-statement
     Res = ParseGotoStatement();
@@ -325,6 +346,8 @@ Retry:
     SemiError = "break";
     break;
   case tok::kw_return:              // C99 6.8.6.4: return-statement
+    if (getLangOpts().LUA)
+      return ParseLuaReturnStatement(Stmts, StmtCtx);
     Res = ParseReturnStatement();
     SemiError = "return";
     break;
@@ -519,50 +542,132 @@ Retry:
   return Res;
 }
 
+void Parser::GenerateAssignStmts(SourceLocation OpLoc,
+                                 SmallVector<Expr *> &VarList,
+                                 Expr *TempObjArrRef, StmtVector &Stmts,
+                                 ParsedStmtContext StmtCtx) {
+  SmallVector<Expr *> AssignExprs =
+      Actions.ActOnVarsAssign(OpLoc, VarList, TempObjArrRef);
+
+  for (uint32_t i = 0; i < AssignExprs.size(); i++) {
+    if (dyn_cast<DeclRefExpr>(AssignExprs[i])) {
+      Decl *ObjArr = cast<DeclRefExpr>(AssignExprs[i])->getDecl();
+      Stmts.push_back(Actions
+                          .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(ObjArr),
+                                         ObjArr->getLocation(),
+                                         ObjArr->getLocation())
+                          .get());
+    } else {
+      Stmts.push_back(handleExprStmt(AssignExprs[i], StmtCtx).get());
+    }
+  }
+}
+
+ExprResult Parser::GenerateTempObjArray(SmallVector<Expr *> &Exprs,
+                                        StmtVector &Stmts,
+                                        ParsedStmtContext StmtCtx) {
+  SmallVector<Expr *> ExprList = Actions.ActOnExpList(Exprs);
+  Decl *ObjArr = cast<DeclRefExpr>(ExprList.front())->getDecl();
+  Stmts.push_back(Actions
+                      .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(ObjArr),
+                                     ObjArr->getLocation(),
+                                     ObjArr->getLocation())
+                      .get());
+
+  for (size_t i = 1; i < ExprList.size(); i++) {
+    Stmts.push_back(handleExprStmt(ExprList[i], StmtCtx).get());
+  }
+  return ExprList.front();
+}
+
+ExprResult Parser::ParseLuaExprList(SmallVector<Expr *> &Exprs,
+                                    StmtVector &Stmts,
+                              ParsedStmtContext StmtCtx) {
+  Exprs.push_back(ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+  while (TryConsumeToken(tok::comma))
+    Exprs.push_back(ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+  return GenerateTempObjArray(Exprs, Stmts, StmtCtx);
+}
+
+//functioncall :: = prefixexp args | prefixexp ‘:’ Name args
+//args :: =  ‘(’ [explist] ‘)’ | tableconstructor | LiteralString 
+
+ExprResult Parser::ParseLuaFunCall(ExprResult PreFixExp, StmtVector &Stmts,
+                                   ParsedStmtContext StmtCtx) {
+  SmallVector<Expr *> ExprList;
+  if (TryConsumeToken(tok::colon)) {
+    UnqualifiedId Id;
+    CXXScopeSpec SS;
+    ExprList.push_back(PreFixExp.get());
+    SourceLocation OpLoc = PrevTokLocation;
+    ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
+                       nullptr, Id);
+    PreFixExp = Actions.ActOnMemberAccessExpr(getCurScope(), PreFixExp.get(),
+                                             OpLoc, tok::period, SS,
+                                             SourceLocation(), Id, nullptr);
+  }
+
+  SourceLocation BLoc = Tok.getLocation();
+  bool IsExpList = false;
+  Expr *Args = nullptr; 
+  if (Tok.is(tok::l_paren)) {
+    BalancedDelimiterTracker T(*this, tok::l_paren);
+    T.consumeOpen();
+    if (Tok.isNot(tok::r_paren)) {
+      Args = ParseLuaExprList(ExprList, Stmts, StmtCtx).get();
+      IsExpList = true;
+    }
+    T.consumeClose();
+  } else if (Tok.is(tok::l_brace)) {
+    ExprList.push_back(ParseTableConstructor(Stmts, StmtCtx).get());
+  } else if (Tok.is(tok::string_literal)) {
+    ExprList.push_back(ParseStringLiteralExpression(true).get());
+  }
+  SourceLocation ELoc = Tok.getLocation();
+  if (!IsExpList)
+    Args = GenerateTempObjArray(ExprList, Stmts, StmtCtx).get();
+
+  Expr *Ret = Actions.ActOnLuaFunctionCall(PreFixExp.get(), Args).get();
+  return Ret;
+}
+
+
+// varlist ‘=’ explist |
+// functioncall |
+StmtResult Parser::ParseLuaExprStatement(StmtVector &Stmts,
+                                         ParsedStmtContext StmtCtx) {
+  if (!Tok.isOneOf(tok::l_paren, tok::identifier))
+    return StmtError();
+
+  ExprResult PreFixExp = ParseCastExpression(
+      AnyCastExpr, false, NotTypeCast, false, nullptr, &Stmts, StmtCtx);
+  
+  if (Tok.isOneOf(tok::comma, tok::equal)) {
+    SmallVector<Expr *> VarList;
+    VarList.push_back(PreFixExp.get());
+    while (TryConsumeToken(tok::comma)) 
+      VarList.push_back(ParseCastExpression(AnyCastExpr, false, NotTypeCast,
+                                            false, nullptr, &Stmts, StmtCtx)
+                            .get());
+
+    SourceLocation OpLoc = Tok.getLocation();
+    ConsumeToken();
+
+    SmallVector<Expr *> ExprList;
+    Expr *TempObjArrRef = ParseLuaExprList(ExprList, Stmts, StmtCtx).get();
+    GenerateAssignStmts(OpLoc, VarList, TempObjArrRef, Stmts, StmtCtx);
+    return StmtResult();
+  }
+  return handleExprStmt(PreFixExp, StmtCtx);
+}
+
 /// Parse an expression statement.
-StmtResult Parser::ParseExprStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
+StmtResult Parser::ParseExprStatement(StmtVector &Stmts,
+                                      ParsedStmtContext StmtCtx) {
   // If a case keyword is missing, this is where it should be inserted.
   Token OldToken = Tok;
 
   ExprStatementTokLoc = Tok.getLocation();
-  if (getLangOpts().LUA) {
-    // varlist ‘=’ explist |
-    // functioncall |
-
-    ExprResult PreFixExp = ParseCastExpression(PrimaryExprOnly);
-
-    if (Tok.isOneOf(tok::l_paren, tok::l_brace, tok::string_literal)) {
-
-    } else {
-      SmallVector<Expr*, 4> VarList;
-      VarList.push_back(ParsePostfixExpressionSuffix(PreFixExp).get());
-      while (Tok.is(tok::comma)) {
-        ConsumeToken();
-        VarList.push_back(ParseCastExpression(AnyCastExpr).get());
-      }
-
-      SourceLocation OpLoc = Tok.getLocation();
-      ConsumeToken();
-
-      SmallVector<Expr*, 4> ExprList;
-      ExprList.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
-      while (Tok.is(tok::comma)) {
-        ConsumeToken();
-        ExprList.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
-      }
-
-      MultiExprArg Vars(VarList);
-      MultiExprArg Exprs(ExprList);
-      SmallVector<Expr*> AssignExprs =
-          Actions.ActOnVarsAssign(getCurScope(), OpLoc, Vars, Exprs);
-
-      for (uint32_t i = 0; i < AssignExprs.size() - 1; i++) {
-        Stmts.push_back(handleExprStmt(AssignExprs[i], StmtCtx).get());
-      }
-
-      return handleExprStmt(AssignExprs.back(), StmtCtx);
-    }
-  }
   // expression[opt] ';'
   ExprResult Expr(ParseExpression());
   if (Expr.isInvalid()) {
@@ -755,7 +860,7 @@ StmtResult Parser::ParseLabeledStatement(ParsedAttributes &Attrs,
   Token IdentTok = Tok;  // Save the whole token.
   ConsumeToken();  // eat the identifier.
 
-  assert(Tok.is(tok::colon) && "Not a label!");
+  assert((Tok.is(tok::colon) || getLangOpts().LUA) && "Not a label!");
 
   // identifier ':' statement
   SourceLocation ColonLoc = ConsumeToken();
@@ -803,7 +908,8 @@ StmtResult Parser::ParseLabeledStatement(ParsedAttributes &Attrs,
                                               IdentTok.getLocation());
   Actions.ProcessDeclAttributeList(Actions.CurScope, LD, Attrs);
   Attrs.clear();
-
+  if (getLangOpts().LUA)
+    ConsumeToken();
   return Actions.ActOnLabelStmt(IdentTok.getLocation(), LD, ColonLoc,
                                 SubStmt.get());
 }
@@ -1029,7 +1135,7 @@ StmtResult Parser::ParseCompoundStatement(bool isStmtExpr) {
 ///
 StmtResult Parser::ParseCompoundStatement(bool isStmtExpr,
                                           unsigned ScopeFlags) {
-  assert(Tok.is(tok::l_brace) && "Not a compound stmt!");
+  assert(getLangOpts().LUA || Tok.is(tok::l_brace) && "Not a compound stmt!");
 
   // Enter a scope to hold everything within the compound stmt.  Compound
   // statements can always hold declarations.
@@ -1180,11 +1286,9 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
   // compound statement.
   Sema::FPFeaturesStateRAII SaveFPFeatures(Actions);
 
-  bool IsLuaTopDecl = isLuaTopDeclContext();
-
   InMessageExpressionRAIIObject InMessage(*this, false);
   BalancedDelimiterTracker T(*this, tok::l_brace);
-  if (!IsLuaTopDecl && T.consumeOpen())
+  if (!getLangOpts().LUA && T.consumeOpen())
     return StmtError();
 
   Sema::CompoundScopeRAII CompoundScope(Actions, isStmtExpr);
@@ -1195,6 +1299,22 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
 
   StmtVector Stmts;
 
+  if (getLangOpts().LUA && getCurScope()->isFunctionScope()) {
+    DeclGroupPtrTy Decls = Actions.ActOnLuaFunctionParmInit();
+    if (Decls) {
+      SourceLocation StartLoc, EndLoc;
+      if (Decls.get().isSingleDecl()) {
+        StartLoc = Decls.get().getSingleDecl()->getLocation();
+        EndLoc = StartLoc;
+      } else {
+        DeclGroup &Group = Decls.get().getDeclGroup();
+        StartLoc = Group[0]->getLocation();
+        EndLoc = Group[Group.size() - 1]->getLocation();
+      }
+      Stmt *DeclStmt = Actions.ActOnDeclStmt(Decls, StartLoc, EndLoc).get();
+      Stmts.push_back(DeclStmt);
+    }
+  }
   // "__label__ X, Y, Z;" is the GNU "Local Label" extension.  These are
   // only allowed at the start of a compound stmt regardless of the language.
   while (Tok.is(tok::kw___label__)) {
@@ -1231,6 +1351,9 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
 
   while (!tryParseMisplacedModuleImport() && Tok.isNot(tok::r_brace) &&
          Tok.isNot(tok::eof)) {
+    if (getLangOpts().LUA &&
+        Tok.isOneOf(tok::kw_else, tok::kw_end, tok::kw_until, tok::kw_elseif))
+      break;
     if (Tok.is(tok::annot_pragma_unused)) {
       HandlePragmaUnused();
       continue;
@@ -1298,10 +1421,10 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
          diag::warn_no_support_for_eval_method_source_on_m32);
 
   SourceLocation CloseLoc =
-      IsLuaTopDecl ? T.getOpenLocation() : Tok.getLocation();
+      getLangOpts().LUA ? T.getOpenLocation() : Tok.getLocation();
 
   // We broke out of the while loop because we found a '}' or EOF.
-  if (!IsLuaTopDecl && !T.consumeClose()) {
+  if (!getLangOpts().LUA && !T.consumeClose()) {
     // If this is the '})' of a statement expression, check that it's written
     // in a sensible way.
     if (isStmtExpr && Tok.is(tok::r_paren))
@@ -1311,7 +1434,7 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
     // instead of dropping everything and returning StmtError().
   }
 
-  if (!IsLuaTopDecl && T.getCloseLocation().isValid())
+  if (!getLangOpts().LUA && T.getCloseLocation().isValid())
     CloseLoc = T.getCloseLocation();
 
   return Actions.ActOnCompoundStmt(T.getOpenLocation(), CloseLoc,
@@ -1486,6 +1609,92 @@ struct MisleadingIndentationChecker {
 
 }
 
+//if exp then block {elseif exp then block} [else block] end
+StmtResult Parser::ParseLuaIfStatement(StmtVector &Stmts,
+                                       ParsedStmtContext StmtCtx) {
+  SmallVector<Stmt *> IfStmts;
+  SmallVector<Expr *> Exprs;
+  SmallVector<SourceLocation> IfLocs;
+  SmallVector<SourceLocation> ThenLocs;
+
+  ParseScope IfScope(this, Scope::DeclScope | Scope::ControlScope, false);
+
+  {
+    IfLocs.push_back(ConsumeToken()); // eat the 'if'.
+    Exprs.push_back(Actions.ConvertObjArrayToScalar(
+        ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get()));
+    ThenLocs.push_back(ConsumeToken()); // eat the 'then'.
+
+    ParseScope InnerScope(this, Scope::DeclScope, false, true);
+    IfStmts.push_back(ParseCompoundStatement().get());
+    InnerScope.Exit();
+  }
+
+  while (TryConsumeToken(tok::kw_elseif)) {
+    IfLocs.push_back(PrevTokLocation);
+    Exprs.push_back(Actions.ConvertObjArrayToScalar(
+        ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get()));
+    ThenLocs.push_back(ConsumeToken()); // eat the 'then'.
+
+    ParseScope InnerScope(this, Scope::DeclScope, false, true);
+    IfStmts.push_back(ParseCompoundStatement().get());
+    InnerScope.Exit();
+  }
+
+  SourceLocation ElseLoc;
+  StmtResult ElseStmt(true);
+  if (TryConsumeToken(tok::kw_else)) {
+    ElseLoc = PrevTokLocation;
+    ParseScope InnerScope(this, Scope::DeclScope, false, true);
+    ElseStmt = ParseCompoundStatement();
+    InnerScope.Exit();
+  }
+  ConsumeToken(); // eat the 'end'.
+  IfScope.Exit();
+
+  if (ElseStmt.isInvalid()) {
+    Expr *CondExpr = Exprs.back();
+    Sema::ConditionResult Cond = Actions.ActOnCondition(
+        getCurScope(), CondExpr->getExprLoc(),
+        Actions
+            .BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr},
+                                     CondExpr->getSourceRange())
+            .get(),
+        Sema::ConditionKind::Boolean,
+        /*MissingOK=*/false);
+    ElseLoc = IfLocs.back();
+    ElseStmt = Actions.ActOnIfStmt(
+        IfLocs.back(), IfStatementKind::Ordinary, IfLocs.back(), nullptr, Cond,
+        ThenLocs.back(), IfStmts.back(), SourceLocation(), nullptr);
+    IfStmts.pop_back();
+    IfLocs.pop_back();
+    ThenLocs.pop_back();
+    Exprs.pop_back();
+  }
+
+  while (!Exprs.empty()) {
+    Expr *CondExpr = Exprs.back();
+    Sema::ConditionResult Cond = Actions.ActOnCondition(
+        getCurScope(), CondExpr->getExprLoc(),
+        Actions
+            .BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr},
+                                     CondExpr->getSourceRange())
+            .get(),
+        Sema::ConditionKind::Boolean,
+        /*MissingOK=*/false);
+    ElseLoc = IfLocs.back();
+    ElseStmt = Actions.ActOnIfStmt(
+        IfLocs.back(), IfStatementKind::Ordinary, IfLocs.back(), nullptr, Cond,
+        ThenLocs.back(), IfStmts.back(), ElseLoc, ElseStmt.get());
+    IfStmts.pop_back();
+    IfLocs.pop_back();
+    ThenLocs.pop_back();
+    Exprs.pop_back();
+  }
+
+  return ElseStmt;
+}
+
 /// ParseIfStatement
 ///       if-statement: [C99 6.8.4.1]
 ///         'if' '(' expression ')' statement
@@ -1521,7 +1730,7 @@ StmtResult Parser::ParseIfStatement(SourceLocation *TrailingElseLoc) {
       ConstevalLoc = ConsumeToken();
     }
   }
-  if (!IsConsteval && (NotLocation.isValid() || Tok.isNot(tok::l_paren))) {
+  if (!IsConsteval && (NotLocation.isValid() || (Tok.isNot(tok::l_paren) && !getLangOpts().LUA))) {
     Diag(Tok, diag::err_expected_lparen_after) << "if";
     SkipUntil(tok::semi);
     return StmtError();
@@ -1801,12 +2010,14 @@ StmtResult Parser::ParseSwitchStatement(SourceLocation *TrailingElseLoc) {
 ///       while-statement: [C99 6.8.5.1]
 ///         'while' '(' expression ')' statement
 /// [C++]   'while' '(' condition ')' statement
-StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc) {
+StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc,
+                                       StmtVector *Stmts,
+                                       ParsedStmtContext StmtCtx) {
   assert(Tok.is(tok::kw_while) && "Not a while stmt!");
   SourceLocation WhileLoc = Tok.getLocation();
   ConsumeToken();  // eat the 'while'.
 
-  if (Tok.isNot(tok::l_paren)) {
+  if (Tok.isNot(tok::l_paren) && !getLangOpts().LUA) {
     Diag(Tok, diag::err_expected_lparen_after) << "while";
     SkipUntil(tok::semi);
     return StmtError();
@@ -1838,7 +2049,22 @@ StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc) {
   Sema::ConditionResult Cond;
   SourceLocation LParen;
   SourceLocation RParen;
-  if (ParseParenExprOrCondition(nullptr, Cond, WhileLoc,
+  if (getLangOpts().LUA) {
+    ExprResult CondExpr = ParseLuaExpression(NotTypeCast, Stmts, StmtCtx);
+    CondExpr = Actions.ConvertObjArrayToScalar(CondExpr.get());
+    Cond = Actions.ActOnCondition(
+        getCurScope(), WhileLoc,
+        Actions
+            .BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr.get()},
+                                     CondExpr.get()->getSourceRange())
+            .get(),
+        Sema::ConditionKind::Boolean,
+        /*MissingOK=*/false);
+    LParen = CondExpr.get()->getBeginLoc();
+    RParen = CondExpr.get()->getEndLoc();
+    ConsumeToken();
+  }
+  else if (ParseParenExprOrCondition(nullptr, Cond, WhileLoc,
                                 Sema::ConditionKind::Boolean, LParen, RParen))
     return StmtError();
 
@@ -1853,23 +2079,247 @@ StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc) {
   // See comments in ParseIfStatement for why we create a scope for the
   // condition and a new scope for substatement in C++.
   //
-  ParseScope InnerScope(this, Scope::DeclScope, C99orCXX, Tok.is(tok::l_brace));
+  ParseScope InnerScope(this, Scope::DeclScope, C99orCXX, Tok.is(tok::l_brace) || getLangOpts().LUA);
 
   MisleadingIndentationChecker MIChecker(*this, MSK_while, WhileLoc);
 
   // Read the body statement.
-  StmtResult Body(ParseStatement(TrailingElseLoc));
+  StmtResult Body(getLangOpts().LUA ? ParseCompoundStatement()
+                                    : ParseStatement(TrailingElseLoc));
 
   if (Body.isUsable())
     MIChecker.Check();
   // Pop the body scope if needed.
   InnerScope.Exit();
   WhileScope.Exit();
+  if (getLangOpts().LUA)
+    ConsumeToken(); //eat 'end'
 
   if (Cond.isInvalid() || Body.isInvalid())
     return StmtError();
 
   return Actions.ActOnWhileStmt(WhileLoc, LParen, Cond, RParen, Body.get());
+}
+
+//for Name ‘=’ exp ‘,’ exp [‘,’ exp] do block end 
+//for namelist in explist do block end 
+StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
+                                        ParsedStmtContext StmtCtx) {
+#define ActonBinOp(LHS, Op, RHS)                                               \
+  Actions.ActOnBinOp(getCurScope(), ForLoc, Op, LHS.get(), RHS.get())
+  SourceLocation ForLoc = ConsumeToken(); // eat repeat
+
+  ParseScope ForScope(this, Scope::DeclScope | Scope::ControlScope);
+  if (Tok.is(tok::identifier) && NextToken().is(tok::equal)) {
+    UnqualifiedId Var;
+    CXXScopeSpec SS;
+    ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
+                       nullptr, Var);
+
+    SourceLocation EqualLoc = ConsumeToken(); // eat '='
+
+    Expr *Initializer = Actions.ConvertObjArrayToScalar(
+        ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    SourceLocation CommalLoc = ConsumeToken(); // eat ','
+    Expr *Limit = Actions.ConvertObjArrayToScalar(
+        ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    Expr *Step = nullptr;
+    if (TryConsumeToken(tok::comma)) {
+      Step = Actions.ConvertObjArrayToScalar(
+          ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    } else {
+      Token Result;
+      Result.startToken();
+      std::string One = "1.0";
+      Result.setKind(tok::numeric_constant);
+      Result.setLength(One.length());
+      Result.setLiteralData(One.data());
+      Step = Actions.ActOnNumericConstant(Result).get();
+    }
+
+    SmallVector<Decl *> LocalVars;
+
+    VarDecl *LocalVar =
+        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc(), Initializer);
+    LocalVars.push_back(LocalVar);
+
+    VarDecl *LimitVar =
+        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc(), Limit);
+    LocalVars.push_back(LimitVar);
+
+    VarDecl *StepVar =
+        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc(), Step);
+    LocalVars.push_back(StepVar);
+
+    StmtResult FirstPart = Actions.ActOnDeclStmt(
+        Actions.BuildDeclaratorGroup(LocalVars),
+        LocalVars.front()->getLocation(), LocalVars.back()->getLocation());
+
+    SourceLocation DoLoc = ConsumeToken(); // eat 'do'
+
+    ParseScope InnerScope(this, Scope::DeclScope, false, true);
+    StmtResult Body(ParseCompoundStatement());
+    InnerScope.Exit();
+    SourceLocation EndLoc = ConsumeToken(); // eat 'end'
+
+    Token Result;
+    Result.startToken();
+    std::string Zero = "0.0";
+    Result.setKind(tok::numeric_constant);
+    Result.setLength(Zero.length());
+    Result.setLiteralData(Zero.data());
+
+    ExprResult ZeroExpr = Actions.ActOnNumericConstant(Result);
+    ExprResult VarDeclRef = Actions.BuildDeclRefExpr(
+        LocalVar, LocalVar->getType(), VK_LValue, LocalVar->getLocation());
+    ExprResult LimitDeclRef = Actions.BuildDeclRefExpr(
+        LimitVar, LimitVar->getType(), VK_LValue, LimitVar->getLocation());
+    ExprResult StepDeclRef = Actions.BuildDeclRefExpr(
+        StepVar, StepVar->getType(), VK_LValue, StepVar->getLocation());
+
+    ExprResult CondExpr = ActonBinOp(
+        ActonBinOp(ActonBinOp(StepDeclRef, tok::greaterequal, ZeroExpr),
+                   tok::kw_and,
+                   ActonBinOp(VarDeclRef, tok::lessequal, LimitDeclRef)),
+        tok::kw_or,
+        ActonBinOp(ActonBinOp(StepDeclRef, tok::less, ZeroExpr), tok::kw_and,
+                   ActonBinOp(VarDeclRef, tok::greaterequal, LimitDeclRef)));
+
+    CondExpr = Actions.BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr.get()},
+                                    CondExpr.get()->getSourceRange());
+
+    ExprResult IncExpr = ActonBinOp(
+        VarDeclRef, tok::equal, ActonBinOp(VarDeclRef, tok::plus, StepDeclRef));
+
+    Sema::ConditionResult SecondPart = Actions.ActOnCondition(
+        getCurScope(), ForLoc, CondExpr.get(), Sema::ConditionKind::Boolean,
+        /*MissingOK=*/true);
+
+    FullExprArg ThirdPart = Actions.MakeFullDiscardedValueExpr(IncExpr.get());
+
+    ForScope.Exit();
+    return Actions.ActOnForStmt(ForLoc, Var.getBeginLoc(), FirstPart.get(),
+                                SecondPart, ThirdPart, DoLoc, Body.get());
+  } else {
+    SmallVector<IdentifierInfo *> Varlist;
+    SmallVector<SourceLocation> VarLocs;
+    VarLocs.push_back(Tok.getLocation());
+    Varlist.push_back(Tok.getIdentifierInfo());
+    ConsumeToken(); //eat 'Id'
+    while (TryConsumeToken(tok::comma)) {
+      VarLocs.push_back(Tok.getLocation());
+      Varlist.push_back(Tok.getIdentifierInfo());
+      ConsumeToken(); // eat 'Id'
+    }
+
+    SourceLocation InLoc = ConsumeToken(); // eat 'in'
+
+    SmallVector<Expr *> ExprList;
+    Expr *ExprLst = ParseLuaExprList(ExprList, Stmts, StmtCtx).get();
+
+    SmallVector<IdentifierInfo *> FSVAR(3, nullptr);
+    SmallVector<SourceLocation> FSVARLocs(3, ForLoc);
+
+    SmallVector<Decl *> FSVARVars;
+    for (size_t i = 0; i < FSVAR.size(); i++) {
+      UnqualifiedId Id;
+      Id.setIdentifier(
+          &Actions.Context.Idents.get(Actions.Context.getLuaTempObjName()),
+          FSVARLocs[i]);
+      FSVARVars.push_back(Actions.ActOnLocalVariable(Id));
+    }
+
+    Actions.ActOnLocalVarsInitial(FSVARVars, ExprLst);
+    Stmts.push_back(Actions
+                        .ActOnDeclStmt(Actions.BuildDeclaratorGroup(FSVARVars),
+                                       FSVARVars.front()->getLocation(),
+                                       FSVARVars.back()->getLocation())
+                        .get());
+
+    SmallVector<Decl *> LocalVars;
+    SmallVector<Expr*> LocalVarRefs;
+    for (size_t i = 0; i < Varlist.size(); i++) {
+      UnqualifiedId Id;
+      Id.setIdentifier(Varlist[i], VarLocs[i]);
+      LocalVars.push_back(Actions.ActOnLocalVariable(Id));
+      Actions.AddInitializerToDecl(LocalVars[i], Actions.BuildNil().get(),
+                                   false);
+      LocalVarRefs.push_back(Actions.BuildDeclRefExpr(
+          cast<VarDecl>(LocalVars[i]), cast<VarDecl>(LocalVars[i])->getType(),
+          VK_LValue, VarLocs[i]));
+    }
+
+    Stmts.push_back(Actions
+                        .ActOnDeclStmt(Actions.BuildDeclaratorGroup(LocalVars),
+                                       LocalVars.front()->getLocation(),
+                                       LocalVars.back()->getLocation())
+                        .get());
+
+    SourceLocation DoLoc = ConsumeToken(); // eat 'do'
+
+    SmallVector<Expr *> FSVARVarRefs;
+    for (size_t i = 0; i < FSVARVars.size(); i++) {
+      FSVARVarRefs.push_back(Actions.BuildDeclRefExpr(
+          cast<VarDecl>(FSVARVars[i]), cast<VarDecl>(FSVARVars[i])->getType(),
+          VK_LValue, ForLoc));
+    }
+
+    StmtVector TempStmts;
+    SmallVector<Expr *> Exprs = {FSVARVarRefs[1], FSVARVarRefs[2]};
+    GenerateTempObjArray(Exprs, TempStmts, StmtCtx);
+
+    Expr *CallExpr = Actions.ActOnLuaFunctionCall(FSVARVarRefs[0], Exprs[0]).get();
+
+    GenerateAssignStmts(InLoc, LocalVarRefs, CallExpr, TempStmts, StmtCtx);
+    
+    ParseScope InnerScope(this, Scope::DeclScope, false, true);
+    StmtResult Body(ParseCompoundStatement());
+    InnerScope.Exit();
+    SourceLocation EndLoc = ConsumeToken(); // eat 'end'
+
+    Body = Actions.AddStmtsIntoCompStmt(TempStmts, Body.get(), false);
+
+    Stmts.append(TempStmts);
+
+    ExprResult Var1Ref = Actions.BuildDeclRefExpr(cast<VarDecl>(LocalVars[0]),
+                                     cast<VarDecl>(LocalVars[0])->getType(),
+                                     VK_LValue, LocalVars[0]->getLocation());
+
+    ExprResult Nil = Actions.BuildNil();
+
+    ExprResult CondExpr = ActonBinOp(Var1Ref, tok::tildeequal, Nil);
+    CondExpr = Actions.BuildLuaBuiltinCallExpr(
+        "ConvertToBool", {CondExpr.get()}, CondExpr.get()->getSourceRange());
+    Sema::ConditionResult Cond = Actions.ActOnCondition(
+        getCurScope(), ForLoc, CondExpr.get(), Sema::ConditionKind::Boolean,
+        /*MissingOK=*/false);
+    ForScope.Exit();
+
+    return Actions.ActOnWhileStmt(ForLoc, ForLoc, Cond, DoLoc, Body.get());
+  }
+}
+
+StmtResult Parser::ParseRepeatStatement() {
+  SourceLocation RepeatLoc = ConsumeToken(); // eat repeat
+
+  ParseScope RepeatScope(this, Scope::BreakScope | Scope::ContinueScope);
+
+  ParseScope InnerScope(this, Scope::DeclScope, false, true);
+  StmtResult Body(ParseCompoundStatement());
+
+  SourceLocation UntilLoc = ConsumeToken(); // eat until
+
+  StmtVector Stmts;
+  ExprResult CondExpr =
+      ParseLuaExpression(NotTypeCast, &Stmts, ParsedStmtContext::Compound);
+  CondExpr = Actions.ConvertObjArrayToScalar(CondExpr.get());
+  CondExpr = Actions.BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr.get()},
+                                             CondExpr.get()->getSourceRange());
+  InnerScope.Exit();
+  RepeatScope.Exit();
+
+  return Actions.ActOnRepeatStmt(RepeatLoc, Body.get(), Stmts, UntilLoc,
+                          CondExpr.get());
 }
 
 /// ParseDoStatement
@@ -2364,7 +2814,8 @@ StmtResult Parser::ParseGotoStatement() {
     LabelDecl *LD = Actions.LookupOrCreateLabel(Tok.getIdentifierInfo(),
                                                 Tok.getLocation());
     Res = Actions.ActOnGotoStmt(GotoLoc, Tok.getLocation(), LD);
-    ConsumeToken();
+    if (!getLangOpts().LUA)
+      ConsumeToken();
   } else if (Tok.is(tok::star)) {
     // GNU indirect goto extension.
     Diag(Tok, diag::ext_gnu_indirect_goto);
@@ -2403,6 +2854,24 @@ StmtResult Parser::ParseContinueStatement() {
 StmtResult Parser::ParseBreakStatement() {
   SourceLocation BreakLoc = ConsumeToken();  // eat the 'break'.
   return Actions.ActOnBreakStmt(BreakLoc, getCurScope());
+}
+//retstat ::= return [explist] [;]
+StmtResult Parser::ParseLuaReturnStatement(StmtVector &Stmts,
+                                           ParsedStmtContext StmtCtx) {
+  SourceLocation ReturnLoc = ConsumeToken(); // eat the 'return'.
+  Expr *Ret;
+  if (Tok.isOneOf(tok::semi, tok::kw_end)) {
+    TryConsumeToken(tok::semi);
+    Ret = Actions
+              .BuildLuaBuiltinCallExpr("BuildEmptyArr", SmallVector<Expr *>(),
+                                       ReturnLoc)
+              .get();
+  } else {
+    SmallVector<Expr *> ExprList;
+    Ret = ParseLuaExprList(ExprList, Stmts, StmtCtx).get();
+    TryConsumeToken(tok::semi);
+  }
+  return Actions.ActOnReturnStmt(ReturnLoc, Ret, getCurScope());
 }
 
 /// ParseReturnStatement
@@ -2490,7 +2959,7 @@ StmtResult Parser::ParsePragmaLoopHint(StmtVector &Stmts,
 
 Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
   SourceLocation LBraceLoc;
-  if (!isLuaTopDeclContext()) {
+  if (!getLangOpts().LUA) {
     assert(Tok.is(tok::l_brace));
     LBraceLoc = Tok.getLocation();
   }

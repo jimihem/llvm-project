@@ -19637,6 +19637,14 @@ static bool actOnOMPReductionKindClause(
       case BO_ShrAssign:
       case BO_Comma:
         llvm_unreachable("Unexpected reduction operation");
+      case BO_LuaLAnd:
+      case BO_LuaLOr:
+      case BO_LuaXor:
+      case BO_LuaNE:
+      case BO_Exp:
+      case BO_Concat:
+      case BO_DivDiv:
+        assert(0);
       }
     }
     if (Init && DeclareReductionRef.isUnset()) {

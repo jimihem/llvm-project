@@ -155,6 +155,7 @@ public:
   bool shouldMangleCXXName(const NamedDecl *D) override;
   bool shouldMangleStringLiteral(const StringLiteral *SL) override;
   void mangleCXXName(GlobalDecl GD, raw_ostream &Out) override;
+  void mangleLuaName(GlobalDecl GD, raw_ostream &Out) override;
   void mangleVirtualMemPtrThunk(const CXXMethodDecl *MD,
                                 const MethodVFTableLocation &ML,
                                 raw_ostream &Out) override;
@@ -3434,6 +3435,27 @@ void MicrosoftCXXNameMangler::mangleType(const PipeType *T, Qualifiers,
   Extra.mangleIntegerLiteral(llvm::APSInt::get(T->isReadOnly()));
 
   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__clang"});
+}
+
+void MicrosoftMangleContextImpl::mangleLuaName(GlobalDecl GD,
+                                               raw_ostream &Out) {
+  Out << "@Lua";
+  const Decl *D = GD.getDecl();
+  if (auto Var = dyn_cast<VarDecl>(D)) {
+    Out << ".Var." << Var->getName();
+  } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
+    Out << ".CXXMethod." << Method->getNameAsString();
+  } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
+    Out << ".Fun." << Fun->getNameAsString();
+  }
+
+  if (auto Fun = dyn_cast<FunctionDecl>(D)) {
+    for (unsigned i = 0; i < Fun->getNumParams(); i++) {
+      Out << ".";
+      const ParmVarDecl *P = Fun->getParamDecl(i);
+      Out << P->getType().getAsString();
+    }
+  }
 }
 
 void MicrosoftMangleContextImpl::mangleCXXName(GlobalDecl GD,

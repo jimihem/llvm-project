@@ -439,6 +439,7 @@ class Parser : public CodeCompletionHandler {
   /// GNU statement expression. Checks whether we are actually at the end of
   /// a statement expression and builds a suitable expression statement.
   StmtResult handleExprStmt(ExprResult E, ParsedStmtContext StmtCtx);
+  bool UseString = true;
 
 public:
   Parser(Preprocessor &PP, Sema &Actions, bool SkipFunctionBodies);
@@ -1771,10 +1772,10 @@ public:
     IsTypeCast
   };
 
-  ExprResult
-  ParseExpression(TypeCastState isTypeCast = NotTypeCast,
-                  StmtVector *Stmts = nullptr, 
-                  ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
+  ExprResult ParseLuaExpression(TypeCastState isTypeCast, StmtVector *Stmts,
+                                ParsedStmtContext StmtCtx);
+
+  ExprResult ParseExpression(TypeCastState isTypeCast = NotTypeCast);
   ExprResult ParseConstantExpressionInExprEvalContext(
       TypeCastState isTypeCast = NotTypeCast);
   ExprResult ParseConstantExpression();
@@ -1801,25 +1802,25 @@ private:
 
   ExprResult ParseExpressionWithLeadingExtension(SourceLocation ExtLoc);
 
-  ExprResult ParseRHSOfBinaryExpression(ExprResult LHS,
-                                        prec::Level MinPrec);
+  ExprResult ParseRHSOfBinaryExpression(
+      ExprResult LHS, prec::Level MinPrec, StmtVector *Stmts = nullptr,
+      ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
   /// Control what ParseCastExpression will parse.
   enum CastParseKind {
     AnyCastExpr = 0,
     UnaryExprOnly,
     PrimaryExprOnly
   };
-  ExprResult ParseCastExpression(CastParseKind ParseKind,
-                                 bool isAddressOfOperand,
-                                 bool &NotCastExpr,
-                                 TypeCastState isTypeCast,
-                                 bool isVectorLiteral = false,
-                                 bool *NotPrimaryExpression = nullptr);
-  ExprResult ParseCastExpression(CastParseKind ParseKind,
-                                 bool isAddressOfOperand = false,
-                                 TypeCastState isTypeCast = NotTypeCast,
-                                 bool isVectorLiteral = false,
-                                 bool *NotPrimaryExpression = nullptr);
+  ExprResult ParseCastExpression(
+      CastParseKind ParseKind, bool isAddressOfOperand, bool &NotCastExpr,
+      TypeCastState isTypeCast, bool isVectorLiteral = false,
+      bool *NotPrimaryExpression = nullptr, StmtVector *Stmts = nullptr,
+      ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
+  ExprResult ParseCastExpression(
+      CastParseKind ParseKind, bool isAddressOfOperand = false,
+      TypeCastState isTypeCast = NotTypeCast, bool isVectorLiteral = false,
+      bool *NotPrimaryExpression = nullptr, StmtVector *Stmts = nullptr,
+      ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
 
   /// Returns true if the next token cannot start an expression.
   bool isNotExpressionStart();
@@ -1843,7 +1844,9 @@ private:
     return false;
   }
 
-  ExprResult ParsePostfixExpressionSuffix(ExprResult LHS);
+  ExprResult ParsePostfixExpressionSuffix(
+      ExprResult LHS, StmtVector *Stmts = nullptr,
+      ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
   ExprResult ParseUnaryExprOrTypeTraitExpression();
   ExprResult ParseBuiltinPrimaryExpression();
   ExprResult ParseSYCLUniqueStableNameExpression();
@@ -2050,12 +2053,15 @@ private:
   bool MayBeDesignationStart();
   ExprResult ParseBraceInitializer();
 
-  MultiExprArg ParseTableField(StmtVector &Stmts, ParsedStmtContext StmtCtx);
+  SmallVector<Expr *> ParseTableField(StmtVector &Stmts,
+                                      ParsedStmtContext StmtCtx);
 
   ExprResult ParseTableConstructor(StmtVector &Stmts, ParsedStmtContext StmtCtx);
 
-  ExprResult ParseLuaFunBody(StmtVector &Stmts,
-                                   ParsedStmtContext StmtCtx);
+  ExprResult ParseLuaFunBody(StmtVector &Stmts, ParsedStmtContext StmtCtx,
+                             bool HaveSelf = false);
+
+  ExprResult ParseLuaFunName(bool &HaveSelf);
 
   struct DesignatorCompletionInfo {
     SmallVectorImpl<Expr *> &InitExprs;
@@ -2108,6 +2114,16 @@ private:
       StmtVector &Stmts, ParsedStmtContext StmtCtx,
       SourceLocation *TrailingElseLoc, ParsedAttributes &DeclAttrs,
       ParsedAttributes &DeclSpecAttrs);
+  StmtResult ParseLuaExprStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx);
+  ExprResult ParseLuaFunCall(ExprResult PreFixExp, StmtVector &Stmts,
+                             ParsedStmtContext StmtCtx);
+  ExprResult GenerateTempObjArray(SmallVector<Expr *> &Exprs, StmtVector &Stmts,
+                                  ParsedStmtContext StmtCtx);
+  void GenerateAssignStmts(SourceLocation OpLoc, SmallVector<Expr *> &VarList,
+                           Expr *TempObjArrRef, StmtVector &Stmts,
+                           ParsedStmtContext StmtCtx);
+  ExprResult ParseLuaExprList(SmallVector<Expr *> &Exprs, StmtVector &Stmts,
+                              ParsedStmtContext StmtCtx);
   StmtResult ParseExprStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx);
   StmtResult ParseLabeledStatement(ParsedAttributes &Attrs,
                                    ParsedStmtContext StmtCtx);
@@ -2127,14 +2143,21 @@ private:
                                  SourceLocation Loc, Sema::ConditionKind CK,
                                  SourceLocation &LParenLoc,
                                  SourceLocation &RParenLoc);
+  StmtResult ParseLuaIfStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx);
   StmtResult ParseIfStatement(SourceLocation *TrailingElseLoc);
   StmtResult ParseSwitchStatement(SourceLocation *TrailingElseLoc);
-  StmtResult ParseWhileStatement(SourceLocation *TrailingElseLoc);
+  StmtResult ParseWhileStatement(SourceLocation *TrailingElseLoc,
+                                 StmtVector *Stmts = nullptr,
+                                 ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
+  StmtResult ParseLuaForStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx);
+  StmtResult ParseRepeatStatement();
   StmtResult ParseDoStatement();
   StmtResult ParseForStatement(SourceLocation *TrailingElseLoc);
   StmtResult ParseGotoStatement();
   StmtResult ParseContinueStatement();
   StmtResult ParseBreakStatement();
+  StmtResult ParseLuaReturnStatement(StmtVector &Stmts,
+                                     ParsedStmtContext StmtCtx);
   StmtResult ParseReturnStatement();
   StmtResult ParseAsmStatement(bool &msAsm);
   StmtResult ParseMicrosoftAsmStatement(SourceLocation AsmLoc);
@@ -2397,12 +2420,13 @@ private:
     StmtResult LoopVar;
   };
 
-  DeclGroupPtrTy
-  ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
-                   ParsedAttributes &DeclAttrs, ParsedAttributes &DeclSpecAttrs,
-                   SourceLocation *DeclSpecStart = nullptr,
-                   StmtVector *Stmts = nullptr,
-                   ParsedStmtContext StmtCtx = ParsedStmtContext::Compound);
+  void ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx);
+
+  DeclGroupPtrTy ParseDeclaration(DeclaratorContext Context,
+                                  SourceLocation &DeclEnd,
+                                  ParsedAttributes &DeclAttrs,
+                                  ParsedAttributes &DeclSpecAttrs,
+                                  SourceLocation *DeclSpecStart = nullptr);
   DeclGroupPtrTy
   ParseSimpleDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
                          ParsedAttributes &DeclAttrs,

@@ -412,6 +412,14 @@ BINARY_OPERATION(XorAssign, "^=")
 BINARY_OPERATION(OrAssign, "|=")
 // [C99 6.5.17] Comma operator.
 BINARY_OPERATION(Comma, ",")
+//lua
+BINARY_OPERATION(DivDiv,  "//")
+BINARY_OPERATION(Exp,      "^")
+BINARY_OPERATION(LuaXor,   "~")
+BINARY_OPERATION(Concat,  "..")
+BINARY_OPERATION(LuaNE,   "~=")
+BINARY_OPERATION(LuaLAnd, "and")
+BINARY_OPERATION(LuaLOr,  "or")
 
 
 //===- Unary Operations ---------------------------------------------------===//
@@ -439,6 +447,8 @@ UNARY_OPERATION(Imag, "__imag")
 UNARY_OPERATION(Extension, "__extension__")
 // [C++ Coroutines] co_await operator
 UNARY_OPERATION(Coawait, "co_await")
+// [lua] not
+UNARY_OPERATION(hash, "#")
 
 #undef CAST_OPERATION
 #undef BINARY_OPERATION

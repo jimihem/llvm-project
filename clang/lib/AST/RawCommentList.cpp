@@ -29,7 +29,7 @@ std::pair<RawComment::CommentKind, bool> getCommentKind(StringRef Comment,
     if ((Comment.size() < 2) || Comment[0] != '-' || Comment[1] != '-')
       return std::make_pair(RawComment::RCK_Invalid, false);
     else
-      return std::make_pair(RawComment::RCK_Lua, true);
+      return std::make_pair(RawComment::RCK_Lua, false);
   }
   const size_t MinCommentLength = ParseAllComments ? 2 : 3;
   if ((Comment.size() < MinCommentLength) || Comment[0] != '/')
@@ -114,10 +114,10 @@ static bool isOrdinaryKind(RawComment::CommentKind K) {
 }
 
 RawComment::RawComment(const SourceManager &SourceMgr, SourceRange SR,
-                       const CommentOptions &CommentOpts, bool Merged) :
-    Range(SR), RawTextValid(false), BriefTextValid(false),
-    IsAttached(false), IsTrailingComment(false),
-    IsAlmostTrailingComment(false) {
+                       const CommentOptions &CommentOpts, bool Merged)
+    : Range(SR), RawTextValid(false), BriefTextValid(false), IsAttached(false),
+      IsTrailingComment(false), IsAlmostTrailingComment(false),
+      IsLuaComment(CommentOpts.ParseLuaComments) {
   // Extract raw comment text, if possible.
   if (SR.getBegin() == SR.getEnd() || getRawText(SourceMgr).empty()) {
     Kind = RCK_Invalid;
@@ -216,7 +216,7 @@ comments::FullComment *RawComment::parse(const ASTContext &Context,
   comments::Lexer L(Context.getAllocator(), Context.getDiagnostics(),
                     Context.getCommentCommandTraits(),
                     getSourceRange().getBegin(),
-                    RawText.begin(), RawText.end());
+                    RawText.begin(), RawText.end(), true, IsLuaComment);
   comments::Sema S(Context.getAllocator(), Context.getSourceManager(),
                    Context.getDiagnostics(),
                    Context.getCommentCommandTraits(),

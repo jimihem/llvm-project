@@ -3409,6 +3409,32 @@ private:
   /// All OMPTraitInfo objects live in this collection, one per
   /// `pragma omp [begin] declare variant` directive.
   SmallVector<std::unique_ptr<OMPTraitInfo>, 4> OMPTraitInfoVector;
+
+public:
+  unsigned ObjTag = 0;
+  unsigned ObjArrTag = 0;
+  unsigned MethodTag = 0;
+  unsigned ClosureTag = 0;
+  unsigned TableTag = 0;
+  std::string getLuaTempObjName() {
+    return "__Lua_Temp_Obj_" + std::to_string(ObjTag++);
+  }
+
+  std::string getLuaTempObjArrName() {
+    return "__Lua_Temp_Obj_Arr_" + std::to_string(ObjArrTag++);
+  }
+
+  std::string getLuaTempMethodName() {
+    return "__Lua_Temp_Method_" + std::to_string(MethodTag++);
+  }
+
+  std::string getLuaTempClosureName() {
+    return "__Lua_Temp_Closure_" + std::to_string(ClosureTag++);
+  }
+
+  std::string getLuaTempTableName() {
+    return "__Lua_Temp_Table_" + std::to_string(TableTag++);
+  }
 };
 
 /// Insertion operator for diagnostics.

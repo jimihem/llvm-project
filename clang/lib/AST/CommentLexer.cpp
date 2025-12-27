@@ -218,7 +218,7 @@ const char *skipCommandName(const char *BufferPtr, const char *BufferEnd) {
 
 /// Return the one past end pointer for BCPL comments.
 /// Handles newlines escaped with backslash or trigraph for backslahs.
-const char *findBCPLCommentEnd(const char *BufferPtr, const char *BufferEnd) {
+const char *findBCPLCommentEnd(const char *BufferPtr, const char *BufferEnd, bool IsLua) {
   const char *CurPtr = BufferPtr;
   while (CurPtr != BufferEnd) {
     while (!isVerticalWhitespace(*CurPtr)) {
@@ -226,6 +226,8 @@ const char *findBCPLCommentEnd(const char *BufferPtr, const char *BufferEnd) {
       if (CurPtr == BufferEnd)
         return BufferEnd;
     }
+    if (IsLua)
+      return CurPtr;
     // We found a newline, check if it is escaped.
     const char *EscapePtr = CurPtr - 1;
     while(isHorizontalWhitespace(*EscapePtr))
@@ -244,9 +246,26 @@ const char *findBCPLCommentEnd(const char *BufferPtr, const char *BufferEnd) {
 
 /// Return the one past end pointer for C comments.
 /// Very dumb, does not handle escaped newlines or trigraphs.
-const char *findCCommentEnd(const char *BufferPtr, const char *BufferEnd) {
+const char *findCCommentEnd(const char *BufferPtr, const char *BufferEnd,
+                            bool IsLua, unsigned EqualCount) {
   for ( ; BufferPtr != BufferEnd; ++BufferPtr) {
-    if (*BufferPtr == '*') {
+    if (IsLua) {
+      if (*BufferPtr == ']') {
+        const char *Start = BufferPtr + 1;
+        bool Abort = false;
+        for (unsigned i = 0; i < EqualCount; i++) {
+          if (Start[i] != '=') {
+            Abort = true;
+            break;
+          }
+        }
+        if (Abort)
+          continue;
+        if (Start[EqualCount] == ']')
+          return BufferPtr;
+      }
+    }
+    else if (*BufferPtr == '*') {
       assert(BufferPtr + 1 != BufferEnd);
       if (*(BufferPtr + 1) == '/')
         return BufferPtr;
@@ -271,6 +290,8 @@ void Lexer::formTokenWithChars(Token &Result, const char *TokEnd,
 }
 
 const char *Lexer::skipTextToken() {
+  if (IsLua)
+    return CommentEnd;
   const char *TokenPtr = BufferPtr;
   assert(TokenPtr < CommentEnd);
   StringRef TokStartSymbols = ParseCommands ? "\n\r\\@\"&<" : "\n\r";
@@ -309,7 +330,7 @@ void Lexer::lexCommentText(Token &T) {
           TokenPtr = skipNewline(TokenPtr, CommentEnd);
           formTokenWithChars(T, TokenPtr, tok::newline);
 
-          if (CommentState == LCS_InsideCComment)
+          if (CommentState == LCS_InsideCComment && !IsLua)
             skipLineStartingDecorations();
           return;
 
@@ -318,7 +339,7 @@ void Lexer::lexCommentText(Token &T) {
     }
   };
 
-  if (!ParseCommands)
+  if (!ParseCommands || IsLua)
     return HandleNonCommandToken();
 
   switch (State) {
@@ -736,13 +757,15 @@ void Lexer::lexHTMLEndTag(Token &T) {
 
 Lexer::Lexer(llvm::BumpPtrAllocator &Allocator, DiagnosticsEngine &Diags,
              const CommandTraits &Traits, SourceLocation FileLoc,
-             const char *BufferStart, const char *BufferEnd, bool ParseCommands)
+             const char *BufferStart, const char *BufferEnd, bool ParseCommands,
+             bool Lua)
     : Allocator(Allocator), Diags(Diags), Traits(Traits),
       BufferStart(BufferStart), BufferEnd(BufferEnd), BufferPtr(BufferStart),
-      FileLoc(FileLoc), ParseCommands(ParseCommands),
+      FileLoc(FileLoc), ParseCommands(ParseCommands), IsLua(Lua),
       CommentState(LCS_BeforeComment), State(LS_Normal) {}
 
 void Lexer::lex(Token &T) {
+  unsigned EqualCount = 0;
 again:
   switch (CommentState) {
   case LCS_BeforeComment:
@@ -751,13 +774,19 @@ again:
       return;
     }
 
-    assert(*BufferPtr == '/');
+    assert(*BufferPtr == '/' || IsLua);
+    if (IsLua)
+      BufferPtr++;
     BufferPtr++; // Skip first slash.
     switch(*BufferPtr) {
+    default:
+      if (!IsLua)
+        llvm_unreachable("second character of comment should be '/' or '*'");
     case '/': { // BCPL comment.
-      BufferPtr++; // Skip second slash.
+      if (!IsLua)
+        BufferPtr++; // Skip second slash.
 
-      if (BufferPtr != BufferEnd) {
+      if (BufferPtr != BufferEnd && !IsLua) {
         // Skip Doxygen magic marker, if it is present.
         // It might be missing because of a typo //< or /*<, or because we
         // merged this non-Doxygen comment into a bunch of Doxygen comments
@@ -770,42 +799,53 @@ again:
       // Skip less-than symbol that marks trailing comments.
       // Skip it even if the comment is not a Doxygen one, because //< and /*<
       // are frequent typos.
-      if (BufferPtr != BufferEnd && *BufferPtr == '<')
+      if (BufferPtr != BufferEnd && (!IsLua && * BufferPtr == '<'))
         BufferPtr++;
 
       CommentState = LCS_InsideBCPLComment;
       if (State != LS_VerbatimBlockBody && State != LS_VerbatimBlockFirstLine)
         State = LS_Normal;
-      CommentEnd = findBCPLCommentEnd(BufferPtr, BufferEnd);
+      CommentEnd = findBCPLCommentEnd(BufferPtr, BufferEnd, IsLua);
       goto again;
     }
+    case '[':
+      if (IsLua) {
+        BufferPtr++;
+        while (*BufferPtr != '[') {
+          BufferPtr++;
+          EqualCount++;
+        }
+      }
     case '*': { // C comment.
       BufferPtr++; // Skip star.
 
       // Skip Doxygen magic marker.
       const char C = *BufferPtr;
-      if ((C == '*' && *(BufferPtr + 1) != '/') || C == '!')
+      if (!IsLua && ((C == '*' && *(BufferPtr + 1) != '/') || C == '!'))
         BufferPtr++;
 
       // Skip less-than symbol that marks trailing comments.
-      if (BufferPtr != BufferEnd && *BufferPtr == '<')
+      if (!IsLua && BufferPtr != BufferEnd && *BufferPtr == '<')
         BufferPtr++;
 
       CommentState = LCS_InsideCComment;
       State = LS_Normal;
-      CommentEnd = findCCommentEnd(BufferPtr, BufferEnd);
+      CommentEnd = findCCommentEnd(BufferPtr, BufferEnd, IsLua, EqualCount);
       goto again;
     }
-    default:
-      llvm_unreachable("second character of comment should be '/' or '*'");
     }
 
   case LCS_BetweenComments: {
     // Consecutive comments are extracted only if there is only whitespace
     // between them.  So we can search for the start of the next comment.
     const char *EndWhitespace = BufferPtr;
-    while(EndWhitespace != BufferEnd && *EndWhitespace != '/')
-      EndWhitespace++;
+    if (IsLua) {
+      while (EndWhitespace != BufferEnd && *EndWhitespace != '-')
+        EndWhitespace++;
+    } else {
+      while (EndWhitespace != BufferEnd && *EndWhitespace != '/')
+        EndWhitespace++;
+    }
 
     // Turn any whitespace between comments (and there is only whitespace
     // between them -- guaranteed by comment extraction) into a newline.  We
@@ -825,9 +865,13 @@ again:
     } else {
       // Skip C comment closing sequence.
       if (CommentState == LCS_InsideCComment) {
-        assert(BufferPtr[0] == '*' && BufferPtr[1] == '/');
-        BufferPtr += 2;
-        assert(BufferPtr <= BufferEnd);
+        if (IsLua) {
+          BufferPtr += 2 + EqualCount;
+        } else {
+          assert(BufferPtr[0] == '*' && BufferPtr[1] == '/');
+          BufferPtr += 2;
+          assert(BufferPtr <= BufferEnd);
+        }
 
         // Synthenize newline just after the C comment, regardless if there is
         // actually a newline.

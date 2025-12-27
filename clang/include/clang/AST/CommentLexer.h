@@ -245,7 +245,7 @@ private:
   /// separate tokens inside the comment body. If false, the comment text will
   /// be parsed into text and newline tokens.
   bool ParseCommands;
-
+  bool IsLua = false;
   enum LexerCommentState : uint8_t {
     LCS_BeforeComment,
     LCS_InsideBCPLComment,
@@ -352,7 +352,7 @@ public:
   Lexer(llvm::BumpPtrAllocator &Allocator, DiagnosticsEngine &Diags,
         const CommandTraits &Traits, SourceLocation FileLoc,
         const char *BufferStart, const char *BufferEnd,
-        bool ParseCommands = true);
+        bool ParseCommands = true, bool Lua = false);
 
   void lex(Token &T);
 

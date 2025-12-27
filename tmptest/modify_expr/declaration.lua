@@ -5,11 +5,11 @@
 		 local function Name funcbody | 
 		 local namelist [‘=’ explist] 
 ]]
-
-local a, b, c = { [f] = g; "x", "y"; x = 1, f, [30] = 23; 45 }, {}
-
 local function firstFun (a, b)
 end
 
 function secondFun (a, b)
 end
+
+local a, b, c = { [f] = g; "x", "y"; x = 1, f, [30] = 23; 45 }, {}
+

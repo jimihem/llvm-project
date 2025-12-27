@@ -1710,6 +1710,12 @@ ExprResult Sema::ActOnMemberAccessExpr(Scope *S, Expr *Base,
                                        SourceLocation TemplateKWLoc,
                                        UnqualifiedId &Id,
                                        Decl *ObjCImpDecl) {
+  if (getLangOpts().LUA) {
+    Base = ConvertObjArrayToScalar(Base);
+    Expr *Idx = BuildStringFromId(Id).get();
+    return BuildLuaBuiltinCallExpr("GetMember", {Base, Idx},
+                                   SourceRange(OpLoc, Id.getEndLoc()));
+  }
   if (SS.isSet() && SS.isInvalid())
     return ExprError();
 

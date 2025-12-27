@@ -15015,20 +15015,30 @@ void Sema::ActOnFinishKNRParamDeclarations(Scope *S, Declarator &D,
   }
 }
 
-Decl* Sema::ActOnStartOfLuaFunctionDef(Scope* S) {
+SmallVector<Expr *> Sema::ActOnFinishOfLuaFunctionDef(VarDecl *Closure,
+                                                      Decl *FD, Stmt *Body) {
+  LuaFunctionScopeInfo FSI = *cast<LuaFunctionScopeInfo>(getCurFunction());
+  ActOnFinishFunctionBody(FD, Body);
+
+  return ActOnClosure(&FSI, Closure, FD);
+}
+
+Decl *Sema::ActOnStartOfLuaFunctionDef(Scope *S,
+                                       SmallVector<IdentifierInfo *> &parlist,
+                                       SmallVector<SourceLocation> &parLocs) {
   Scope *ParentScope = S->getParent();
   FunctionDecl *DP = 0;
-  if (ParentScope == TUScope) {
+  if (/*ParentScope == TUScope*/0) {
     DP = Context.getTopFunctionDecl();
   } else {
     SourceLocation Loc;
-    QualType T = Context.getLuaMethodTy();
-    DP = FunctionDecl::Create(Context, CurContext, Loc, Loc, DeclarationName(),
-                              T, nullptr,
-                              SC_None);
+    QualType T = QualType(getDeclByName("MethodTy")->getFunctionType(), 0);
+    std::string FunName = Context.getLuaTempMethodName();
+    DP = FunctionDecl::Create(Context, CurContext, Loc, Loc,
+                              &Context.Idents.get(FunName), T, nullptr, SC_None);
 
-    QualType ObjectPtrArrayT =
-        Context.getTypeDeclType(cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray")));
+    QualType ObjectPtrArrayT = Context.getTypeDeclType(
+        cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray")));
     QualType ObjectPtrArrayRefT =
         Context.getLValueReferenceType(ObjectPtrArrayT);
     Qualifiers Qs;
@@ -15036,23 +15046,28 @@ Decl* Sema::ActOnStartOfLuaFunctionDef(Scope* S) {
     QualType ConstObjectPtrArrayRefT =
         Context.getQualifiedType(ObjectPtrArrayRefT, Qs);
 
-    QualType ObjectPtrT =
-        Context.getTypeDeclType(cast<CXXRecordDecl>(getDeclByName("ObjectPtr")));
-    QualType ObjectPtrRefT =
-        Context.getLValueReferenceType(ObjectPtrT);
-    QualType ConstObjectPtrRefT =
-        Context.getQualifiedType(ObjectPtrRefT, Qs);
+    QualType ObjectPtrT = Context.getTypeDeclType(
+        cast<CXXRecordDecl>(getDeclByName("ObjectPtr")));
+    QualType ObjectPtrRefT = Context.getLValueReferenceType(ObjectPtrT);
+    QualType ConstObjectPtrRefT = Context.getQualifiedType(ObjectPtrRefT, Qs);
 
     ParmVarDecl *Base =
         ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("Base"),
-                            ConstObjectPtrArrayRefT, nullptr, SC_None, nullptr);
+                            ConstObjectPtrRefT, nullptr, SC_None, nullptr);
     ParmVarDecl *Parms =
         ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("Parms"),
-                            ConstObjectPtrRefT, nullptr, SC_None, nullptr);
+                            ConstObjectPtrArrayRefT, nullptr, SC_None, nullptr);
     DP->setParams({Base, Parms});
     PushOnScopeChains(DP, ParentScope);
   }
   Decl *Dcl = ActOnStartOfFunctionDef(S, DP, nullptr, FnBodyKind::Other);
+
+  if (!parlist.empty()) {
+    LuaFunctionScopeInfo *FunScope =
+        cast<LuaFunctionScopeInfo>(getCurFunction());
+    FunScope->parlist = parlist;
+    FunScope->parLocs = parLocs;
+  }
   return Dcl;
 }
 
@@ -15366,7 +15381,7 @@ Decl *Sema::ActOnStartOfFunctionDef(Scope *FnBodyScope, Decl *D,
   } else {
     // Enter a new function scope
     if (getLangOpts().LUA)
-      PushCaptureScope();
+      PushLuaFunctionScope();
     else
       PushFunctionScope();
   }

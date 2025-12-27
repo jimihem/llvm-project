@@ -105,6 +105,9 @@ static CCMangling getCallingConvMangling(const ASTContext &Context,
 bool MangleContext::shouldMangleDeclName(const NamedDecl *D) {
   const ASTContext &ASTContext = getASTContext();
 
+  if (getASTContext().getLangOpts().LUA)
+    return true;
+
   CCMangling CC = getCallingConvMangling(ASTContext, D);
   if (CC != CCM_Other)
     return true;
@@ -139,6 +142,10 @@ bool MangleContext::shouldMangleDeclName(const NamedDecl *D) {
 void MangleContext::mangleName(GlobalDecl GD, raw_ostream &Out) {
   const ASTContext &ASTContext = getASTContext();
   const NamedDecl *D = cast<NamedDecl>(GD.getDecl());
+  if (ASTContext.getLangOpts().LUA) {
+    mangleLuaName(GD, Out);
+    return;
+  }
 
   // Any decl can be declared with __asm("foo") on it, and this takes precedence
   // over all other naming in the .o file.

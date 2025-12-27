@@ -1811,6 +1811,81 @@ void Parser::stripTypeAttributesOffDeclSpec(ParsedAttributes &Attrs,
   }
 }
 
+// function funcname funcbody |
+// local function Name funcbody |
+// local namelist[‘=’ explist]
+void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
+  if (getLangOpts().LUA) {
+    if (Tok.is(tok::kw_local) && NextToken().is(tok::kw_function)) {
+      ConsumeToken(); //eat 'local'
+      ConsumeToken(); //eat 'function'
+      assert(Tok.is(tok::identifier));
+      UnqualifiedId Id;
+      CXXScopeSpec SS;
+      ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
+                         nullptr, Id);
+      VarDecl *LocalVar = Actions.ActOnLocalVariable(Id);
+      Actions.AddInitializerToDecl(LocalVar, Actions.BuildNil().get(), false);
+      Stmts.push_back(
+          Actions
+              .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                             Id.getBeginLoc(), Id.getEndLoc())
+              .get());
+
+      Expr *Body = ParseLuaFunBody(Stmts, StmtCtx).get();
+      Expr *LocalVarRef = Actions.BuildDeclRefExpr(
+          LocalVar, LocalVar->getType(), VK_LValue, Id.getBeginLoc());
+
+      ExprResult ModExpr = Actions.BuildLuaBuiltinCallExpr(
+          "BuildModifyExpr", {LocalVarRef, Body}, Id.getSourceRange());
+      Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+    } else if (Tok.is(tok::kw_function)) {
+      ConsumeToken(); // eat 'function'
+      bool HaveSelf = false;
+      Expr *Funcname = ParseLuaFunName(HaveSelf).get();
+
+      Expr *Body = ParseLuaFunBody(Stmts, StmtCtx, HaveSelf).get();
+      Expr *ModExpr =
+          Actions
+              .ActOnBinOp(getCurScope(), Body->getSourceRange().getBegin(),
+                          tok::equal, Funcname, Body)
+              .get();
+      Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+    } else {
+      ConsumeToken();//eat 'local'
+      SmallVector<IdentifierInfo *> Varlist;
+      SmallVector<SourceLocation> VarLocs;
+      VarLocs.push_back(Tok.getLocation());
+      Varlist.push_back(Tok.getIdentifierInfo());
+      ConsumeToken(); // eat 'id'
+      while (TryConsumeToken(tok::comma)) {
+        VarLocs.push_back(Tok.getLocation());
+        Varlist.push_back(Tok.getIdentifierInfo());
+        ConsumeToken(); // eat 'id'
+      }
+      ConsumeToken(); // eat '='
+      SmallVector<Expr *> ExprList;
+      Expr *ExprLst = ParseLuaExprList(ExprList, Stmts, StmtCtx).get();
+
+      SmallVector<Decl *> LocalVars;
+      for (size_t i = 0; i < Varlist.size(); i++) {
+        UnqualifiedId Id;
+        Id.setIdentifier(Varlist[i], VarLocs[i]);
+        LocalVars.push_back(Actions.ActOnLocalVariable(Id));
+      }
+
+      Actions.ActOnLocalVarsInitial(LocalVars, ExprLst);
+
+      Stmts.push_back(
+          Actions
+              .ActOnDeclStmt(Actions.BuildDeclaratorGroup(LocalVars),
+                             LocalVars.front()->getLocation(),
+                             LocalVars.back()->getLocation())
+              .get());
+    }
+  }
+}
+
 /// ParseDeclaration - Parse a full 'declaration', which consists of
 /// declaration-specifiers, some number of declarators, and a semicolon.
 /// 'Context' should be a DeclaratorContext value.  This returns the
@@ -1831,35 +1906,11 @@ Parser::DeclGroupPtrTy Parser::ParseDeclaration(DeclaratorContext Context,
                                                 SourceLocation &DeclEnd,
                                                 ParsedAttributes &DeclAttrs,
                                                 ParsedAttributes &DeclSpecAttrs,
-                                                SourceLocation *DeclSpecStart,
-                                                StmtVector *Stmts,
-                                                ParsedStmtContext StmtCtx) {
+                                                SourceLocation *DeclSpecStart) {
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
   // Must temporarily exit the objective-c container scope for
   // parsing c none objective-c decls.
   ObjCDeclContextSwitch ObjCDC(*this);
-
-  // function funcname funcbody | 
-  // local function Name funcbody |
-  // local namelist[‘=’ explist] 
-  if (getLangOpts().LUA) {
-    if (Tok.is(tok::kw_local) && NextToken().is(tok::kw_function)) {
-      ConsumeToken();
-      ConsumeToken();
-      assert(Tok.is(tok::identifier));
-      UnqualifiedId Id;
-      CXXScopeSpec SS;
-      ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false, nullptr, Id);
-      VarDecl* LocalVar = Actions.ActOnLocalVariable(Id);
-      ExprResult Body = ParseLuaFunBody(*Stmts, StmtCtx);
-      Actions.AddInitializerToDecl(LocalVar, Body.get(), false);
-      return Actions.ConvertDeclToDeclGroup(LocalVar);
-    } else if (Tok.is(tok::kw_function)) {
-
-    } else {
-
-    }
-  }
 
   Decl *SingleDecl = nullptr;
   switch (Tok.getKind()) {

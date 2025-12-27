@@ -122,17 +122,19 @@ using namespace clang;
 ///         assignment-expression ...[opt]
 ///         expression ',' assignment-expression ...[opt]
 /// \endverbatim
-ExprResult Parser::ParseExpression(TypeCastState isTypeCast,
-                                   StmtVector *Stmts,
-                                   ParsedStmtContext StmtCtx) {
-  if (getLangOpts().LUA) {
-    if (Tok.is(tok::l_brace))
-      return ParseTableConstructor(*Stmts, StmtCtx);
-    ExprResult LHS(ParseCastExpression(AnyCastExpr));
-    return ParseRHSOfBinaryExpression(LHS, prec::Conditional);
-  }
+ExprResult Parser::ParseExpression(TypeCastState isTypeCast) {
   ExprResult LHS(ParseAssignmentExpression(isTypeCast));
   return ParseRHSOfBinaryExpression(LHS, prec::Comma);
+}
+
+// exp ::=  nil | false | true | Numeral | LiteralString | ‘...’ | functiondef |
+//    prefixexp | tableconstructor | exp binop exp | unop exp
+ExprResult Parser::ParseLuaExpression(TypeCastState isTypeCast,
+                                      StmtVector *Stmts,
+                                      ParsedStmtContext StmtCtx) {
+  ExprResult LHS(ParseCastExpression(AnyCastExpr, false, NotTypeCast, false,
+                                     nullptr, Stmts, StmtCtx));
+  return ParseRHSOfBinaryExpression(LHS, prec::Conditional, Stmts, StmtCtx);
 }
 
 /// This routine is called when the '@' is seen and consumed.
@@ -297,7 +299,7 @@ Parser::ParseConstraintLogicalAndExpression(bool IsTrailingRequiresClause) {
         // Check if the following tokens must be a part of a non-primary
         // expression
         getBinOpPrecedence(Tok.getKind(), GreaterThanIsOperator,
-                           /*CPlusPlus11=*/true) > prec::LogicalAnd ||
+                           /*CPlusPlus11=*/true, getLangOpts().LUA) > prec::LogicalAnd ||
         // Postfix operators other than '(' (which will be checked for in
         // CheckConstraintExpression).
         Tok.isOneOf(tok::period, tok::plusplus, tok::minusminus) ||
@@ -397,16 +399,19 @@ bool Parser::isFoldOperator(prec::Level Level) const {
 }
 
 bool Parser::isFoldOperator(tok::TokenKind Kind) const {
-  return isFoldOperator(getBinOpPrecedence(Kind, GreaterThanIsOperator, true));
+  return isFoldOperator(
+      getBinOpPrecedence(Kind, GreaterThanIsOperator, true, getLangOpts().LUA));
 }
 
 /// Parse a binary expression that starts with \p LHS and has a
 /// precedence of at least \p MinPrec.
-ExprResult
-Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
+ExprResult Parser::ParseRHSOfBinaryExpression(ExprResult LHS,
+                                              prec::Level MinPrec,
+                                              StmtVector *Stmts,
+                                              ParsedStmtContext StmtCtx) {
   prec::Level NextTokPrec = getBinOpPrecedence(Tok.getKind(),
                                                GreaterThanIsOperator,
-                                               getLangOpts().CPlusPlus11);
+                         getLangOpts().CPlusPlus11, getLangOpts().LUA);
   SourceLocation ColonLoc;
 
   auto SavedType = PreferredType;
@@ -447,7 +452,7 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
 
     // If the next token is an ellipsis, then this is a fold-expression. Leave
     // it alone so we can handle it in the paren expression.
-    if (isFoldOperator(NextTokPrec) && Tok.is(tok::ellipsis)) {
+    if (!getLangOpts().LUA && isFoldOperator(NextTokPrec) && Tok.is(tok::ellipsis)) {
       // FIXME: We can't check this via lookahead before we consume the token
       // because that tickles a lexer bug.
       PP.EnterToken(Tok, /*IsReinject*/true);
@@ -552,6 +557,10 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
       RHSIsInitList = true;
     } else if (getLangOpts().CPlusPlus && NextTokPrec <= prec::Conditional)
       RHS = ParseAssignmentExpression();
+    else if (getLangOpts().LUA) {
+      RHS = ParseCastExpression(AnyCastExpr, false, NotTypeCast, false, nullptr,
+                                Stmts, StmtCtx);
+    }
     else
       RHS = ParseCastExpression(AnyCastExpr);
 
@@ -568,11 +577,13 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
     // operator immediately to the right of the RHS.
     prec::Level ThisPrec = NextTokPrec;
     NextTokPrec = getBinOpPrecedence(Tok.getKind(), GreaterThanIsOperator,
-                                     getLangOpts().CPlusPlus11);
+                           getLangOpts().CPlusPlus11, getLangOpts().LUA);
 
     // Assignment and conditional expressions are right-associative.
-    bool isRightAssoc = ThisPrec == prec::Conditional ||
-                        ThisPrec == prec::Assignment;
+    bool isRightAssoc =
+        getLangOpts().LUA
+            ? (ThisPrec == prec::LuaExp || ThisPrec == prec::ConCat)
+            : (ThisPrec == prec::Conditional || ThisPrec == prec::Assignment);
 
     // Get the precedence of the operator to the right of the RHS.  If it binds
     // more tightly with RHS than we do, evaluate it completely first.
@@ -602,7 +613,7 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
       }
 
       NextTokPrec = getBinOpPrecedence(Tok.getKind(), GreaterThanIsOperator,
-                                       getLangOpts().CPlusPlus11);
+                             getLangOpts().CPlusPlus11, getLangOpts().LUA);
     }
 
     if (!RHS.isInvalid() && RHSIsInitList) {
@@ -676,25 +687,34 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
   }
 }
 
-MultiExprArg Parser::ParseTableField(StmtVector &Stmts,
+SmallVector<Expr *> Parser::ParseTableField(StmtVector &Stmts,
                                      ParsedStmtContext StmtCtx) {
-  SmallVector<Expr *, 4> Fields;
+  SmallVector<Expr *> Fields;
+  bool HasKey = false;
   if (Tok.is(tok::l_square)) {
     BalancedDelimiterTracker T(*this, tok::l_square);
     T.consumeOpen();
-    Fields.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    Fields.push_back(Actions.ConvertObjArrayToScalar(ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get()));
     T.consumeClose();
     ConsumeToken();
+    HasKey = true;
   } else if (Tok.is(tok::identifier) && NextToken().is(tok::equal)) {
     UnqualifiedId Id;
     Id.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
     Fields.push_back(Actions.ActOnTableFieldName(Id).get());
     ConsumeToken();
     ConsumeToken();
-  } else {
-    Fields.push_back(Actions.ActOnNil(Tok.getLocation()).get());
+    HasKey = true;
   }
-  Fields.push_back(ParseExpression(NotTypeCast, &Stmts, StmtCtx).get());
+  
+  Expr *Value = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
+  bool MaybeArr =
+      !HasKey &&
+      ((Tok.isOneOf(tok::comma, tok::semi) && NextToken().is(tok::r_brace)) ||
+       Tok.is(tok::r_brace));
+  if (!MaybeArr)
+    Value = Actions.ConvertObjArrayToScalar(Value);
+  Fields.push_back(Value);
   return Fields;
 }
 
@@ -707,72 +727,149 @@ ExprResult Parser::ParseTableConstructor(StmtVector &Stmts,
                                          ParsedStmtContext StmtCtx) { 
   BalancedDelimiterTracker T(*this, tok::l_brace);
   T.consumeOpen();
-  SmallVector<Expr *, 4> Fields;
+  
+  VarDecl* Table = Actions.CreateLuaTempTableObjPtrObjVar(T.getOpenLocation());
+  Stmts.push_back(Actions
+                      .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(Table),
+                                     Table->getLocation(), Table->getLocation())
+                      .get());
+
+  Expr *TableRef = Actions.BuildDeclRefExpr(Table, Table->getType(), VK_LValue,
+                                            T.getOpenLocation());
+  SmallVector<Expr *> Fields;
   if (Tok.isNot(tok::r_brace)) {
-    MultiExprArg Ret = ParseTableField(Stmts, StmtCtx);
 
-    Fields.push_back(Ret.front());
-    Fields.push_back(Ret.back());
-
-    while (Tok.isOneOf(tok::comma, tok::semi)) {
-      ConsumeToken();
-      Ret = ParseTableField(Stmts, StmtCtx);
-
-      Fields.push_back(Ret.front());
-      Fields.push_back(Ret.back());
-    }
+    do {
+      SmallVector<Expr *> Ret = ParseTableField(Stmts, StmtCtx);
+      Expr *E;
+      if (Ret.size() == 1) {
+        if (Actions.IsObjArrayType(Ret[0]->getType())) {
+          E = Actions
+                  .BuildLuaBuiltinCallExpr("AddMembers", {TableRef, Ret[0]},
+                                           Ret[0]->getSourceRange())
+                  .get();
+        } else {
+          E = Actions
+                  .BuildLuaBuiltinCallExpr("AddMember", {TableRef, Ret[0]},
+                                           Ret[0]->getSourceRange())
+                  .get();
+        }
+      } else {
+        E = Actions
+                .BuildLuaBuiltinCallExpr(
+                    "SetMember", {TableRef, Ret[0], Ret[1]},
+                    SourceRange(Ret[0]->getBeginLoc(), Ret[1]->getEndLoc()))
+                .get();
+      }
+      Stmts.push_back(handleExprStmt(E, StmtCtx).get());
+    } while ((TryConsumeToken(tok::comma) || TryConsumeToken(tok::semi)) &&
+             Tok.isNot(tok::r_brace));
   }
   T.consumeClose();
-  SmallVector<Expr*> Exprs = Actions.ActOnTableConstructor(Fields);
-  if (Exprs.size() > 1) {
-    for (size_t i = 0; i < Exprs.size() - 1; i++) {
-      Stmts.push_back(handleExprStmt(Exprs[i], StmtCtx).get());
-    }
+  
+  return TableRef;
+}
+
+ExprResult Parser::ParseLuaFunName(bool &HaveSelf) {
+  UnqualifiedId Id;
+  CXXScopeSpec SS;
+  ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
+                     nullptr, Id);
+  ExprResult PrimExpr = Actions.ActOnIdExpression(getCurScope(), SS, SourceLocation(), Id, false,
+                            false);
+  while (TryConsumeToken(tok::period)) {
+    SourceLocation OpLoc = PrevTokLocation;
+    ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
+                       nullptr, Id);
+    PrimExpr = Actions.ActOnMemberAccessExpr(getCurScope(), PrimExpr.get(), OpLoc,
+                                  tok::period, SS, SourceLocation(), Id, nullptr);
   }
-  return Exprs.back();
+
+  if (TryConsumeToken(tok::colon)) {
+    SourceLocation OpLoc = PrevTokLocation;
+    ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
+                       nullptr, Id);
+    PrimExpr = Actions.ActOnMemberAccessExpr(getCurScope(), PrimExpr.get(),
+                                             OpLoc, tok::period, SS,
+                                             SourceLocation(), Id, nullptr);
+  }
+  return PrimExpr;
 }
 
 //funcbody ::= ‘(’ [parlist] ‘)’ block end
 // parlist ::= namelist [‘,’ ‘...’] | ‘...’
 ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
-                                   ParsedStmtContext StmtCtx) {
+                                   ParsedStmtContext StmtCtx, bool HaveSelf) {
   BalancedDelimiterTracker T(*this, tok::l_paren);
-  SmallVector<UnqualifiedId> parlist;
-  UnqualifiedId Par;
+  SmallVector<IdentifierInfo *> parlist;
+  SmallVector<SourceLocation> parLocs;
   T.consumeOpen();
+  SourceLocation FunStartLoc = T.getOpenLocation();
+
+  if (HaveSelf) {
+    parLocs.push_back(T.getOpenLocation());
+    parlist.push_back(&Actions.Context.Idents.get("self"));
+  }
+
   bool IsVar = false;
   if (Tok.isNot(tok::r_paren)) {
     if (Tok.is(tok::identifier)) {
-      Par.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
-      parlist.push_back(Par);
-      while (Tok.is(tok::comma)) {
-        ConsumeToken();
+      parLocs.push_back(Tok.getLocation());
+      parlist.push_back(Tok.getIdentifierInfo());
+      ConsumeToken();
+      while (TryConsumeToken(tok::comma)) {
         if (Tok.is(tok::ellipsis)) {
-          IsVar = true;
-          Par.setIdentifier(&Actions.Context.Idents.get("VarList"),
-                            Tok.getLocation());
-          parlist.push_back(Par);
           break;
         } else {
-          Par.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
-          parlist.push_back(Par);
+          parLocs.push_back(Tok.getLocation());
+          parlist.push_back(Tok.getIdentifierInfo());
+          ConsumeToken();
         }
       }
-    } else {
+    } 
+
+    if (Tok.is(tok::ellipsis)) {
       IsVar = true;
-      Par.setIdentifier(&Actions.Context.Idents.get("VarList"),
-                        Tok.getLocation());
-      parlist.push_back(Par);
+      parLocs.push_back(Tok.getLocation());
+      parlist.push_back(&Actions.Context.Idents.get("VarList"));
+      ConsumeToken();
+      if (Tok.is(tok::identifier)) {
+        parLocs.push_back(Tok.getLocation());
+        parlist.push_back(Tok.getIdentifierInfo());
+        ConsumeToken();
+      }
     }
   }
   T.consumeClose();
 
+  VarDecl *Closure = Actions.CreateLuaTempClosureObjPtrVar(FunStartLoc);
+  Stmts.push_back(Actions
+                      .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(Closure),
+                                     T.getOpenLocation(), T.getCloseLocation())
+                      .get());
+
   ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
                                  Scope::CompoundStmtScope);
-  Decl *FD = Actions.ActOnStartOfLuaFunctionDef(getCurScope());
+  Decl *FD =
+      Actions.ActOnStartOfLuaFunctionDef(getCurScope(), parlist, parLocs);
+  FD->setLocation(T.getOpenLocation());
 
+  StmtResult FnBody(ParseCompoundStatementBody());
+  SourceLocation FunEndLoc = ConsumeToken(); //eat 'end'
+  BodyScope.Exit();
+  Stmts.push_back(Actions
+                      .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(FD),
+                                     FunStartLoc, FunEndLoc)
+                      .get());
 
-  return ExprResult();
+  SmallVector<Expr *> Exprs =
+      Actions.ActOnFinishOfLuaFunctionDef(Closure, FD, FnBody.get());
+  for (size_t i = 0; i < Exprs.size(); i++) {
+    Stmts.push_back(handleExprStmt(Exprs[i], StmtCtx).get());
+  }
+
+  return Actions.BuildDeclRefExpr(Closure, Closure->getType(), VK_LValue,
+                                  Closure->getLocation());
 }
 
 /// Parse a cast-expression, unary-expression or primary-expression, based
@@ -781,18 +878,15 @@ ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
 /// \p isAddressOfOperand exists because an id-expression that is the
 /// operand of address-of gets special treatment due to member pointers.
 ///
-ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
-                                       bool isAddressOfOperand,
-                                       TypeCastState isTypeCast,
-                                       bool isVectorLiteral,
-                                       bool *NotPrimaryExpression) {
+ExprResult
+Parser::ParseCastExpression(CastParseKind ParseKind, bool isAddressOfOperand,
+                            TypeCastState isTypeCast, bool isVectorLiteral,
+                            bool *NotPrimaryExpression, StmtVector *Stmts,
+                            ParsedStmtContext StmtCtx) {
   bool NotCastExpr;
-  ExprResult Res = ParseCastExpression(ParseKind,
-                                       isAddressOfOperand,
-                                       NotCastExpr,
-                                       isTypeCast,
-                                       isVectorLiteral,
-                                       NotPrimaryExpression);
+  ExprResult Res = ParseCastExpression(ParseKind, isAddressOfOperand,
+                                       NotCastExpr, isTypeCast, isVectorLiteral,
+                                       NotPrimaryExpression, Stmts, StmtCtx);
   if (NotCastExpr)
     Diag(Tok, diag::err_expected_expression);
   return Res;
@@ -1021,12 +1115,11 @@ class CastExpressionIdValidator final : public CorrectionCandidateCallback {
 ///                   '__is_rvalue_expr'
 /// \endverbatim
 ///
-ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
-                                       bool isAddressOfOperand,
-                                       bool &NotCastExpr,
-                                       TypeCastState isTypeCast,
-                                       bool isVectorLiteral,
-                                       bool *NotPrimaryExpression) {
+ExprResult
+Parser::ParseCastExpression(CastParseKind ParseKind, bool isAddressOfOperand,
+                            bool &NotCastExpr, TypeCastState isTypeCast,
+                            bool isVectorLiteral, bool *NotPrimaryExpression,
+    StmtVector *Stmts, ParsedStmtContext StmtCtx) {
   ExprResult Res;
   tok::TokenKind SavedKind = Tok.getKind();
   auto SavedType = PreferredType;
@@ -1049,6 +1142,14 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   // by postfix exprs should set AllowSuffix to false.
   switch (SavedKind) {
   case tok::l_paren: {
+    if (getLangOpts().LUA) {
+      BalancedDelimiterTracker T(*this, tok::l_paren);
+      T.consumeOpen();
+      Res = ParseLuaExpression(NotTypeCast, Stmts, StmtCtx);
+      Res = Actions.ConvertObjArrayToScalar(Res.get());
+      T.consumeClose();
+      break;
+    }
     // If this expression is limited to being a unary-expression, the paren can
     // not start a cast expression.
     ParenParseOption ParenExprType;
@@ -1101,11 +1202,13 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
 
     Res = Actions.ActOnNumericConstant(Tok, /*UDLScope*/getCurScope());
     ConsumeToken();
+    AllowSuffix = getLangOpts().LUA ? false : AllowSuffix;
     break;
 
   case tok::kw_true:
   case tok::kw_false:
     Res = ParseCXXBoolLiteral();
+    AllowSuffix = getLangOpts().LUA ? false : AllowSuffix;
     break;
 
   case tok::kw___objc_yes:
@@ -1499,6 +1602,8 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::plus:          // unary-expression: '+' cast-expression
   case tok::minus:         // unary-expression: '-' cast-expression
   case tok::tilde:         // unary-expression: '~' cast-expression
+  case tok::kw_not:        // unary-expression: 'not' cast-expression
+  case tok::hash:          // unary-expression: '#' cast-expression
   case tok::exclaim:       // unary-expression: '!' cast-expression
   case tok::kw___real:     // unary-expression: '__real' cast-expression [GNU]
   case tok::kw___imag: {   // unary-expression: '__imag' cast-expression [GNU]
@@ -1506,7 +1611,10 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       *NotPrimaryExpression = true;
     SourceLocation SavedLoc = ConsumeToken();
     PreferredType.enterUnary(Actions, Tok.getLocation(), SavedKind, SavedLoc);
-    Res = ParseCastExpression(AnyCastExpr);
+    if (getLangOpts().LUA) 
+      Res = ParseCastExpression(AnyCastExpr, false, NotTypeCast, false, nullptr, Stmts, StmtCtx);
+    else
+      Res = ParseCastExpression(AnyCastExpr);
     if (!Res.isInvalid()) {
       Expr *Arg = Res.get();
       Res = Actions.ActOnUnaryOp(getCurScope(), SavedLoc, SavedKind, Arg,
@@ -1904,6 +2012,37 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       break;
     }
     [[fallthrough]];
+  case tok::kw_nil:
+    if (getLangOpts().LUA) {
+      Res = Actions.ActOnNil(Tok.getLocation());
+      AllowSuffix = false;
+      ConsumeToken();
+      break;
+    }
+    [[fallthrough]];
+  case tok::ellipsis:
+    if (getLangOpts().LUA) {
+      Res = Actions.ActOnEllipsis(Tok.getLocation());
+      AllowSuffix = false;
+      ConsumeToken();
+      break;
+    }
+    [[fallthrough]];
+  case tok::kw_function:
+    if (getLangOpts().LUA) {
+      ConsumeToken();
+      Res = ParseLuaFunBody(*Stmts, StmtCtx);
+      AllowSuffix = false;
+      break;
+    }
+    [[fallthrough]];
+  case tok::l_brace:
+    if (getLangOpts().LUA) {
+      Res = ParseTableConstructor(*Stmts, StmtCtx);
+      AllowSuffix = false;
+      break;
+    }
+    [[fallthrough]];
   default:
   ExpectedExpression:
     NotCastExpr = true;
@@ -1956,7 +2095,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
 
   // These can be followed by postfix-expr pieces.
   PreferredType = SavedType;
-  Res = ParsePostfixExpressionSuffix(Res);
+  Res = ParsePostfixExpressionSuffix(Res, Stmts, StmtCtx);
   if (getLangOpts().OpenCL &&
       !getActions().getOpenCLOptions().isAvailableOption(
           "__cl_clang_function_pointers", getLangOpts()))
@@ -1993,8 +2132,9 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
 ///         argument-expression ...[opt]
 ///         argument-expression-list ',' assignment-expression ...[opt]
 /// \endverbatim
-ExprResult
-Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
+ExprResult Parser::ParsePostfixExpressionSuffix(ExprResult LHS,
+                                                StmtVector *Stmts,
+                                                ParsedStmtContext StmtCtx) {
   // Now that the primary-expression piece of the postfix-expression has been
   // parsed, see if there are any postfix-expression pieces here.
   SourceLocation Loc;
@@ -2063,6 +2203,8 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
           if (getLangOpts().CPlusPlus11 && Tok.is(tok::l_brace)) {
             Diag(Tok, diag::warn_cxx98_compat_generalized_initializer_lists);
             Idx = ParseBraceInitializer();
+          } else if (getLangOpts().LUA) {
+            Idx = ParseLuaExpression(NotTypeCast, Stmts, StmtCtx);
           } else {
             Idx = ParseExpression(); // May be a comma expression
           }
@@ -2127,7 +2269,15 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       break;
     }
 
+    case tok::l_brace:
+    case tok::string_literal:
+    case tok::colon:
     case tok::l_paren:         // p-e: p-e '(' argument-expression-list[opt] ')'
+      if (getLangOpts().LUA) {
+        LHS = ParseLuaFunCall(LHS, *Stmts, StmtCtx);
+        break;
+      }
+      [[fallthrough]];
     case tok::lesslessless: {  // p-e: p-e '<<<' argument-expression-list '>>>'
                                //   '(' argument-expression-list[opt] ')'
       tok::TokenKind OpKind = Tok.getKind();

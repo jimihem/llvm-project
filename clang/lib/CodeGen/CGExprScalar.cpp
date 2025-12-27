@@ -3994,6 +3994,14 @@ Value *ScalarExprEmitter::EmitFixedPointBinOp(const BinOpInfo &op) {
   case BO_OrAssign:
   case BO_Comma:
     llvm_unreachable("Found unsupported binary operation for fixed point types.");
+  case BO_LuaLAnd:
+  case BO_LuaLOr:
+  case BO_LuaXor:
+  case BO_LuaNE:
+  case BO_Exp:
+  case BO_Concat:
+  case BO_DivDiv:
+    assert(0);
   }
 
   bool IsShift = BinaryOperator::isShiftOp(op.Opcode) ||
@@ -5190,6 +5198,14 @@ LValue CodeGenFunction::EmitCompoundAssignmentLValue(
   case BO_Assign:
   case BO_Comma:
     llvm_unreachable("Not valid compound assignment operators");
+  case BO_LuaLAnd:
+  case BO_LuaLOr:
+  case BO_LuaXor:
+  case BO_LuaNE:
+  case BO_Exp:
+  case BO_Concat:
+  case BO_DivDiv:
+  assert(0);
   }
 
   llvm_unreachable("Unhandled compound assignment operator");

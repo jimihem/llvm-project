@@ -13476,6 +13476,14 @@ static IntRange GetExprRange(ASTContext &C, const Expr *E, unsigned MaxWidth,
     case BO_Xor:
     case BO_Or:
       break;
+    case BO_LuaLAnd:
+    case BO_LuaLOr:
+    case BO_LuaXor:
+    case BO_LuaNE:
+    case BO_Exp:
+    case BO_Concat:
+    case BO_DivDiv:
+      assert(0);
     }
 
     // Combine the two ranges, but limit the result to the type in which we

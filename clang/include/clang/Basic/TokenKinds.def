@@ -251,6 +251,10 @@ PUNCTUATOR(greatergreatergreater, ">>>")
 
 // CL support
 PUNCTUATOR(caretcaret,            "^^")
+//lua support
+PUNCTUATOR(concat,                "..")
+PUNCTUATOR(tildeequal,            "~=")
+PUNCTUATOR(slashslash,            "//")
 
 // C99 6.4.1: Keywords.  These turn into kw_* tokens.
 // Flags allowed:
@@ -764,6 +768,7 @@ KEYWORD(or                               , KEYLUA)
 KEYWORD(repeat                           , KEYLUA)
 KEYWORD(then                             , KEYLUA)
 KEYWORD(until                            , KEYLUA)
+KEYWORD(label                            , KEYLUA)
 
 // Keywords defined by Attr.td.
 #ifndef KEYWORD_ATTRIBUTE

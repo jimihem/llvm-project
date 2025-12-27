@@ -4428,6 +4428,8 @@ llvm::Constant *CodeGenModule::GetOrCreateLLVMFunction(
           }
         }
       }
+    } else if (getLangOpts().LUA && D && cast<FunctionDecl>(D)->doesThisDeclarationHaveABody()) {
+      addDeferredDeclToEmit(GD.getWithDecl(cast<FunctionDecl>(D)));
     }
   }
 
@@ -5150,7 +5152,10 @@ void CodeGenModule::EmitGlobalVarDefinition(const VarDecl *D,
       if (D->getType()->isReferenceType())
         T = D->getType();
 
-      if (getLangOpts().CPlusPlus) {
+      if (getLangOpts().LUA) {
+        Init = EmitNullConstant(T);
+        NeedsGlobalCtor = true;
+      } else if (getLangOpts().CPlusPlus) {
         if (InitDecl->hasFlexibleArrayInit(getContext()))
           ErrorUnsupported(D, "flexible array initializer");
         Init = EmitNullConstant(T);

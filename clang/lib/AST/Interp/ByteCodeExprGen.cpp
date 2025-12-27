@@ -2002,6 +2002,7 @@ bool ByteCodeExprGen<Emitter>::VisitUnaryOperator(const UnaryOperator *E) {
   case UO_Imag:   // __imag x
   case UO_Extension:
   case UO_Coawait:
+  case UO_hash:
     assert(false && "Unhandled opcode");
   }
 

@@ -532,6 +532,20 @@ Module *Preprocessor::getCurrentModuleImplementation() {
   return getHeaderSearchInfo().lookupModule(getLangOpts().ModuleName);
 }
 
+void Preprocessor::EnterSourceString(SourceLocation FileLoc, std::string &Source) {
+  LangOpts.LUA = false;
+  LangOpts.CPlusPlus = true;
+  LangOpts.Bool = true;
+  Identifiers.AddKeywords(LangOpts);
+  TemporaryString = Source;
+  
+  std::unique_ptr<llvm::MemoryBuffer> SB =
+      llvm::MemoryBuffer::getMemBufferCopy(TemporaryString, "<TempString>");
+  FileID FID = SourceMgr.createFileID(std::move(SB));
+  setTemporaryFileID(FID);
+  EnterSourceFile(FID, nullptr, SourceLocation(), false);
+}
+
 //===----------------------------------------------------------------------===//
 // Preprocessor Initialization Methods
 //===----------------------------------------------------------------------===//

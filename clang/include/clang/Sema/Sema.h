@@ -225,6 +225,7 @@ namespace sema {
   class DelayedDiagnosticPool;
   class FunctionScopeInfo;
   class LambdaScopeInfo;
+  class LuaFunctionScopeInfo;
   class PossiblyUnreachableDiag;
   class RISCVIntrinsicManager;
   class SemaPPCallbacks;
@@ -1989,7 +1990,7 @@ public:
   void PushFunctionScope();
   void PushBlockScope(Scope *BlockScope, BlockDecl *Block);
   sema::LambdaScopeInfo *PushLambdaScope();
-  sema::CapturingScopeInfo *PushCaptureScope();
+  sema::LuaFunctionScopeInfo *PushLuaFunctionScope();
   /// This is used to inform Sema what the current TemplateParameterDepth
   /// is during Parsing.  Currently it is used to pass on the depth
   /// when parsing generic lambda 'auto' parameters.
@@ -3118,7 +3119,10 @@ public:
   Decl *ActOnStartOfFunctionDef(Scope *S, Decl *D,
                                 SkipBodyInfo *SkipBody = nullptr,
                                 FnBodyKind BodyKind = FnBodyKind::Other);
-  Decl *ActOnStartOfLuaFunctionDef(Scope *S);
+  Decl *ActOnStartOfLuaFunctionDef(Scope *S,
+                                   SmallVector<IdentifierInfo *> &parlist,
+                                   SmallVector<SourceLocation> &parLocs);
+  SmallVector<Expr *> ActOnFinishOfLuaFunctionDef(VarDecl* Closure, Decl* FD, Stmt* Body);
   void SetFunctionBodyKind(Decl *D, SourceLocation Loc, FnBodyKind BodyKind);
   void ActOnStartTrailingRequiresClause(Scope *S, Declarator &D);
   ExprResult ActOnFinishTrailingRequiresClause(ExprResult ConstraintExpr);
@@ -5154,6 +5158,11 @@ public:
   StmtResult ActOnWhileStmt(SourceLocation WhileLoc, SourceLocation LParenLoc,
                             ConditionResult Cond, SourceLocation RParenLoc,
                             Stmt *Body);
+  StmtResult ActOnRepeatStmt(SourceLocation RepeatLoc, Stmt *Body,
+                             SmallVector<Stmt *, 32> &ExprStmts,
+                             SourceLocation UntilLoc, Expr *Cond);
+  StmtResult AddStmtsIntoCompStmt(SmallVector<Stmt *, 32> &ExprStmts,
+                                  Stmt *Body, bool IsBefore = true);
   StmtResult ActOnDoStmt(SourceLocation DoLoc, Stmt *Body,
                          SourceLocation WhileLoc, SourceLocation CondLParen,
                          Expr *Cond, SourceLocation CondRParen);
@@ -5808,6 +5817,8 @@ public:
   ExprResult ActOnArraySubscriptExpr(Scope *S, Expr *Base, SourceLocation LLoc,
                                      MultiExprArg ArgExprs,
                                      SourceLocation RLoc);
+  Expr *ConvertObjArrayToScalar(Expr* InputExpr);
+  bool IsObjArrayType(QualType Ty);
   ExprResult CreateBuiltinArraySubscriptExpr(Expr *Base, SourceLocation LLoc,
                                              Expr *Idx, SourceLocation RLoc);
 
@@ -5995,20 +6006,52 @@ public:
                                         ExprResult Init);
 
 private:
-  static BinaryOperatorKind ConvertTokenKindToBinaryOpcode(tok::TokenKind Kind);
+  static BinaryOperatorKind ConvertTokenKindToBinaryOpcode(tok::TokenKind Kind, bool Lua);
 
 public:
   ExprResult ActOnBinOp(Scope *S, SourceLocation TokLoc,
                         tok::TokenKind Kind, Expr *LHSExpr, Expr *RHSExpr);
 
-  SmallVector<Expr*> ActOnVarsAssign(Scope *S, SourceLocation TokLoc,
-                               MultiExprArg &VarList, MultiExprArg &ExprList);
+  void ActOnLocalVarsInitial(SmallVector<Decl *> VarList,
+                                            Expr *ExprList);
+
+  SmallVector<Expr *> ActOnVarsAssign(SourceLocation TokLoc,
+                                      SmallVector<Expr *> &VarList, Expr *Expr);
 
   ExprResult ActOnNil(SourceLocation TokLoc);
 
-  SmallVector<Expr*> ActOnTableConstructor(MultiExprArg Fields);
+  ExprResult ActOnEllipsis(SourceLocation TokLoc);
 
-  VarDecl* ActOnLocalVariable(UnqualifiedId &Id);
+  ExprResult ActOnLuaFunctionCall(Expr* Fun, Expr* Args);
+
+  VarDecl *CreateLuaTempObjPtrArrayVar(SourceLocation TokLoc,
+                                       Expr *Init = nullptr);
+
+  VarDecl *CreateLuaTempTableObjPtrObjVar(SourceLocation TokLoc, Expr *Init = nullptr);
+
+  VarDecl *CreateLuaTempLocalObjPtrVar(SourceLocation TokLoc, Expr *Init = nullptr);
+
+  VarDecl *CreateLuaTempClosureObjPtrVar(SourceLocation TokLoc,
+                                       Expr *Init = nullptr);
+
+  DeclGroupPtrTy ActOnLuaFunctionParmInit();
+
+  std::string GetLuaFunctionParmInitStr();
+
+  bool IsObjArrayTy(Expr* Epr);
+
+  SmallVector<Expr *> ActOnTableConstructor(SmallVector<Expr *> Fields);
+
+  SmallVector<Expr *> ActOnClosure(sema::LuaFunctionScopeInfo *FSI,
+                                   VarDecl *Closure, Decl *Fun);
+
+  SmallVector<Expr *> ActOnExpList(SmallVector<Expr *> ExpList);
+
+  SmallVector<Expr *> ActOnFunctionUpValues(sema::LuaFunctionScopeInfo *FSI);
+
+  ExprResult GetUpValue(VarDecl *UpValue, SourceLocation Loc);
+
+  VarDecl* ActOnLocalVariable(UnqualifiedId &Id, bool IsArray = false);
 
   ExprResult ActOnTableFieldName(UnqualifiedId &Id);
 
@@ -6204,6 +6247,8 @@ public:
   ExprResult BuildStringFromId(UnqualifiedId &Id);
 
   ExprResult BuildNil(SourceRange LR = SourceRange());
+
+  ExprResult BuildBool(Expr* BoolVal, SourceRange LR = SourceRange());
 
   ExprResult BuildStringFromLitera(StringLiteral &Str);
 

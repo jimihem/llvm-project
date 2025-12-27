@@ -756,7 +756,7 @@ public:
     if (ForcedPrecedence != prec::Unknown)
       return ForcedPrecedence;
     return getBinOpPrecedence(Tok.getKind(), /*GreaterThanIsOperator=*/true,
-                              /*CPlusPlus11=*/true);
+                              /*CPlusPlus11=*/true, false);
   }
 
   /// Returns the previous token ignoring comments.

@@ -1703,6 +1703,40 @@ StmtResult Sema::ActOnWhileStmt(SourceLocation WhileLoc,
                            WhileLoc, LParenLoc, RParenLoc);
 }
 
+StmtResult Sema::AddStmtsIntoCompStmt(SmallVector<Stmt *, 32> &ExprStmts,
+                                      Stmt *Body, bool IsBefore) {
+  
+  CompoundStmt *ComStmt = cast<CompoundStmt>(Body);
+  SmallVector<Stmt *> BodyStmts(ComStmt->size());
+  std::copy(ComStmt->body_begin(), ComStmt->body_end(), BodyStmts.begin());
+  SmallVector<Stmt *> Stmts;
+  if (IsBefore) {
+    Stmts.append(ExprStmts);
+    Stmts.append(BodyStmts);
+  } else {
+    Stmts.append(BodyStmts);
+    Stmts.append(ExprStmts);
+  }
+  return CompoundStmt::Create(Context, Stmts,
+                              ComStmt->hasStoredFPFeatures()
+                                  ? ComStmt->getStoredFPFeatures()
+                                  : FPOptionsOverride(),
+                              ComStmt->getLBracLoc(), ComStmt->getRBracLoc());
+}
+
+StmtResult Sema::ActOnRepeatStmt(SourceLocation RepeatLoc, Stmt *Body,
+                                 SmallVector<Stmt *, 32> &ExprStmts,
+                                 SourceLocation UntilLoc, Expr *Cond) {
+  if (ExprStmts.size()) {
+    Body = AddStmtsIntoCompStmt(ExprStmts, Body, false).get();
+  }
+
+  Cond =
+      ActOnUnaryOp(getCurScope(), Cond->getBeginLoc(), tok::kw_not, Cond).get();
+
+  return new (Context) DoStmt(Body, Cond, RepeatLoc, UntilLoc, Cond->getEndLoc());
+}
+
 StmtResult
 Sema::ActOnDoStmt(SourceLocation DoLoc, Stmt *Body,
                   SourceLocation WhileLoc, SourceLocation CondLParen,

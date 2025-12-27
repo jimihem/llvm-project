@@ -43,7 +43,8 @@ public:
     RCK_Lua           ///lua comment
   };
 
-  RawComment() : Kind(RCK_Invalid), IsAlmostTrailingComment(false) { }
+  RawComment()
+      : Kind(RCK_Invalid), IsAlmostTrailingComment(false), IsLuaComment(false) {}
 
   RawComment(const SourceManager &SourceMgr, SourceRange SR,
              const CommentOptions &CommentOpts, bool Merged);
@@ -186,13 +187,15 @@ private:
 
   bool IsTrailingComment : 1;
   bool IsAlmostTrailingComment : 1;
+  bool IsLuaComment : 1;
 
   /// Constructor for AST deserialization.
   RawComment(SourceRange SR, CommentKind K, bool IsTrailingComment,
              bool IsAlmostTrailingComment) :
     Range(SR), RawTextValid(false), BriefTextValid(false), Kind(K),
     IsAttached(false), IsTrailingComment(IsTrailingComment),
-    IsAlmostTrailingComment(IsAlmostTrailingComment)
+        IsAlmostTrailingComment(IsAlmostTrailingComment),
+        IsLuaComment(K == RCK_Lua)
   { }
 
   StringRef getRawTextSlow(const SourceManager &SourceMgr) const;

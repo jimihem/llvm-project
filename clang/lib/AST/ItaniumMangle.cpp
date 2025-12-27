@@ -98,6 +98,7 @@ public:
   }
 
   void mangleCXXName(GlobalDecl GD, raw_ostream &) override;
+  void mangleLuaName(GlobalDecl GD, raw_ostream &Out) override;
   void mangleThunk(const CXXMethodDecl *MD, const ThunkInfo &Thunk,
                    raw_ostream &) override;
   void mangleCXXDtorThunk(const CXXDestructorDecl *DD, CXXDtorType Type,
@@ -6485,6 +6486,32 @@ bool CXXNameMangler::shouldHaveAbiTags(ItaniumMangleContextImpl &C,
   CXXNameMangler TrackAbiTags(C, NullOutStream, nullptr, true);
   TrackAbiTags.mangle(VD);
   return TrackAbiTags.AbiTagsRoot.getUsedAbiTags().size();
+}
+
+void ItaniumMangleContextImpl::mangleLuaName(GlobalDecl GD, raw_ostream &Out) {
+  std::string MangledName;
+  MangledName += "_Lua";
+  const Decl *D = GD.getDecl();
+  if (auto Var = dyn_cast<VarDecl>(D)) {
+    MangledName += "_Var_";
+    MangledName += Var->getName();
+  } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
+    MangledName += "_CXXMethod_";
+    MangledName += Method->getNameAsString();
+  } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
+    MangledName += "_Fun_";
+    MangledName += Fun->getNameAsString();
+  }
+
+  if (auto Fun = dyn_cast<FunctionDecl>(D)) {
+    for (unsigned i = 0; i < Fun->getNumParams(); i++) {
+      MangledName += "_";
+      const ParmVarDecl* P = Fun->getParamDecl(i);
+      MangledName += P->getType().getAsString();
+    }
+  }
+  std::replace(MangledName.begin(), MangledName.end(), ' ', '_');
+  Out << MangledName;
 }
 
 //

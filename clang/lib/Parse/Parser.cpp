@@ -564,6 +564,96 @@ void Parser::Initialize() {
 
   Actions.Initialize();
 
+  if (getLangOpts().LUA) {
+    std::string str = "\
+    class Object;\
+    class ObjectPtr {\
+    private:\
+      Object *ptr;\
+      unsigned int *ref_count;\
+\
+      void release();\
+\
+    public:\
+      ObjectPtr();\
+\
+      ObjectPtr(Object *p);\
+\
+      ObjectPtr(const ObjectPtr &other);\
+\
+      ~ObjectPtr();\
+\
+      ObjectPtr &operator=(const ObjectPtr &other);\
+\
+      Object *operator->() const;\
+\
+      Object &operator*() const;\
+\
+      operator bool() const;\
+    };\
+\
+    class ObjectPtrArray {\
+    private:\
+      ObjectPtr *data;\
+      unsigned capacity;\
+      unsigned size;\
+\
+      void resize(unsigned new_capacity);\
+\
+    public:\
+      ObjectPtrArray();\
+\
+      ObjectPtrArray(const ObjectPtrArray& other);\
+\
+      ~ObjectPtrArray();\
+\
+      void push_back(const ObjectPtr &value);\
+\
+      void push_back(const ObjectPtrArray &values);\
+\
+      void pop_back();\
+\
+      ObjectPtr &operator[](unsigned index) const;\
+\
+      unsigned get_size() const;\
+      unsigned get_capacity();\
+    };\
+\
+    extern ObjectPtr _ENV;\
+    extern ObjectPtr _G;\
+    typedef ObjectPtrArray (*MethodTy)(const ObjectPtr &Base, const ObjectPtrArray &Parms);\
+    ObjectPtr GetMember(const ObjectPtr &Base, const ObjectPtr &Name, unsigned long long OpLoc);\
+    ObjectPtr GetMemberFromName(const ObjectPtr &Base, char *Name, unsigned NameLen, unsigned long long OpLoc);\
+    void SetMember(const ObjectPtr &Base, const ObjectPtr &Field, const ObjectPtr &Value, unsigned long long OpLoc);\
+    ObjectPtr BuildNil();\
+    ObjectPtr BuildBool(bool bVal);\
+    ObjectPtr BuildNumber(double dVal);\
+    ObjectPtr BuildString(char *data, unsigned length);\
+    ObjectPtr BuildTable(const ObjectPtrArray &Values);\
+    ObjectPtr BuildTableFromArray(const ObjectPtrArray &Values);\
+    ObjectPtr BuildFunction();\
+    ObjectPtr BuildFunctionWithMethod(const MethodTy &Ptr);\
+    ObjectPtr GetObjectPtrFromArray(const ObjectPtrArray &Values, unsigned Index);\
+    ObjectPtrArray GetSubArray(const ObjectPtrArray &Values, unsigned Start);\
+    void PushObjPtrIntoArray(ObjectPtrArray & Arr1, const ObjectPtr &Value);\
+    void PushArrayIntoArray(ObjectPtrArray & Arr1, const ObjectPtrArray &Arr2);\
+    void SetAsLocal(ObjectPtr & LocalVar);\
+    void SetFunctionUpValues(ObjectPtr & Fun, const ObjectPtrArray &Arr);\
+    void SetFunctionMethod(ObjectPtr & Fun, const MethodTy &Ptr);\
+    ObjectPtr GetUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);\
+    void BuildModifyExpr(const ObjectPtr &LHS, const ObjectPtr &RHS);\
+    ObjectPtrArray BuildCallExpr(const ObjectPtr &Function, const ObjectPtrArray &Args);\
+    ObjectPtr BuildUnOpExpr(const ObjectPtr &Expr, unsigned Op);\
+    ObjectPtr BuildBinOpExpr(const ObjectPtr &LHSExpr, const ObjectPtr &RHSExpr, unsigned Op);\
+    ObjectPtrArray BuildEmptyArr();\
+    bool ConvertToBool(const ObjectPtr &Op);\
+    ObjectPtr BuildEmptyTable();\
+    void SetUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtr &Var, unsigned long long OpLoc);\
+    void AddMember(const ObjectPtr &Base, const ObjectPtr &Value, unsigned long long OpLoc);\
+    void AddMembers(const ObjectPtr &Base, const ObjectPtrArray &Values, unsigned long long OpLoc);\
+    ";
+    PP.EnterSourceString(SourceLocation(), str);
+  }
   // Prime the lexer look-ahead.
   ConsumeToken();
 }
@@ -620,12 +710,20 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result,
       Actions.ActOnEndOfTranslationUnit();
       return true;
     }
+
     ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
                                    Scope::CompoundStmtScope);
-    Decl *TopFunc = Actions.ActOnStartOfLuaFunctionDef(getCurScope());
+    SmallVector<IdentifierInfo *> parlist;
+    SmallVector<SourceLocation> parLocs;
+    Decl *TopFunc =
+        Actions.ActOnStartOfLuaFunctionDef(getCurScope(), parlist, parLocs);
     TopFunc = ParseFunctionStatementBody(TopFunc, BodyScope);
-    Result = Actions.ConvertDeclToDeclGroup(TopFunc);
-    return false;
+
+    std::string SourceStr = "ObjectPtr " + Actions.Context.getLuaTempClosureName();
+    SourceStr += " = BuildFunctionWithMethod(" +
+                 cast<FunctionDecl>(TopFunc)->getNameAsString() + ");";
+    PP.EnterSourceString(Tok.getLocation(), SourceStr);
+    ConsumeToken();
   }
 
   Result = nullptr;

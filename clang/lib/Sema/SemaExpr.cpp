@@ -2018,10 +2018,9 @@ Sema::ActOnStringLiteral(ArrayRef<Token> StringToks, Scope *UDLScope) {
                                              StringTokLocs.size());
   if (getLangOpts().LUA) {
     SourceRange LocRange = Lit->getSourceRange();
-    Expr *Sl =
-        BuildImplCastExpr(Lit, Context.getPointerType(Context.SignedCharTy),
-                          CK_ArrayToPointerDecay, LocRange)
-            .get();
+    Expr *Sl = BuildImplCastExpr(Lit, Context.getPointerType(Context.CharTy),
+                                 CK_ArrayToPointerDecay, LocRange)
+                   .get();
 
     Expr *l = BuildIntLiteral(Lit->getByteLength(), LocRange).get();
     return BuildLuaBuiltinCallExpr("BuildString", {Sl, l}, LocRange);
@@ -2782,6 +2781,12 @@ Sema::ActOnIdExpression(Scope *S, CXXScopeSpec &SS,
   // This is guaranteed from this point on.
   assert(!R.empty() || ADL);
 
+  if (getLangOpts().LUA && CurContext != R.getFoundDecl()->getDeclContext() &&
+      dyn_cast<VarDecl>(R.getFoundDecl()) &&
+      dyn_cast<VarDecl>(R.getFoundDecl())->getStorageClass() != SC_Extern) {
+    VarDecl *UpValue = cast<VarDecl>(R.getFoundDecl());
+    return GetUpValue(UpValue, Id.getBeginLoc());
+  }
   // Check whether this might be a C++ implicit instance member access.
   // C++ [class.mfct.non-static]p3:
   //   When an id-expression that is not part of a class member access
@@ -5829,9 +5834,31 @@ ExprResult Sema::ActOnOMPIteratorExpr(Scope *S, SourceLocation IteratorKwLoc,
                                  LLoc, RLoc, ID, Helpers);
 }
 
+bool Sema::IsObjArrayType(QualType Ty) {
+  return Ty.getTypePtr()->getAsCXXRecordDecl() ==
+         cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray"));
+}
+
+Expr *Sema::ConvertObjArrayToScalar(Expr *InputExpr) {
+  if (IsObjArrayType(InputExpr->getType())) {
+    Expr *Index = BuildIntLiteral(0, InputExpr->getSourceRange()).get();
+    InputExpr =
+        BuildLuaBuiltinCallExpr("GetObjectPtrFromArray", {InputExpr, Index},
+                                InputExpr->getSourceRange())
+            .get();
+  }
+  return InputExpr;
+}
+
 ExprResult
 Sema::CreateBuiltinArraySubscriptExpr(Expr *Base, SourceLocation LLoc,
                                       Expr *Idx, SourceLocation RLoc) {
+  if (getLangOpts().LUA) {
+    Base = ConvertObjArrayToScalar(Base);
+    Idx = ConvertObjArrayToScalar(Idx);
+    return BuildLuaBuiltinCallExpr("GetMember", {Base, Idx},
+                                   SourceRange(LLoc, RLoc));
+  }
   Expr *LHSExp = Base;
   Expr *RHSExp = Idx;
 
@@ -15204,7 +15231,7 @@ static QualType CheckIndirectionOperand(Sema &S, Expr *Op, ExprValueKind &VK,
   return Result;
 }
 
-BinaryOperatorKind Sema::ConvertTokenKindToBinaryOpcode(tok::TokenKind Kind) {
+BinaryOperatorKind Sema::ConvertTokenKindToBinaryOpcode(tok::TokenKind Kind, bool Lua) {
   BinaryOperatorKind Opc;
   switch (Kind) {
   default: llvm_unreachable("Unknown binop!");
@@ -15225,7 +15252,7 @@ BinaryOperatorKind Sema::ConvertTokenKindToBinaryOpcode(tok::TokenKind Kind) {
   case tok::equalequal:           Opc = BO_EQ; break;
   case tok::spaceship:            Opc = BO_Cmp; break;
   case tok::amp:                  Opc = BO_And; break;
-  case tok::caret:                Opc = BO_Xor; break;
+  case tok::caret:                Opc = Lua ? BO_Exp : BO_Xor; break;
   case tok::pipe:                 Opc = BO_Or; break;
   case tok::ampamp:               Opc = BO_LAnd; break;
   case tok::pipepipe:             Opc = BO_LOr; break;
@@ -15241,6 +15268,12 @@ BinaryOperatorKind Sema::ConvertTokenKindToBinaryOpcode(tok::TokenKind Kind) {
   case tok::caretequal:           Opc = BO_XorAssign; break;
   case tok::pipeequal:            Opc = BO_OrAssign; break;
   case tok::comma:                Opc = BO_Comma; break;
+  case tok::slashslash:           Opc = BO_DivDiv; break;
+  case tok::tilde:                Opc = BO_LuaXor; break;
+  case tok::concat:               Opc = BO_Concat; break;
+  case tok::kw_and:               Opc = BO_And; break;
+  case tok::kw_or:                Opc = BO_Or; break;
+  case tok::tildeequal:           Opc = BO_Or; break;
   }
   return Opc;
 }
@@ -15257,10 +15290,12 @@ static inline UnaryOperatorKind ConvertTokenKindToUnaryOpcode(
   case tok::plus:         Opc = UO_Plus; break;
   case tok::minus:        Opc = UO_Minus; break;
   case tok::tilde:        Opc = UO_Not; break;
+  case tok::kw_not:
   case tok::exclaim:      Opc = UO_LNot; break;
   case tok::kw___real:    Opc = UO_Real; break;
   case tok::kw___imag:    Opc = UO_Imag; break;
   case tok::kw___extension__: Opc = UO_Extension; break;
+  case tok::hash:         Opc = UO_hash; break;
   }
   return Opc;
 }
@@ -15693,6 +15728,14 @@ ExprResult Sema::CreateBuiltinBinOp(SourceLocation OpLoc,
       OK = RHS.get()->getObjectKind();
     }
     break;
+  case BO_LuaLAnd:
+  case BO_LuaLOr:
+  case BO_LuaXor:
+  case BO_LuaNE:
+  case BO_Exp:
+  case BO_Concat:
+  case BO_DivDiv:
+    assert(0);
   }
   if (ResultTy.isNull() || LHS.isInvalid() || RHS.isInvalid())
     return ExprError();
@@ -15953,21 +15996,36 @@ static void DiagnoseBinOpPrecedence(Sema &Self, BinaryOperatorKind Opc,
 ExprResult Sema::ActOnBinOp(Scope *S, SourceLocation TokLoc,
                             tok::TokenKind Kind,
                             Expr *LHSExpr, Expr *RHSExpr) {
-  BinaryOperatorKind Opc = ConvertTokenKindToBinaryOpcode(Kind);
+  BinaryOperatorKind Opc = ConvertTokenKindToBinaryOpcode(Kind, getLangOpts().LUA);
   assert(LHSExpr && "ActOnBinOp(): missing left expression");
   assert(RHSExpr && "ActOnBinOp(): missing right expression");
 
-  if (Opc == BO_Assign) {
-    if (CallExpr* CE = cast<CallExpr>(LHSExpr)) {
-      FunctionDecl *Callee = CE->getDirectCallee();
-      if (getDeclByName("GetMember") == Callee) {
-        SmallVector<Expr *> Args;
-        Args.push_back(CE->getArg(0));
-        Args.push_back(CE->getArg(1));
-        Args.push_back(RHSExpr);
-        Args.push_back(CE->getArg(2));
-        return BuildLuaBuiltinCallExpr("SetMember", Args, SourceRange(TokLoc));
+  if (getLangOpts().LUA) {
+    if (Opc == BO_Assign) {
+      if (CallExpr *CE = dyn_cast<CallExpr>(LHSExpr)) {
+        FunctionDecl *Callee = CE->getDirectCallee();
+        if (getDeclByName("GetMember") == Callee) {
+          SmallVector<Expr *> Args;
+          Args.push_back(CE->getArg(0));
+          Args.push_back(CE->getArg(1));
+          Args.push_back(RHSExpr);
+          Args.push_back(CE->getArg(2));
+          return BuildLuaBuiltinCallExpr("SetMember", Args,
+                                         SourceRange(TokLoc));
+        } else if (getDeclByName("GetUpValue") == Callee) {
+          return BuildLuaBuiltinCallExpr("BuildModifyExpr", {LHSExpr, RHSExpr},
+                                         SourceRange(TokLoc));
+        }
+      } else if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(LHSExpr)) {
+        return BuildLuaBuiltinCallExpr("BuildModifyExpr", {LHSExpr, RHSExpr},
+                                       SourceRange(TokLoc));
       }
+    } else {
+      LHSExpr = ConvertObjArrayToScalar(LHSExpr);
+      RHSExpr = ConvertObjArrayToScalar(RHSExpr);
+      Expr *Op = BuildIntLiteral(Opc, TokLoc).get();
+      return BuildLuaBuiltinCallExpr("BuildBinOpExpr", {LHSExpr, RHSExpr, Op},
+                                     SourceRange(TokLoc, RHSExpr->getEndLoc()));
     }
   }
 
@@ -15977,36 +16035,37 @@ ExprResult Sema::ActOnBinOp(Scope *S, SourceLocation TokLoc,
   return BuildBinOp(S, TokLoc, Opc, LHSExpr, RHSExpr);
 }
 
-SmallVector<Expr *> Sema::ActOnVarsAssign(Scope *S, SourceLocation TokLoc,
-                                   MultiExprArg &VarList,
-                                   MultiExprArg &ExprList) {
+bool Sema::IsObjArrayTy(Expr *Epr) {
+  return Epr->getType()->getAsCXXRecordDecl() ==
+         cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray"));
+}
 
+void Sema::ActOnLocalVarsInitial(SmallVector<Decl *> VarList,
+                                                Expr *ExprList) {
+  for (size_t i = 0; i < VarList.size(); i++) {
+    Expr *Index = BuildIntLiteral(i, VarList[i]->getSourceRange()).get();
+    ExprResult Value = BuildLuaBuiltinCallExpr(
+        "GetObjectPtrFromArray", {ExprList, Index}, ExprList->getSourceRange());
+
+    AddInitializerToDecl(VarList[i], Value.get(), false);
+  }
+}
+
+SmallVector<Expr *> Sema::ActOnVarsAssign(SourceLocation TokLoc,
+                                          SmallVector<Expr *> &VarList,
+                                          Expr *ExprList) {
   SmallVector<Expr *> Ret;
+  if (ExprList->getValueKind() == VK_PRValue) {
+    VarDecl *TempArr = CreateLuaTempObjPtrArrayVar(ExprList->getBeginLoc(), ExprList);
+    ExprList = BuildDeclRefExpr(TempArr, TempArr->getType(), VK_LValue,
+                                ExprList->getBeginLoc());
+    Ret.push_back(ExprList);
+  }
   for (size_t i = 0; i < VarList.size(); i++) {
     ExprResult Value;
-    if (i < ExprList.size()) {
-      if (ExprList[i]->getType().getTypePtr()->getAsCXXRecordDecl() ==
-          getDeclByName("ObjectPtrArray")) {
-        Expr *Index = BuildIntLiteral(0, ExprList[i]->getSourceRange()).get();
-        Value = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray",
-                                        {ExprList[i], Index},
-                                        ExprList[i]->getSourceRange());
-      } else
-        Value = ExprList[i];
-    } else {
-      if (ExprList.back()->getType().getTypePtr()->getAsCXXRecordDecl() ==
-          getDeclByName("ObjectPtrArray")) {
-        Expr *Index = BuildIntLiteral(i - ExprList.size() + 1,
-                                      ExprList.back()->getSourceRange())
-                          .get();
-        Value = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray",
-                                        {ExprList.back(), Index},
-                                        ExprList.back()->getSourceRange());
-      } else {
-        Value = BuildNil(VarList[i]->getSourceRange());
-      }
-    }
-
+    Expr *Index = BuildIntLiteral(i, ExprList->getSourceRange()).get();
+    Value = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray", {ExprList, Index},
+                                    ExprList->getSourceRange());
     ExprResult AssignExpr =
         ActOnBinOp(getCurScope(), TokLoc, tok::equal, VarList[i], Value.get());
     Ret.push_back(AssignExpr.get());
@@ -16018,13 +16077,25 @@ ExprResult Sema::ActOnNil(SourceLocation TokLoc) {
   return BuildNil(SourceRange(TokLoc));
 }
 
-VarDecl *Sema::ActOnLocalVariable(UnqualifiedId &Id) {
+ExprResult Sema::ActOnEllipsis(SourceLocation TokLoc){
+  VarDecl *Varlist = cast<VarDecl>(getDeclByName("VarList"));
+  if (!Varlist) {
+    return ExprError();
+  }
+  return BuildDeclRefExpr(Varlist, Varlist->getType(), VK_LValue, TokLoc);
+}
+
+VarDecl *Sema::ActOnLocalVariable(UnqualifiedId &Id, bool IsArray) {
   SourceRange SR = Id.getSourceRange();
   CXXRecordDecl *ObjPtr = cast<CXXRecordDecl>(getDeclByName("ObjectPtr"));
-  QualType ObjPtrTy = Context.getTypeDeclType(ObjPtr);
+  QualType Ty = Context.getTypeDeclType(ObjPtr);
+  if (IsArray) {
+    CXXRecordDecl *ObjPtrArray = cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray"));
+    Ty = Context.getTypeDeclType(ObjPtrArray);
+  }
   VarDecl *Var =
       VarDecl::Create(Context, CurContext, SR.getBegin(), SR.getBegin(),
-                      Id.Identifier, ObjPtrTy, nullptr, SC_None);
+                      Id.Identifier, Ty, nullptr, SC_None);
   PushOnScopeChains(Var, getCurScope());
   return Var;
 }
@@ -16033,53 +16104,217 @@ ExprResult Sema::ActOnTableFieldName(UnqualifiedId& Id) {
   return BuildStringFromId(Id);
 }
 
-SmallVector<Expr *> Sema::ActOnTableConstructor(MultiExprArg Fields) {
-  CXXRecordDecl *ObjArr = cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray"));
-  QualType ObjArrTy = Context.getTypeDeclType(ObjArr);
-  MultiExprArg EmptyArg;
+SmallVector<Expr *> Sema::ActOnExpList(SmallVector<Expr *> ExpList) {
+  SmallVector<Expr *> Ret;
+  VarDecl *tempObjArr = CreateLuaTempObjPtrArrayVar(ExpList.front()->getExprLoc());
+
+  Expr *tempObjArrRef = BuildDeclRefExpr(tempObjArr, tempObjArr->getType(),
+                                         VK_LValue, SourceLocation());
+  Ret.push_back(tempObjArrRef);
+
+  for (size_t i = 0; i < ExpList.size(); i++) {
+    Expr *Value = ExpList[i];
+    if ((i == ExpList.size() - 1) &&
+        ExpList[i]->getType() == tempObjArr->getType()) {
+      Ret.push_back(BuildLuaBuiltinCallExpr("PushArrayIntoArray",
+                                            {tempObjArrRef, ExpList[i]},
+                                            ExpList[i]->getSourceRange())
+                        .get());
+      break;
+    }
+    Value = ConvertObjArrayToScalar(Value);
+    Ret.push_back(BuildLuaBuiltinCallExpr("PushObjPtrIntoArray",
+                                          {tempObjArrRef, Value},
+                                          ExpList[i]->getSourceRange())
+                      .get());
+  }
+  return Ret;
+}
+
+SmallVector<Expr *>
+Sema::ActOnClosure(sema::LuaFunctionScopeInfo *FSI, VarDecl *Closure, Decl *Fun) {
+  SmallVector<Expr *> Ret;
+  Expr *ClosureRef = BuildDeclRefExpr(Closure, Closure->getType(), VK_LValue,
+                                      Closure->getLocation());
+  for (size_t i = 0; i < FSI->Captures.size(); i++) {
+    VarDecl *Var = cast<VarDecl>(FSI->Captures[i].getVariable());
+
+    UnqualifiedId Id;
+    Id.setIdentifier(Var->getDeclName().getAsIdentifierInfo(), Fun->getLocation());
+    Expr *UpValueName = BuildStringFromId(Id).get();
+
+    uint64_t SR = Id.getEndLoc().getRawEncoding();
+    SR <<= 32;
+    SR |= Id.getBeginLoc().getRawEncoding();
+    Expr *opLoc = BuildInt64Literal(SR, Id.getSourceRange()).get();
+    Expr *UpValueVal = nullptr;
+    if (Var->getDeclContext() != CurContext) {
+      UpValueVal = GetUpValue(Var, Fun->getLocation()).get();
+    } else {
+      UpValueVal =
+          BuildDeclRefExpr(Var, Var->getType(), VK_LValue, SourceLocation());
+    }
+    Ret.push_back(
+        BuildLuaBuiltinCallExpr("SetUpValue",
+                                {ClosureRef, UpValueName, UpValueVal, opLoc},
+                                Closure->getSourceRange())
+            .get());
+  }
+
+  Expr *FunRef = BuildDeclRefExpr(cast<FunctionDecl>(Fun),
+                                  cast<FunctionDecl>(Fun)->getType(), VK_LValue,
+                                  Fun->getLocation());
+
+  Ret.push_back(BuildLuaBuiltinCallExpr("SetFunctionMethod",
+                                        {ClosureRef, FunRef},
+                                        Closure->getSourceRange())
+                    .get());
+
+  return Ret;
+}
+
+ExprResult Sema::GetUpValue(VarDecl *UpValue, SourceLocation Loc) {
+  LuaFunctionScopeInfo *Fun = cast<LuaFunctionScopeInfo>(getCurFunction());
+  if (Fun->CaptureMap.find(UpValue) == Fun->CaptureMap.end())
+    Fun->addCapture(UpValue, false, false, false, Loc, Loc, UpValue->getType(),
+                    false);
+  ParmVarDecl *Base = cast<ParmVarDecl>(getDeclByName("Base"));
+  assert(Base->getDeclContext() == CurContext);
+  Expr *BaseRef = BuildDeclRefExpr(Base, Base->getType().getNonReferenceType(),
+                                   VK_LValue, Loc);
+
+  UnqualifiedId Id;
+  Id.setIdentifier(UpValue->getDeclName().getAsIdentifierInfo(), Loc);
+  Expr *UpValueName = BuildStringFromId(Id).get();
+
+  uint64_t SR = Id.getEndLoc().getRawEncoding();
+  SR <<= 32;
+  SR |= Id.getBeginLoc().getRawEncoding();
+  Expr *opLoc = BuildInt64Literal(SR, Id.getSourceRange()).get();
+
+  return BuildLuaBuiltinCallExpr("GetUpValue", {BaseRef, UpValueName, opLoc},
+                                 Id.getSourceRange());
+}
+
+SmallVector<Expr *> Sema::ActOnFunctionUpValues(LuaFunctionScopeInfo *FSI) {
+  if (FSI->Captures.empty())
+    return SmallVector<Expr *>();
+  SmallVector<Expr *>Ret;
+  for (size_t i = 0; i < FSI->Captures.size(); i++) {
+    VarDecl *Var = cast<VarDecl>(FSI->Captures[i].getVariable());
+    if (Var->getDeclContext() != CurContext) {
+      Ret.push_back(GetUpValue(Var, SourceLocation()).get());
+    } else {
+      Expr *VarRef =
+          BuildDeclRefExpr(Var, Var->getType(), VK_LValue, SourceLocation());
+      Ret.push_back(VarRef);
+    }
+  }
+  return Ret;
+}
+
+std::string Sema::GetLuaFunctionParmInitStr() {
+  LuaFunctionScopeInfo *FSI = cast<LuaFunctionScopeInfo>(getCurFunction());
+  SmallVector<IdentifierInfo *> &parList = FSI->parlist;
+  if (parList.empty())
+    return std::string();
+  std::string Ret;
+  for (size_t i = 0; i < parList.size(); i++) {
+    IdentifierInfo *par = parList[i];
+    StringRef ParName = "VarList";
+    if (par->isStr(ParName)) {
+      Ret += "ObjectPtrArray ";
+      Ret += parList[i]->getName();
+      Ret += std::string("(");
+      Ret += "GetSubArray(Parms, ";
+      Ret += std::to_string(i);
+      Ret += "));\n";
+    } else {
+      Ret += "ObjectPtr ";
+      Ret += parList[i]->getName();
+      Ret += std::string(" = Parms[") + std::to_string(i) + "];\n";
+    }
+  }
+  return Ret;
+}
+
+Sema::DeclGroupPtrTy Sema::ActOnLuaFunctionParmInit() {
+  LuaFunctionScopeInfo *FSI = cast<LuaFunctionScopeInfo>(getCurFunction());
+  SmallVector<IdentifierInfo *> &parList = FSI->parlist;
+  SmallVector<SourceLocation> &parLocs = FSI->parLocs;
+  if (parList.empty())
+    return DeclGroupPtrTy();
+
+  SmallVector<Expr *> Exprs;
+  std::vector<Decl *> Decls;
+  bool IsVar = false;
+  Decl *VarList = nullptr;
+  for (size_t i = 0; i < parList.size(); i++) {
+    IdentifierInfo *par = parList[i];
+    SourceLocation parLoc = parLocs[i];
+    UnqualifiedId Id;
+    StringRef ParName = "VarList";
+    Id.setIdentifier(par, parLoc);
+    Decl *LocalVar = ActOnLocalVariable(Id, par->isStr(ParName) || IsVar);
+
+    ParmVarDecl *Parms = cast<ParmVarDecl>(getDeclByName("Parms"));
+    
+    Expr *ParmsRef = BuildDeclRefExpr(
+        Parms, Parms->getType().getNonReferenceType(), VK_LValue, parLoc);
+    Expr *Index = BuildIntLiteral(i, Id.getSourceRange()).get();
+
+    Expr *Initial = nullptr;
+    if (par->isStr(ParName)) {
+      Initial = BuildLuaBuiltinCallExpr("GetSubArray", {ParmsRef, Index},
+                                        Id.getSourceRange())
+                    .get();
+      IsVar = true;
+      VarList = LocalVar;
+    } else if (IsVar) {
+      Initial = BuildDeclRefExpr(cast<VarDecl>(VarList),
+                                 cast<VarDecl>(VarList)->getType(), VK_LValue,
+                                 parLoc);
+    } else {
+      Initial = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray",
+                                        {ParmsRef, Index}, Id.getSourceRange())
+                    .get();
+    }
+
+    AddInitializerToDecl(LocalVar, Initial, true);
+    Decls.push_back(LocalVar);
+  }
+
+  if (Decls.size() == 1) 
+    return ConvertDeclToDeclGroup(Decls[0]);
+
+  MutableArrayRef<Decl *> Group(Decls);
+  return BuildDeclaratorGroup(Group);
+}
+
+SmallVector<Expr *> Sema::ActOnTableConstructor(SmallVector<Expr *> Fields) {
   SourceRange SR;
   if (Fields.size() > 0) {
     SR.setBegin(Fields.front()->getBeginLoc());
     SR.setBegin(Fields.back()->getEndLoc());
   }
 
-  VarDecl *tempObjArr = VarDecl::Create(
-      Context, CurContext, SR.getBegin(), SR.getBegin(),
-      &Context.Idents.get("_Lua_temp"), ObjArrTy, nullptr, SC_None);
-  PushOnScopeChains(tempObjArr, getCurScope());
-  ActOnUninitializedDecl(tempObjArr);
-
-  Expr *Base = DeclRefExpr::Create(
-      Context, NestedNameSpecifierLoc(), SourceLocation(), tempObjArr, false,
-      SR.getBegin(), tempObjArr->getType(), VK_LValue);
-
-  SmallVector<Expr *, 4> Exprs;
-  for (size_t i = 0; i < Fields.size(); i++) {
-    Expr *Value = Fields[i];
-    if (i == Fields.size() - 1 && Value->getType() == ObjArrTy) {
-      break;
-    } else if (Value->getType() == ObjArrTy) {
-      Expr *Arr = Value;
-      Expr *Index = BuildIntLiteral(0, Arr->getSourceRange()).get();
-      Value = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray", {Arr, Index},
-                                      Arr->getSourceRange())
-                  .get();
+  CXXRecordDecl *ObjArr = cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray"));
+  QualType ObjArrTy = Context.getTypeDeclType(ObjArr);
+  if (Fields.size() % 2) {
+    Expr *Last = Fields.back();
+    Fields.pop_back();
+    if (Last->getType() == ObjArrTy) {
+      Fields.push_back(
+          BuildLuaBuiltinCallExpr("BuildTableFromArray", {Last}, Last->getSourceRange()).get());
+    } else {
+      Fields.push_back(BuildNil(Last->getSourceRange()).get());
+      Fields.push_back(Last);
     }
-
-    Exprs.push_back(BuildLuaBuiltinCallExpr("PushObjPtrIntoArray",
-                                            {Base, Value},
-                                            Value->getSourceRange())
-                        .get());
   }
 
-  if (Fields.size() && Fields.back()->getType() == ObjArrTy) {
-    Expr *Arr = Fields.back();
-    Exprs.push_back(BuildLuaBuiltinCallExpr("PushArrayIntoArray", {Base, Arr},
-                                            Arr->getSourceRange())
-                        .get());
-  }
+  SmallVector<Expr *> Exprs = ActOnExpList(Fields);
 
-  Exprs.push_back(BuildLuaBuiltinCallExpr("BuildTable", {Base}, SR).get());
+  Exprs.push_back(BuildLuaBuiltinCallExpr("BuildTable", {Exprs[0]}, SR).get());
 
   return Exprs;
 }
@@ -16322,6 +16557,13 @@ ExprResult Sema::CreateBuiltinUnaryOp(SourceLocation OpLoc,
       return ExprError(Diag(OpLoc, diag::err_hlsl_operator_unsupported) << 1);
   }
 
+  if (getLangOpts().LUA) {
+    InputExpr = ConvertObjArrayToScalar(InputExpr);
+    Expr *Op = BuildIntLiteral(Opc, OpLoc).get();
+    return BuildLuaBuiltinCallExpr("BuildUnOpExpr", {InputExpr, Op},
+                                   SourceRange(OpLoc, InputExpr->getEndLoc()));
+  }
+
   switch (Opc) {
   case UO_PreInc:
   case UO_PreDec:
@@ -16504,6 +16746,8 @@ ExprResult Sema::CreateBuiltinUnaryOp(SourceLocation OpLoc,
                    "the co_await expression must be non-dependant before "
                    "building operator co_await");
     return Input;
+  case UO_hash:
+    break;
   }
   if (resultType.isNull() || Input.isInvalid())
     return ExprError();

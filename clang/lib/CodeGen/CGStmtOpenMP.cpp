@@ -6193,6 +6193,14 @@ static std::pair<bool, RValue> emitOMPAtomicRMW(CodeGenFunction &CGF, LValue X,
   case BO_ShrAssign:
   case BO_Comma:
     llvm_unreachable("Unsupported atomic update operation");
+  case BO_LuaLAnd:
+  case BO_LuaLOr:
+  case BO_LuaXor:
+  case BO_LuaNE:
+  case BO_Exp:
+  case BO_Concat:
+  case BO_DivDiv:
+    assert(0);
   }
   llvm::Value *UpdateVal = Update.getScalarVal();
   if (auto *IC = dyn_cast<llvm::ConstantInt>(UpdateVal)) {

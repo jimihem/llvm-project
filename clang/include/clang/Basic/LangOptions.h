@@ -583,7 +583,7 @@ public:
   /// Returns true if implicit function declarations are allowed in the current
   /// language mode.
   bool implicitFunctionsAllowed() const {
-    return !requiresStrictPrototypes() && !OpenCL;
+    return !requiresStrictPrototypes() && !OpenCL && !LUA;
   }
 
   /// Returns true if implicit int is part of the language requirements.

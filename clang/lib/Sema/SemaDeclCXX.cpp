@@ -11569,6 +11569,8 @@ NamedDecl *Sema::getDeclByName(std::string Name) {
   NameInfo.setLoc(SourceLocation());
   LookupResult FR(*this, NameInfo, LookupAnyName);
   LookupParsedName(FR, S, nullptr, false);
+  if (FR.empty())
+    return nullptr;
   return FR.getFoundDecl();
 }
 
@@ -11686,7 +11688,7 @@ ExprResult Sema::BuildInt64Literal(unsigned long long ival,
 ExprResult Sema::BuildStringFromLitera(StringLiteral &Str) {
   SourceRange LocRange = Str.getSourceRange();
   Expr *Sl =
-      BuildImplCastExpr(&Str, Context.getPointerType(Context.SignedCharTy),
+      BuildImplCastExpr(&Str, Context.getPointerType(Context.CharTy),
                         CK_ArrayToPointerDecay, LocRange)
           .get();
 
@@ -11694,12 +11696,6 @@ ExprResult Sema::BuildStringFromLitera(StringLiteral &Str) {
   SmallVector<Expr *> Args = {Sl, l};
 
   return BuildLuaBuiltinCallExpr("BuildString", Args, LocRange);
-  /*Expr *tmp[2] = {Sl, l};
-  MultiExprArg MulExpr(tmp, 2);
-
-  NamedDecl *StringDel = getDeclByName("String");
-  return BuildLuaNew(Context.getTypeDeclType(cast<TypeDecl>(StringDel)),
-                     MulExpr, LocRange);*/
 }
 
 ExprResult Sema::BuildStringFromId(UnqualifiedId &Id) {
@@ -11708,7 +11704,7 @@ ExprResult Sema::BuildStringFromId(UnqualifiedId &Id) {
   StringRef Idname = Id.Identifier->getName();
   SourceLocation Loc = Id.getBeginLoc();
   QualType StrTy =
-      Context.getStringLiteralArrayType(Context.Char8Ty, Idname.size());
+      Context.getStringLiteralArrayType(Context.CharTy, Idname.size());
   StringLiteral *Sl = StringLiteral::Create(
       Context, Idname, StringLiteral::UTF8, false,
                                    StrTy, &Loc, 1);
@@ -11718,6 +11714,10 @@ ExprResult Sema::BuildStringFromId(UnqualifiedId &Id) {
 
 ExprResult Sema::BuildNil(SourceRange LR) {
   return BuildLuaBuiltinCallExpr("BuildNil", SmallVector<Expr *>(), LR);
+}
+
+ExprResult Sema::BuildBool(Expr *BoolVal, SourceRange LR) {
+  return BuildLuaBuiltinCallExpr("BuildBool", {BoolVal}, LR);
 }
 
 ExprResult Sema::BuildObjectPtr(Expr *arg, SourceRange LR) {
@@ -11793,6 +11793,66 @@ uint64_t ConvertSourceRangeToU64(SourceLocation B, SourceLocation E) {
   return ((uint64_t)E.getRawEncoding()) << 32 | ((uint64_t)B.getRawEncoding());
 }
 
+VarDecl *Sema::CreateLuaTempTableObjPtrObjVar(SourceLocation TokLoc,
+                                              Expr *Init) {
+  UnqualifiedId Id;
+  Id.setIdentifier(&Context.Idents.get(Context.getLuaTempTableName()), TokLoc);
+  VarDecl *Table = ActOnLocalVariable(Id);
+  if (!Init) {
+    AddInitializerToDecl(
+        Table, BuildLuaBuiltinCallExpr("BuildEmptyTable", {}, TokLoc).get(), true);
+  } else {
+    AddInitializerToDecl(Table, Init, true);
+  }
+  return Table;
+}
+
+VarDecl *Sema::CreateLuaTempLocalObjPtrVar(SourceLocation TokLoc, Expr *Init) {
+  UnqualifiedId Id;
+  Id.setIdentifier(&Context.Idents.get(Context.getLuaTempObjName()),
+                   TokLoc);
+  VarDecl *LocalObj = ActOnLocalVariable(Id);
+  if (!Init) {
+    AddInitializerToDecl(
+        LocalObj, BuildLuaBuiltinCallExpr("BuildNil", {}, TokLoc).get(),
+        true);
+  } else {
+    AddInitializerToDecl(LocalObj, Init, true);
+  }
+  return LocalObj;
+}
+
+VarDecl *Sema::CreateLuaTempClosureObjPtrVar(SourceLocation TokLoc,
+                                             Expr *Init) {
+  UnqualifiedId Id;
+  Id.setIdentifier(&Context.Idents.get(Context.getLuaTempClosureName()), TokLoc);
+  VarDecl *Closure = ActOnLocalVariable(Id);
+  if (!Init) {
+    AddInitializerToDecl(
+        Closure, BuildLuaBuiltinCallExpr("BuildFunction", {}, TokLoc).get(),
+        true);
+  } else {
+    AddInitializerToDecl(Closure, Init, true);
+  }
+  return Closure;
+}
+
+VarDecl *Sema::CreateLuaTempObjPtrArrayVar(SourceLocation TokLoc, Expr *Init) {
+  UnqualifiedId Id;
+  Id.setIdentifier(&Context.Idents.get(Context.getLuaTempObjArrName()), TokLoc);
+  VarDecl *tempObjArr = ActOnLocalVariable(Id, true);
+  if (Init)
+    AddInitializerToDecl(tempObjArr, Init, true);
+  else
+    ActOnUninitializedDecl(tempObjArr);
+  return tempObjArr;
+}
+
+ExprResult Sema::ActOnLuaFunctionCall(Expr *Fun, Expr *Args) {
+  return BuildLuaBuiltinCallExpr("BuildCallExpr", {Fun, Args},
+                                 Args->getSourceRange());
+}
+
 ExprResult Sema::BuildLuaBuiltinCallExpr(std::string Fn,
                                          SmallVector<Expr *> Args,
                                          SourceRange SR) {
@@ -11800,11 +11860,23 @@ ExprResult Sema::BuildLuaBuiltinCallExpr(std::string Fn,
   Expr *FunExpr = DeclRefExpr::Create(
       Context, NestedNameSpecifierLoc(), SR.getBegin(), FnDecl, false,
       SR.getBegin(), FnDecl->getType(), VK_LValue);
+  FunExpr = CallExprUnaryConversions(FunExpr).get();
 
   if (FnDecl->getNumParams() == Args.size() + 1) {
     uint64_t LocR = ConvertSourceRangeToU64(SR.getBegin(), SR.getEnd());
     Expr *OpLoc = BuildInt64Literal(LocR, SourceLocation()).get();
     Args.push_back(OpLoc);
+  }
+
+  for (unsigned i = 0; i < FnDecl->getNumParams(); i++) {
+    if (Args[i]->getType()->isFunctionType()) {
+      Args[i] = CallExprUnaryConversions(Args[i]).get();
+    }
+    if (FnDecl->getParamDecl(i)->getType()->isReferenceType() !=
+        Args[i]->isGLValue()) {
+      Args[i] =
+          CreateMaterializeTemporaryExpr(Args[i]->getType(), Args[i], true);
+    }
   }
 
   MultiExprArg MulExprs(Args);
@@ -11818,8 +11890,7 @@ ExprResult Sema::BuildMemberRefExpr(Expr *Base, Expr *Field) {
   SourceLocation Loc = RLoc.getBegin();
   if (!Base) {
     VarDecl *Env = cast<VarDecl>(getDeclByName("_ENV"));
-    Base = DeclRefExpr::Create(Context, NestedNameSpecifierLoc(), Loc, Env,
-                               false, Loc, Env->getType(), VK_LValue);
+    Base = BuildDeclRefExpr(Env, Env->getType(), VK_LValue, Loc);
   }
   SmallVector<Expr *> Args;
   Args.push_back(Base);
@@ -11828,27 +11899,8 @@ ExprResult Sema::BuildMemberRefExpr(Expr *Base, Expr *Field) {
 }
 
 ExprResult Sema::BuildENVMemberRefExpr(UnqualifiedId &Id) {
-  /*SourceRange RLoc = Id.getSourceRange();
-  SourceLocation Loc = RLoc.getBegin();
-
-  VarDecl *Env = cast<VarDecl>(getDeclByName("_ENV"));
-
-  DeclRefExpr *EnvRefE =
-      DeclRefExpr::Create(Context, NestedNameSpecifierLoc(), Loc, Env, false,
-                          Loc, Env->getType(), VK_LValue);
-
-  Expr *Base = BuildOverloadedArrowExpr(getCurScope(), EnvRefE, Loc).get();
-
-  UnqualifiedId get;
-  get.setIdentifier(&Context.Idents.get("get"), Loc);*/
-
   Expr *Field = BuildStringFromId(Id).get();
   return BuildMemberRefExpr(nullptr, Field);
-  /*Field = BuildObjectPtr(Field).get();
-
-  return BuildMemberRefExpr(nullptr, Field);
-  MultiExprArg Args(Field);
-  return BuildMemberFunCallExpr(Base, get, Args);*/
 }
 
 EnumDecl *Sema::getStdAlignValT() const {

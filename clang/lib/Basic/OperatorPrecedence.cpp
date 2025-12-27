@@ -15,7 +15,7 @@
 namespace clang {
 
 prec::Level getBinOpPrecedence(tok::TokenKind Kind, bool GreaterThanIsOperator,
-                               bool CPlusPlus11) {
+                               bool CPlusPlus11, bool Lua) {
   switch (Kind) {
   case tok::greater:
     // C++ [temp.names]p3:
@@ -36,7 +36,36 @@ prec::Level getBinOpPrecedence(tok::TokenKind Kind, bool GreaterThanIsOperator,
     if (GreaterThanIsOperator || !CPlusPlus11)
       return prec::Shift;
     return prec::Unknown;
-
+  case tok::kw_or:
+    if (Lua) {
+      return prec::LogicalOr;
+    }
+    [[fallthrough]];
+  case tok::kw_and:
+    if (Lua) {
+      return prec::LogicalAnd;
+    }
+    [[fallthrough]];
+  case tok::concat:
+    if (Lua) {
+      return prec::ConCat;
+    }
+    [[fallthrough]];
+  case tok::slashslash:
+    if (Lua) {
+      return prec::Multiplicative;
+    }
+    [[fallthrough]];
+  case tok::tildeequal: 
+  if (Lua) {
+      return prec::Relational;
+    }
+    [[fallthrough]];
+  case tok::tilde:
+    if (Lua) {
+      return prec::LuaExclusiveOr;
+    }
+    [[fallthrough]];
   default:                        return prec::Unknown;
   case tok::comma:                return prec::Comma;
   case tok::equal:
@@ -54,11 +83,23 @@ prec::Level getBinOpPrecedence(tok::TokenKind Kind, bool GreaterThanIsOperator,
   case tok::pipepipe:             return prec::LogicalOr;
   case tok::caretcaret:
   case tok::ampamp:               return prec::LogicalAnd;
-  case tok::pipe:                 return prec::InclusiveOr;
-  case tok::caret:                return prec::ExclusiveOr;
-  case tok::amp:                  return prec::And;
+  case tok::pipe:
+    if (Lua)
+      return prec::LuaInclusiveOr;
+    return prec::InclusiveOr;
+  case tok::caret:
+    if (Lua)
+      return prec::LuaExp;
+    return prec::ExclusiveOr;
+  case tok::amp:
+    if (Lua)
+      return prec::LuaAnd;
+    return prec::And;
   case tok::exclaimequal:
-  case tok::equalequal:           return prec::Equality;
+  case tok::equalequal:
+    if (Lua)
+      return prec::Relational;
+    return prec::Equality;
   case tok::lessequal:
   case tok::less:
   case tok::greaterequal:         return prec::Relational;

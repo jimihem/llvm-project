@@ -1227,7 +1227,7 @@ ExprResult Sema::ActOnCXXFoldExpr(Scope *S, SourceLocation LParenLoc, Expr *LHS,
     }
   }
 
-  BinaryOperatorKind Opc = ConvertTokenKindToBinaryOpcode(Operator);
+  BinaryOperatorKind Opc = ConvertTokenKindToBinaryOpcode(Operator, getLangOpts().LUA);
 
   // Perform first-phase name lookup now.
   UnresolvedLookupExpr *ULE = nullptr;

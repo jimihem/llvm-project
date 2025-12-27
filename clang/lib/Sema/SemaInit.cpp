@@ -5386,7 +5386,8 @@ static void TryDefaultInitialization(Sema &S,
   //     - if T is a (possibly cv-qualified) class type (Clause 9), the default
   //       constructor for T is called (and the initialization is ill-formed if
   //       T has no accessible default constructor);
-  if (DestType->isRecordType() && S.getLangOpts().CPlusPlus) {
+  if (DestType->isRecordType() &&
+      (S.getLangOpts().CPlusPlus || S.getLangOpts().LUA)) {
     TryConstructorInitialization(S, Entity, Kind, std::nullopt, DestType,
                                  Entity.getType(), Sequence);
     return;
@@ -6340,7 +6341,7 @@ void InitializationSequence::InitializeFrom(Sema &S,
 
   // We're at the end of the line for C: it's either a write-back conversion
   // or it's a C assignment. There's no need to check anything else.
-  if (!S.getLangOpts().CPlusPlus) {
+  if (!S.getLangOpts().CPlusPlus && !S.getLangOpts().LUA) {
     assert(Initializer && "Initializer must be non-null");
     // If allowed, check whether this is an Objective-C writeback conversion.
     if (allowObjCWritebackConversion &&
@@ -6357,7 +6358,7 @@ void InitializationSequence::InitializeFrom(Sema &S,
     return;
   }
 
-  assert(S.getLangOpts().CPlusPlus);
+  assert(S.getLangOpts().CPlusPlus || S.getLangOpts().LUA);
 
   //     - If the destination type is a (possibly cv-qualified) class type:
   if (DestType->isRecordType()) {

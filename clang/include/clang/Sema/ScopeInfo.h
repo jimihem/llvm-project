@@ -755,6 +755,18 @@ public:
   }
 };
 
+class LuaFunctionScopeInfo : public CapturingScopeInfo {
+public:
+  SmallVector<IdentifierInfo *> parlist;
+  SmallVector<SourceLocation> parLocs;
+  LuaFunctionScopeInfo(DiagnosticsEngine &Diag)
+      : CapturingScopeInfo(Diag, ImpCap_None) {}
+
+  static bool classof(const FunctionScopeInfo *FSI) {
+    return FSI->Kind == SK_Function;
+  }
+};
+
 /// Retains information about a block that is currently being parsed.
 class BlockScopeInfo final : public CapturingScopeInfo {
 public:

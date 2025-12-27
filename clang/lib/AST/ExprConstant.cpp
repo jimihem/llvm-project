@@ -15859,6 +15859,8 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
     case UO_Real:
     case UO_Imag:
       return CheckICE(Exp->getSubExpr(), Ctx);
+    case UO_hash:
+      assert(false);
     }
     llvm_unreachable("invalid unary operator class");
   }
@@ -15963,6 +15965,14 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
 
       return Worst(LHSResult, RHSResult);
     }
+    case BO_LuaLAnd:
+    case BO_LuaLOr:
+    case BO_LuaXor:
+    case BO_LuaNE:
+    case BO_Exp:
+    case BO_Concat:
+    case BO_DivDiv:
+      assert(0);
     }
     llvm_unreachable("invalid binary operator kind");
   }

@@ -230,7 +230,7 @@ Sema::Sema(Preprocessor &pp, ASTContext &ctxt, ASTConsumer &consumer,
   if (getLangOpts().ObjC)
     NSAPIObj.reset(new NSAPI(Context));
 
-  if (getLangOpts().CPlusPlus)
+  if (getLangOpts().CPlusPlus || getLangOpts().LUA)
     FieldCollector.reset(new CXXFieldCollector());
 
   // Tell diagnostics how to render things from the AST library.
@@ -401,6 +401,16 @@ void Sema::AddLuaBuiltinFun() {
     PushOnScopeChains(BuildFunction, getCurScope());
   }
 
+  // ObjectPtr BuildFunctionWithMethod(const MethodTy &Ptr);
+  {
+    QualType BuildFunctionWithMethodT =
+        Context.getFunctionType(ObjectPtrT, {ConstMethodTyRefT}, EPI);
+    DefFun(BuildFunctionWithMethod, BuildFunctionWithMethodT);
+    DefParm(Ptr, ConstMethodTyRefT, BuildFunctionWithMethod);
+    BuildFunctionWithMethod->setParams({Ptr});
+    PushOnScopeChains(BuildFunctionWithMethod, getCurScope());
+  }
+
   //ObjectPtr GetObjectPtrFromArray(const ObjectPtrArray &Values, , unsigned Index);
   {
     QualType GetObjectPtrFromArrayT =
@@ -410,6 +420,17 @@ void Sema::AddLuaBuiltinFun() {
     DefParm(Index, Context.UnsignedIntTy, GetObjectPtrFromArray);
     GetObjectPtrFromArray->setParams({Values, Index});
     PushOnScopeChains(GetObjectPtrFromArray, getCurScope());
+  }
+
+  //ObjectPtrArray GetSubArray(const ObjectPtrArray &Values, unsigned Start);
+  {
+    QualType GetSubArrayT = Context.getFunctionType(
+        ObjectPtrArrayT, {ConstObjectPtrArrayRefT, Context.UnsignedIntTy}, EPI);
+    DefFun(GetSubArray, GetSubArrayT);
+    DefParm(Values, ConstObjectPtrArrayRefT, GetSubArray);
+    DefParm(Start, Context.UnsignedIntTy, GetSubArray);
+    GetSubArray->setParams({Values, Start});
+    PushOnScopeChains(GetSubArray, getCurScope());
   }
 
   // void PushObjPtrIntoArray(ObjectPtrArray &Arr1, const ObjectPtr &Value);
@@ -490,6 +511,41 @@ void Sema::AddLuaBuiltinFun() {
     BuildModifyExpr->setParams({LHS, RHS});
     PushOnScopeChains(BuildModifyExpr, getCurScope());
   }
+
+  //ObjectPtrArray BuildCallExpr(const ObjectPtr& Function, const ObjectPtrArray &Args);
+  {
+    QualType BuildCallExprT = Context.getFunctionType(
+        ObjectPtrArrayT, {ConstObjectPtrRefT, ConstObjectPtrArrayRefT}, EPI);
+    DefFun(BuildCallExpr, BuildCallExprT);
+    DefParm(Function, ConstObjectPtrRefT, BuildCallExpr);
+    DefParm(Args, ConstObjectPtrArrayRefT, BuildCallExpr);
+    BuildCallExpr->setParams({Function, Args});
+    PushOnScopeChains(BuildCallExpr, getCurScope());
+  }
+
+  //ObjectPtr BuildUnOpExpr(const ObjectPtr& Expr, unsigned Op);
+  {
+    QualType BuildUnOpExprT = Context.getFunctionType(
+        ObjectPtrT, {ConstObjectPtrRefT, Context.UnsignedIntTy}, EPI);
+    DefFun(BuildUnOpExpr, BuildUnOpExprT);
+    DefParm(Expr, ConstObjectPtrRefT, BuildUnOpExpr);
+    DefParm(Op, Context.UnsignedIntTy, BuildUnOpExpr);
+    BuildUnOpExpr->setParams({Expr, Op});
+    PushOnScopeChains(BuildUnOpExpr, getCurScope());
+  }
+
+  //ObjectPtr BuildBinOpExpr(const ObjectPtr& LHSExpr, const ObjectPtr& RHSExpr, unsigned Op);
+  {
+    QualType BuildBinOpExprT = Context.getFunctionType(
+        ObjectPtrT,
+        {ConstObjectPtrRefT, ConstObjectPtrRefT, Context.UnsignedIntTy}, EPI);
+    DefFun(BuildBinOpExpr, BuildBinOpExprT);
+    DefParm(LHSExpr, ConstObjectPtrRefT, BuildBinOpExpr);
+    DefParm(RHSExpr, ConstObjectPtrRefT, BuildBinOpExpr);
+    DefParm(Op, Context.UnsignedIntTy, BuildBinOpExpr);
+    BuildBinOpExpr->setParams({LHSExpr, RHSExpr, Op});
+    PushOnScopeChains(BuildBinOpExpr, getCurScope());
+  }
 }
 
 void Sema::Initialize() {
@@ -509,6 +565,7 @@ void Sema::Initialize() {
   if (!TUScope)
     return;
   if (getLangOpts().LUA) {
+    return;
     PushOnScopeChains(Context.getCharArrayDecl(), TUScope);
     PushOnScopeChains(Context.getStringDecl(), TUScope);
     PushOnScopeChains(Context.getObjectDecl(), TUScope);
@@ -2385,9 +2442,8 @@ void Sema::PushBlockScope(Scope *BlockScope, BlockDecl *Block) {
   CapturingFunctionScopes++;
 }
 
-sema::CapturingScopeInfo *Sema::PushCaptureScope() {
-  CapturingScopeInfo *const CSI =
-      new CapturingScopeInfo(getDiagnostics(), CapturingScopeInfo::ImpCap_None);
+LuaFunctionScopeInfo *Sema::PushLuaFunctionScope() {
+  LuaFunctionScopeInfo *const CSI = new LuaFunctionScopeInfo(getDiagnostics());
   FunctionScopes.push_back(CSI);
   CapturingFunctionScopes++;
   return CSI;
@@ -2518,7 +2574,7 @@ Sema::PopFunctionScopeInfo(const AnalysisBasedWarnings::Policy *WP,
 
 void Sema::PoppedFunctionScopeDeleter::
 operator()(sema::FunctionScopeInfo *Scope) const {
-  if (!Scope->isPlainFunction())
+  if (!Scope->isPlainFunction() || Self->getLangOpts().LUA)
     Self->CapturingFunctionScopes--;
   // Stash the function scope for later reuse if it's for a normal function.
   if (Scope->isPlainFunction() && !Self->CachedFunctionScope)

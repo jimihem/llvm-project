@@ -81,6 +81,13 @@ public:
       case BO_OrAssign:  DISPATCH(BinOrAssign,  CompoundAssignOperator);
       case BO_XorAssign: DISPATCH(BinXorAssign, CompoundAssignOperator);
       case BO_Comma:     DISPATCH(BinComma,     BinaryOperator);
+      case BO_LuaLAnd:
+      case BO_LuaLOr:
+      case BO_LuaXor:
+      case BO_LuaNE:
+      case BO_Exp:
+      case BO_Concat:
+      case BO_DivDiv:    assert(0);
       }
     } else if (PTR(UnaryOperator) UnOp = dyn_cast<UnaryOperator>(S)) {
       switch (UnOp->getOpcode()) {
@@ -98,6 +105,8 @@ public:
       case UO_Imag:      DISPATCH(UnaryImag,      UnaryOperator);
       case UO_Extension: DISPATCH(UnaryExtension, UnaryOperator);
       case UO_Coawait:   DISPATCH(UnaryCoawait,   UnaryOperator);
+      case UO_hash:
+        assert(0);
       }
     }
 

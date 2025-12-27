@@ -474,7 +474,7 @@ bool Preprocessor::HandleEndOfFile(Token &Result, bool isEndOfMacro) {
     if (!isEndOfMacro && CurPPLexer) {
       ExitedFID = CurPPLexer->getFileID();
 
-      assert(PredefinesFileID.isValid() &&
+      assert((PredefinesFileID.isValid() || TemporaryFileID.isValid()) &&
              "HandleEndOfFile is called before PredefinesFileId is set");
       ExitedFromPredefinesFile = (PredefinesFileID == ExitedFID);
     }
@@ -497,6 +497,13 @@ bool Preprocessor::HandleEndOfFile(Token &Result, bool isEndOfMacro) {
         isPCHThroughHeader(
             SourceMgr.getFileEntryForID(CurPPLexer->getFileID())))
       FoundPCHThroughHeader = true;
+
+    if (TemporaryFileID.isValid()) {
+      LangOpts.LUA = true;
+      LangOpts.CPlusPlus = false;
+      Identifiers.AddKeywords(LangOpts);
+      TemporaryFileID = FileID();
+    }
 
     // We're done with the #included file.
     RemoveTopOfLexerStack();
@@ -535,6 +542,14 @@ bool Preprocessor::HandleEndOfFile(Token &Result, bool isEndOfMacro) {
       return LeavingSubmodule;
     }
   }
+
+  if (TemporaryFileID.isValid()) {
+    LangOpts.LUA = true;
+    LangOpts.CPlusPlus = false;
+    Identifiers.AddKeywords(LangOpts);
+    TemporaryFileID = FileID();
+  }
+
   // If this is the end of the main file, form an EOF token.
   assert(CurLexer && "Got EOF but no current lexer set!");
   const char *EndPos = getCurLexerEndPos();

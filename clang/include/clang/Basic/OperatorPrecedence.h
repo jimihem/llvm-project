@@ -35,17 +35,23 @@ namespace prec {
     And             = 8,    // &
     Equality        = 9,    // ==, !=
     Relational      = 10,   //  >=, <=, >, <
-    Spaceship       = 11,   // <=>
-    Shift           = 12,   // <<, >>
-    Additive        = 13,   // -, +
-    Multiplicative  = 14,   // *, /, %
-    PointerToMember = 15    // .*, ->*
+    LuaInclusiveOr  = 11,   // |
+    LuaExclusiveOr  = 12,   // ~
+    LuaAnd          = 13,   // &
+    Spaceship       = 14,   // <=>
+    Shift           = 15,   // <<, >>
+    ConCat          = 16,   // ..
+    Additive        = 17,   // -, +
+    Multiplicative  = 18,   // *, /, %
+    PointerToMember = 19,   // .*, ->*
+    LuaUnop         = 20,   // not, #, - ~
+    LuaExp          = 21    // ^
   };
 }
 
 /// Return the precedence of the specified binary operator token.
 prec::Level getBinOpPrecedence(tok::TokenKind Kind, bool GreaterThanIsOperator,
-                               bool CPlusPlus11);
+                               bool CPlusPlus11, bool Lua);
 
 }  // end namespace clang
 

@@ -817,8 +817,13 @@ ExprResult
 Sema::ActOnCXXBoolLiteral(SourceLocation OpLoc, tok::TokenKind Kind) {
   assert((Kind == tok::kw_true || Kind == tok::kw_false) &&
          "Unknown C++ Boolean value!");
-  return new (Context)
+
+  Expr *BoolVal = new (Context)
       CXXBoolLiteralExpr(Kind == tok::kw_true, Context.BoolTy, OpLoc);
+  if (getLangOpts().LUA) {
+    return BuildBool(BoolVal, BoolVal->getSourceRange());
+  }
+  return BoolVal;
 }
 
 /// ActOnCXXNullPtrLiteral - Parse 'nullptr'.

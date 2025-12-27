@@ -2011,7 +2011,7 @@ void StringLiteralParser::init(ArrayRef<Token> StringToks){
     const char *ThisTokEnd = ThisTokBuf+ThisTokLen;
 
     // Remove an optional ud-suffix.
-    if (ThisTokEnd[-1] != '"') {
+    if (ThisTokEnd[-1] != '"' && !Features.LUA) {
       const char *UDSuffixEnd = ThisTokEnd;
       do {
         --ThisTokEnd;
@@ -2113,7 +2113,7 @@ void StringLiteralParser::init(ArrayRef<Token> StringToks){
         RemainingTokenSpan = AfterCRLF.substr(1);
       }
     } else {
-      if (ThisTokBuf[0] != '"') {
+      if (ThisTokBuf[0] != '"' && !Features.LUA) {
         // The file may have come from PCH and then changed after loading the
         // PCH; Fail gracefully.
         return DiagnoseLexingError(StringToks[i].getLocation());

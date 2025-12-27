@@ -1090,6 +1090,10 @@ private:
   /// The file ID for the preprocessor predefines.
   FileID PredefinesFileID;
 
+  std::string TemporaryString;
+
+  FileID TemporaryFileID;
+
   /// The file ID for the PCH through header.
   FileID PCHThroughHeaderFileID;
 
@@ -1631,6 +1635,8 @@ public:
   /// Enter the specified FileID as the main source file,
   /// which implicitly adds the builtin defines etc.
   void EnterMainSourceFile();
+
+  void EnterSourceString(SourceLocation FileLoc, std::string &Source);
 
   /// Inform the preprocessor callbacks that processing is complete.
   void EndSourceFile();
@@ -2596,6 +2602,10 @@ private:
   void setPredefinesFileID(FileID FID) {
     assert(PredefinesFileID.isInvalid() && "PredefinesFileID already set!");
     PredefinesFileID = FID;
+  }
+
+  void setTemporaryFileID(FileID FID) {
+    TemporaryFileID = FID;
   }
 
   /// Set the FileID for the PCH through header.

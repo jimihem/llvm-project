@@ -2250,7 +2250,8 @@ bool Sema::LookupName(LookupResult &R, Scope *S, bool AllowBuiltinCreation,
               if (!LastDC->Equals(DC))
                 break;
             }
-
+            if (S->isDeclScope(*LastI) && getLangOpts().LUA)
+              break;
             // If the declaration is in the right namespace and visible, add it.
             if (NamedDecl *LastD = R.getAcceptableDecl(*LastI))
               R.addDecl(LastD);
