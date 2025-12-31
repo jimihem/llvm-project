@@ -61,6 +61,7 @@ entry:
   store ptr @_Lua.Fun.__Lua_Temp_Method_1.ObjectPtr.ObjectPtrArray, ptr %ref.tmp3, align 4
   call void @_Lua.Fun.SetFunctionMethod.ObjectPtr.MethodTy(ptr noundef nonnull align 4 dereferenceable(8) %__Lua_Temp_Closure_0, ptr noundef nonnull align 4 dereferenceable(4) %ref.tmp3)
   call void @_Lua.Fun.BuildModifyExpr.ObjectPtr.ObjectPtr(ptr noundef nonnull align 4 dereferenceable(8) %f, ptr noundef nonnull align 4 dereferenceable(8) %__Lua_Temp_Closure_0)
+  call void @_Lua.Fun.BuildEmptyArr(ptr sret(%class.ObjectPtrArray) align 4 %agg.result)
   call void @_Lua.CXXMethod.~ObjectPtr(ptr noundef nonnull align 4 dereferenceable(8) %__Lua_Temp_Closure_0)
   call void @_Lua.CXXMethod.~ObjectPtr(ptr noundef nonnull align 4 dereferenceable(8) %f)
   call void @_Lua.CXXMethod.~ObjectPtrArray(ptr noundef nonnull align 4 dereferenceable(12) %__Lua_Temp_Obj_Arr_0)
@@ -286,6 +287,8 @@ nrvo.skipdtor:                                    ; preds = %nrvo.unused, %for.e
 }
 
 declare void @_Lua.Fun.BuildModifyExpr.ObjectPtr.ObjectPtr(ptr noundef nonnull align 4 dereferenceable(8), ptr noundef nonnull align 4 dereferenceable(8)) #1
+
+declare void @_Lua.Fun.BuildEmptyArr(ptr sret(%class.ObjectPtrArray) align 4) #1
 
 declare void @_Lua.Fun.GetObjectPtrFromArray.ObjectPtrArray.unsigned_int(ptr sret(%class.ObjectPtr) align 4, ptr noundef nonnull align 4 dereferenceable(12), i32 noundef) #1
 

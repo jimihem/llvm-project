@@ -856,6 +856,18 @@ ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
 
   StmtResult FnBody(ParseCompoundStatementBody());
   SourceLocation FunEndLoc = ConsumeToken(); //eat 'end'
+   
+  if (clang::CompoundStmt *Body = dyn_cast<clang::CompoundStmt>(FnBody.get())) {
+    if (!isa<ReturnStmt>(Body->body_back())) {
+      Expr *E =
+          Actions.BuildLuaBuiltinCallExpr("BuildEmptyArr", {}, FunEndLoc).get();
+      StmtResult R = Actions.ActOnReturnStmt(FunEndLoc, E, getCurScope());
+      StmtVector TempStmts;
+      TempStmts.push_back(R.get());
+      FnBody = Actions.AddStmtsIntoCompStmt(TempStmts, Body, false);
+    }
+  }
+  
   BodyScope.Exit();
   Stmts.push_back(Actions
                       .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(FD),

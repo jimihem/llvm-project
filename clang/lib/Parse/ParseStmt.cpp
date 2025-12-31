@@ -2984,7 +2984,22 @@ Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
     FnBody =
         Actions.ActOnCompoundStmt(LBraceLoc, LBraceLoc, std::nullopt, false);
   }
-
+  if (getLangOpts().LUA) {
+    if (clang::CompoundStmt *Body =
+            dyn_cast<clang::CompoundStmt>(FnBody.get())) {
+      if (!isa<ReturnStmt>(Body->body_back())) {
+        Expr *E =
+            Actions
+                .BuildLuaBuiltinCallExpr("BuildEmptyArr", {}, Body->getEndLoc())
+                .get();
+        StmtResult R =
+            Actions.ActOnReturnStmt(Body->getEndLoc(), E, getCurScope());
+        StmtVector TempStmts;
+        TempStmts.push_back(R.get());
+        FnBody = Actions.AddStmtsIntoCompStmt(TempStmts, Body, false);
+      }
+    }
+  }
   BodyScope.Exit();
   return Actions.ActOnFinishFunctionBody(Decl, FnBody.get());
 }
