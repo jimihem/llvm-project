@@ -2139,8 +2139,8 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
 
     SmallVector<Decl *> LocalVars;
 
-    VarDecl *LocalVar =
-        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc(), Initializer);
+    VarDecl *LocalVar = Actions.ActOnLocalVariable(Var);
+    Actions.AddInitializerToDecl(LocalVar, Initializer, true);
     LocalVars.push_back(LocalVar);
 
     VarDecl *LimitVar =

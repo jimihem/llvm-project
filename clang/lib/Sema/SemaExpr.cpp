@@ -5854,6 +5854,15 @@ ExprResult
 Sema::CreateBuiltinArraySubscriptExpr(Expr *Base, SourceLocation LLoc,
                                       Expr *Idx, SourceLocation RLoc) {
   if (getLangOpts().LUA) {
+    if (isa<DeclRefExpr>(Base)) {
+      Decl *BaseDecl = cast<DeclRefExpr>(Base)->getDecl();
+      if (isa<VarDecl>(BaseDecl) &&
+          cast<VarDecl>(BaseDecl)->isLuaEllipsisVar()) {
+        Idx = ConvertObjArrayToScalar(Idx);
+        return BuildLuaBuiltinCallExpr("GetObjectPtrArrayElement", {Base, Idx},
+                                       SourceRange(LLoc, RLoc));
+      }
+    }
     Base = ConvertObjArrayToScalar(Base);
     Idx = ConvertObjArrayToScalar(Idx);
     return BuildLuaBuiltinCallExpr("GetMember", {Base, Idx},
@@ -16270,10 +16279,12 @@ Sema::DeclGroupPtrTy Sema::ActOnLuaFunctionParmInit() {
                     .get();
       IsVar = true;
       VarList = LocalVar;
+      cast<VarDecl>(LocalVar)->setIsLuaEllipsisVar(true);
     } else if (IsVar) {
       Initial = BuildDeclRefExpr(cast<VarDecl>(VarList),
                                  cast<VarDecl>(VarList)->getType(), VK_LValue,
                                  parLoc);
+      cast<VarDecl>(LocalVar)->setIsLuaEllipsisVar(true);
     } else {
       Initial = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray",
                                         {ParmsRef, Index}, Id.getSourceRange())

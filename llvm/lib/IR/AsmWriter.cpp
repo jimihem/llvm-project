@@ -364,7 +364,7 @@ enum PrefixType {
 void llvm::printLLVMNameWithoutPrefix(raw_ostream &OS, StringRef Name) {
   assert(!Name.empty() && "Cannot get empty name!");
   if (Name.startswith("_Lua")) {
-    OS << Name;
+      OS << Name;
     return;
   }
   // Scan the name to see if it needs quotes first.

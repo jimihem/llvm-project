@@ -1073,6 +1073,8 @@ protected:
     unsigned ImplicitParamKind : 3;
 
     unsigned EscapingByref : 1;
+
+    unsigned IsLuaEllipsisVar : 1;
   };
 
   union {
@@ -1547,6 +1549,15 @@ public:
   void setPreviousDeclInSameBlockScope(bool Same) {
     assert(!isa<ParmVarDecl>(this));
     NonParmVarDeclBits.PreviousDeclInSameBlockScope = Same;
+  }
+
+  void setIsLuaEllipsisVar(bool Ellipsis) {
+    assert(!isa<ParmVarDecl>(this));
+    NonParmVarDeclBits.IsLuaEllipsisVar = Ellipsis;
+  }
+
+  bool isLuaEllipsisVar() {
+    return isa<ParmVarDecl>(this) ? false : NonParmVarDeclBits.IsLuaEllipsisVar;
   }
 
   /// Indicates the capture is a __block variable that is captured by a block

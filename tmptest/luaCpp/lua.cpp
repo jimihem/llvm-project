@@ -71,6 +71,8 @@ ObjectPtr BuildTableFromArray(const ObjectPtrArray &Values);
 ObjectPtr BuildFunction();
 ObjectPtr BuildFunctionWithMethod(const MethodTy &Ptr);
 ObjectPtr GetObjectPtrFromArray(const ObjectPtrArray &Values, unsigned Index);
+ObjectPtr GetObjectPtrArraySize(const ObjectPtrArray &Values);
+ObjectPtr GetObjectPtrArrayElement(const ObjectPtrArray &Values, const ObjectPtr &Index);
 ObjectPtrArray GetSubArray(const ObjectPtrArray &Values, unsigned Start);
 void      PushObjPtrIntoArray(ObjectPtrArray &Arr1, const ObjectPtr &Value);
 void      PushArrayIntoArray(ObjectPtrArray &Arr1, const ObjectPtrArray &Arr2);

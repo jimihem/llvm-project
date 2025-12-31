@@ -1,5 +1,5 @@
 --[[
--cc1 -no-round-trip-args  -undef -x lua -std=lua53 -emit-llvm -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\tmptest\testes\vararg.lua >> vararg-llvm.txt
+-cc1 -no-round-trip-args  -undef -x lua -std=lua53 -emit-llvm -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\tmptest\testes\vararg.lua
 -cc1 -no-round-trip-args  -undef -x lua -std=lua53 -ast-dump -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\tmptest\testes\vararg.lua >> vararg-ast.txt
 -- $Id: testes/vararg.lua $
 -- See Copyright Notice in file lua.h

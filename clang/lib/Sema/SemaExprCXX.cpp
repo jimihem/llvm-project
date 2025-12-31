@@ -7299,7 +7299,7 @@ ExprResult Sema::MaybeBindToTemporary(Expr *E) {
   if (E->getType().isDestructedType() == QualType::DK_nontrivial_c_struct)
     Cleanup.setExprNeedsCleanups(true);
 
-  if (!getLangOpts().CPlusPlus)
+  if (!getLangOpts().CPlusPlus && !getLangOpts().LUA)
     return E;
 
   // Search for the base element type (cf. ASTContext::getBaseElementType) with

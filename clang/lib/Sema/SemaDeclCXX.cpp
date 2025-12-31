@@ -11880,9 +11880,11 @@ ExprResult Sema::BuildLuaBuiltinCallExpr(std::string Fn,
   }
 
   MultiExprArg MulExprs(Args);
-  return CallExpr::Create(
+  Expr *TheCall = CallExpr::Create(
       Context, FunExpr, MulExprs, FnDecl->getReturnType(), VK_PRValue,
       SR.getBegin(), CurFPFeatureOverrides(), MulExprs.size());
+  
+  return MaybeBindToTemporary(TheCall);
 }
 
 ExprResult Sema::BuildMemberRefExpr(Expr *Base, Expr *Field) {

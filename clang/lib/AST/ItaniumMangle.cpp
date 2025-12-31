@@ -6488,26 +6488,50 @@ bool CXXNameMangler::shouldHaveAbiTags(ItaniumMangleContextImpl &C,
   return TrackAbiTags.AbiTagsRoot.getUsedAbiTags().size();
 }
 
+static QualType getCoreType(QualType Ty) {
+  do {
+    if (isa<ElaboratedType>(Ty)) {
+      Ty = dyn_cast<ElaboratedType>(Ty)->getNamedType();
+    } else if (isa<TypedefType>(Ty)) {
+      return Ty;
+    }
+    else if (Ty->isPointerType() || Ty->isReferenceType())
+      Ty = Ty->getPointeeType();
+    else if (Ty->isArrayType())
+      Ty = Ty->castAsArrayTypeUnsafe()->getElementType();
+    else
+      return Ty.withoutLocalFastQualifiers();
+  } while (true);
+}
+
 void ItaniumMangleContextImpl::mangleLuaName(GlobalDecl GD, raw_ostream &Out) {
   std::string MangledName;
   MangledName += "_Lua";
   const Decl *D = GD.getDecl();
   if (auto Var = dyn_cast<VarDecl>(D)) {
-    MangledName += "_Var_";
+    MangledName += ".Var.";
     MangledName += Var->getName();
   } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
-    MangledName += "_CXXMethod_";
+    MangledName += ".CXXMethod.";
     MangledName += Method->getNameAsString();
   } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
-    MangledName += "_Fun_";
+    MangledName += ".Fun.";
     MangledName += Fun->getNameAsString();
   }
 
   if (auto Fun = dyn_cast<FunctionDecl>(D)) {
     for (unsigned i = 0; i < Fun->getNumParams(); i++) {
-      MangledName += "_";
-      const ParmVarDecl* P = Fun->getParamDecl(i);
-      MangledName += P->getType().getAsString();
+      MangledName += ".";
+      const ParmVarDecl *P = Fun->getParamDecl(i);
+      QualType CoreTy = getCoreType(P->getType());
+      if (isa<TypedefType>(CoreTy)) {
+        MangledName += dyn_cast<TypedefType>(CoreTy)->getDecl()->getNameAsString();
+      }
+      else if (auto ID = getCoreType(P->getType()).getBaseTypeIdentifier()) {
+        MangledName += ID->getName();
+      } else {
+        MangledName += getCoreType(P->getType()).getAsString();
+      }
     }
   }
   std::replace(MangledName.begin(), MangledName.end(), ' ', '_');

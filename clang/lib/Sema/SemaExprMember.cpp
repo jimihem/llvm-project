@@ -1711,6 +1711,14 @@ ExprResult Sema::ActOnMemberAccessExpr(Scope *S, Expr *Base,
                                        UnqualifiedId &Id,
                                        Decl *ObjCImpDecl) {
   if (getLangOpts().LUA) {
+    if (isa<DeclRefExpr>(Base) && Id.Identifier->getName() == "n") {
+      Decl *BaseDecl = cast<DeclRefExpr>(Base)->getDecl();
+      if (isa<VarDecl>(BaseDecl) &&
+          cast<VarDecl>(BaseDecl)->isLuaEllipsisVar()) {
+        return BuildLuaBuiltinCallExpr("GetObjectPtrArraySize", {Base},
+                                       SourceRange(OpLoc, Id.getEndLoc()));
+      }
+    }
     Base = ConvertObjArrayToScalar(Base);
     Expr *Idx = BuildStringFromId(Id).get();
     return BuildLuaBuiltinCallExpr("GetMember", {Base, Idx},
