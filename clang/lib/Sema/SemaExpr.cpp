@@ -16011,6 +16011,9 @@ ExprResult Sema::ActOnBinOp(Scope *S, SourceLocation TokLoc,
 
   if (getLangOpts().LUA) {
     if (Opc == BO_Assign) {
+      if (CXXBindTemporaryExpr *BTE = dyn_cast<CXXBindTemporaryExpr>(LHSExpr)) {
+        LHSExpr = BTE->getSubExpr();
+      }
       if (CallExpr *CE = dyn_cast<CallExpr>(LHSExpr)) {
         FunctionDecl *Callee = CE->getDirectCallee();
         if (getDeclByName("GetMember") == Callee) {
@@ -16115,7 +16118,8 @@ ExprResult Sema::ActOnTableFieldName(UnqualifiedId& Id) {
 
 SmallVector<Expr *> Sema::ActOnExpList(SmallVector<Expr *> ExpList) {
   SmallVector<Expr *> Ret;
-  VarDecl *tempObjArr = CreateLuaTempObjPtrArrayVar(ExpList.front()->getExprLoc());
+  VarDecl *tempObjArr = CreateLuaTempObjPtrArrayVar(
+      ExpList.empty() ? SourceLocation() : ExpList.front()->getExprLoc());
 
   Expr *tempObjArrRef = BuildDeclRefExpr(tempObjArr, tempObjArr->getType(),
                                          VK_LValue, SourceLocation());

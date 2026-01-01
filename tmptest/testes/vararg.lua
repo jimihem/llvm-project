@@ -1,12 +1,12 @@
 --[[
--cc1 -no-round-trip-args  -undef -x lua -std=lua53 -emit-llvm -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\tmptest\testes\vararg.lua
+-cc1 -no-round-trip-args  -undef -x lua -std=lua53 -emit-llvm -triple lua_v53-pc-luaInterp-itanium_elf  D:\llvm-project\tmptest\testes\vararg.lua
 -cc1 -no-round-trip-args  -undef -x lua -std=lua53 -ast-dump -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\tmptest\testes\vararg.lua >> vararg-ast.txt
 -- $Id: testes/vararg.lua $
 -- See Copyright Notice in file lua.h
 ]]
 
 print('testing vararg')
-
+--[==[]==]
 local function f (a, ...t)
   local x = {n = select('#', ...), ...}
   assert(x.n == t.n)
@@ -15,7 +15,7 @@ local function f (a, ...t)
   end
   return x.n
 end
---[==[
+
 local function c12 (...)
   assert(arg == _G.arg)    -- no local 'arg'
   local x = {...}; x.n = #x
@@ -31,7 +31,7 @@ local call = function (f, args) return f(table.unpack(args, 1, args.n)) end
 assert(f() == 0)
 assert(f({1,2,3}, 1, 2, 3) == 3)
 assert(f({"alo", nil, 45, f, nil}, "alo", nil, 45, f, nil) == 5)
-
+--[==[
 assert(vararg().n == 0)
 assert(vararg(nil, nil).n == 2)
 
