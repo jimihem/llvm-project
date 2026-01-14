@@ -93,6 +93,8 @@ ObjectPtrArray BuildEmptyArr();
 bool ConvertToBool(const ObjectPtr &Op);
 ObjectPtr GetObjectPtrArrayN(const ObjectPtrArray &Values, unsigned long long OpLoc);
 void      SetObjectPtrArrayN(const ObjectPtrArray &Values, const ObjectPtr &N, unsigned long long OpLoc);
+ObjectPtr CloneObjectPtr(const ObjectPtr& other);
+ObjectPtrArray CloneObjectPtrArray(const ObjectPtrArray& other);
 
 
 

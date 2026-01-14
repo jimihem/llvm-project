@@ -658,6 +658,8 @@ void Parser::Initialize() {
     void      SetObjectPtrArrayN(const ObjectPtrArray &Values, const ObjectPtr &N, unsigned long long OpLoc);\
     ObjectPtrArray GetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);\
     void SetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtrArray &Var, unsigned long long OpLoc);\
+    ObjectPtr CloneObjectPtr(const ObjectPtr& other);\
+    ObjectPtrArray CloneObjectPtrArray(const ObjectPtrArray& other);\
     ";
     PP.EnterSourceString(SourceLocation(), str);
   }

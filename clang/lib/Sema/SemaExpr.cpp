@@ -16325,6 +16325,9 @@ Sema::DeclGroupPtrTy Sema::ActOnLuaFunctionParmInit() {
       Initial = BuildLuaBuiltinCallExpr("GetSubArray", {ParmsRef, Index},
                                         Id.getSourceRange())
                     .get();
+      Initial = BuildLuaBuiltinCallExpr("CloneObjectPtrArray", {Initial},
+                                        Id.getSourceRange())
+                    .get();
       IsVar = true;
       VarList = LocalVar;
       cast<VarDecl>(LocalVar)->setIsLuaEllipsisVar(true);
@@ -16336,6 +16339,9 @@ Sema::DeclGroupPtrTy Sema::ActOnLuaFunctionParmInit() {
     } else {
       Initial = BuildLuaBuiltinCallExpr("GetObjectPtrFromArray",
                                         {ParmsRef, Index}, Id.getSourceRange())
+                    .get();
+      Initial = BuildLuaBuiltinCallExpr("CloneObjectPtr", {Initial},
+                                        Id.getSourceRange())
                     .get();
     }
 
