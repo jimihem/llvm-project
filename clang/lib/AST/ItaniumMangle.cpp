@@ -6506,16 +6506,16 @@ static QualType getCoreType(QualType Ty) {
 
 void ItaniumMangleContextImpl::mangleLuaName(GlobalDecl GD, raw_ostream &Out) {
   std::string MangledName;
-  MangledName += "_Lua";
+  MangledName += "__lua";
   const Decl *D = GD.getDecl();
   if (auto Var = dyn_cast<VarDecl>(D)) {
-    MangledName += ".Var.";
+    MangledName += ".var.";
     MangledName += Var->getName();
   } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
-    MangledName += ".CXXMethod.";
+    MangledName += ".cxxmethod.";
     MangledName += Method->getNameAsString();
   } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
-    MangledName += ".Fun.";
+    MangledName += ".fun.";
     MangledName += Fun->getNameAsString();
   }
 

@@ -127,6 +127,8 @@ void LangOptions::setLangDefaults(LangOptions &Opts, Language Lang,
 
   Opts.HLSL = Lang == Language::HLSL;
   Opts.LUA = Lang == Language::lua;
+  if (Opts.LUA)
+    Opts.LUAMANGLE = Opts.LUA;
   Opts.CommentOpts.ParseLuaComments = Lang == Language::lua;
   if (Opts.HLSL && Opts.IncludeDefaultHeader)
     Includes.push_back("hlsl.h");

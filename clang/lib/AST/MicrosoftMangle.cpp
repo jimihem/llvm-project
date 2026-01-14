@@ -3437,25 +3437,54 @@ void MicrosoftCXXNameMangler::mangleType(const PipeType *T, Qualifiers,
   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__clang"});
 }
 
+static QualType getCoreType(QualType Ty) {
+  do {
+    if (isa<ElaboratedType>(Ty)) {
+      Ty = dyn_cast<ElaboratedType>(Ty)->getNamedType();
+    } else if (isa<TypedefType>(Ty)) {
+      return Ty;
+    } else if (Ty->isPointerType() || Ty->isReferenceType())
+      Ty = Ty->getPointeeType();
+    else if (Ty->isArrayType())
+      Ty = Ty->castAsArrayTypeUnsafe()->getElementType();
+    else
+      return Ty.withoutLocalFastQualifiers();
+  } while (true);
+}
+
 void MicrosoftMangleContextImpl::mangleLuaName(GlobalDecl GD,
                                                raw_ostream &Out) {
-  Out << "@Lua";
+  std::string MangledName;
+  MangledName += "__lua";
   const Decl *D = GD.getDecl();
   if (auto Var = dyn_cast<VarDecl>(D)) {
-    Out << ".Var." << Var->getName();
+    MangledName += ".var.";
+    MangledName += Var->getName();
   } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
-    Out << ".CXXMethod." << Method->getNameAsString();
+    MangledName += ".cxxmethod.";
+    MangledName += Method->getNameAsString();
   } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
-    Out << ".Fun." << Fun->getNameAsString();
+    MangledName += ".fun.";
+    MangledName += Fun->getNameAsString();
   }
 
   if (auto Fun = dyn_cast<FunctionDecl>(D)) {
     for (unsigned i = 0; i < Fun->getNumParams(); i++) {
-      Out << ".";
+      MangledName += ".";
       const ParmVarDecl *P = Fun->getParamDecl(i);
-      Out << P->getType().getAsString();
+      QualType CoreTy = getCoreType(P->getType());
+      if (isa<TypedefType>(CoreTy)) {
+        MangledName +=
+            dyn_cast<TypedefType>(CoreTy)->getDecl()->getNameAsString();
+      } else if (auto ID = getCoreType(P->getType()).getBaseTypeIdentifier()) {
+        MangledName += ID->getName();
+      } else {
+        MangledName += getCoreType(P->getType()).getAsString();
+      }
     }
   }
+  std::replace(MangledName.begin(), MangledName.end(), ' ', '_');
+  Out << MangledName;
 }
 
 void MicrosoftMangleContextImpl::mangleCXXName(GlobalDecl GD,

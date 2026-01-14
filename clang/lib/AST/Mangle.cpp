@@ -142,7 +142,7 @@ bool MangleContext::shouldMangleDeclName(const NamedDecl *D) {
 void MangleContext::mangleName(GlobalDecl GD, raw_ostream &Out) {
   const ASTContext &ASTContext = getASTContext();
   const NamedDecl *D = cast<NamedDecl>(GD.getDecl());
-  if (ASTContext.getLangOpts().LUA) {
+  if (ASTContext.getLangOpts().LUAMANGLE) {
     mangleLuaName(GD, Out);
     return;
   }
