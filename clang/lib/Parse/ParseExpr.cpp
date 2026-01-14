@@ -792,6 +792,7 @@ ExprResult Parser::ParseLuaFunName(bool &HaveSelf) {
     PrimExpr = Actions.ActOnMemberAccessExpr(getCurScope(), PrimExpr.get(),
                                              OpLoc, tok::period, SS,
                                              SourceLocation(), Id, nullptr);
+    HaveSelf = true;
   }
   return PrimExpr;
 }

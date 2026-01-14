@@ -653,6 +653,11 @@ void Parser::Initialize() {
     void SetUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtr &Var, unsigned long long OpLoc);\
     void AddMember(const ObjectPtr &Base, const ObjectPtr &Value, unsigned long long OpLoc);\
     void AddMembers(const ObjectPtr &Base, const ObjectPtrArray &Values, unsigned long long OpLoc);\
+    void SetObjectPtrArrayElement(const ObjectPtrArray &Values, const ObjectPtr &Index, const ObjectPtr &Value, unsigned long long OpLoc);\
+    ObjectPtr GetObjectPtrArrayN(const ObjectPtrArray &Values, unsigned long long OpLoc);\
+    void      SetObjectPtrArrayN(const ObjectPtrArray &Values, const ObjectPtr &N, unsigned long long OpLoc);\
+    ObjectPtrArray GetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);\
+    void SetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtrArray &Var, unsigned long long OpLoc);\
     ";
     PP.EnterSourceString(SourceLocation(), str);
   }

@@ -2266,9 +2266,19 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
 
     StmtVector TempStmts;
     SmallVector<Expr *> Exprs = {FSVARVarRefs[1], FSVARVarRefs[2]};
-    GenerateTempObjArray(Exprs, TempStmts, StmtCtx);
+    Expr* Args = GenerateTempObjArray(Exprs, TempStmts, StmtCtx).get();
 
-    Expr *CallExpr = Actions.ActOnLuaFunctionCall(FSVARVarRefs[0], Exprs[0]).get();
+    Expr *CallExpr = Actions.ActOnLuaFunctionCall(FSVARVarRefs[0], Args).get();
+
+    GenerateAssignStmts(InLoc, LocalVarRefs, CallExpr, TempStmts, StmtCtx);
+
+    Stmts.append(TempStmts);
+
+    TempStmts.clear();
+    Exprs = {FSVARVarRefs[1], FSVARVarRefs[2]};
+    Args = GenerateTempObjArray(Exprs, TempStmts, StmtCtx).get();
+
+    CallExpr = Actions.ActOnLuaFunctionCall(FSVARVarRefs[0], Args).get();
 
     GenerateAssignStmts(InLoc, LocalVarRefs, CallExpr, TempStmts, StmtCtx);
     
@@ -2278,8 +2288,6 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
     SourceLocation EndLoc = ConsumeToken(); // eat 'end'
 
     Body = Actions.AddStmtsIntoCompStmt(TempStmts, Body.get(), false);
-
-    Stmts.append(TempStmts);
 
     ExprResult Var1Ref = Actions.BuildDeclRefExpr(cast<VarDecl>(LocalVars[0]),
                                      cast<VarDecl>(LocalVars[0])->getType(),

@@ -31,6 +31,7 @@ private:
   ObjectPtr *data;
   unsigned capacity;
   unsigned size;
+  unsigned n;
 
   void resize(unsigned new_capacity);
 
@@ -73,6 +74,7 @@ ObjectPtr BuildFunctionWithMethod(const MethodTy &Ptr);
 ObjectPtr GetObjectPtrFromArray(const ObjectPtrArray &Values, unsigned Index);
 ObjectPtr GetObjectPtrArraySize(const ObjectPtrArray &Values);
 ObjectPtr GetObjectPtrArrayElement(const ObjectPtrArray &Values, const ObjectPtr &Index);
+void      SetObjectPtrArrayElement(const ObjectPtrArray &Values, const ObjectPtr &Index, const ObjectPtr &Value, unsigned long long OpLoc);
 ObjectPtrArray GetSubArray(const ObjectPtrArray &Values, unsigned Start);
 void      PushObjPtrIntoArray(ObjectPtrArray &Arr1, const ObjectPtr &Value);
 void      PushArrayIntoArray(ObjectPtrArray &Arr1, const ObjectPtrArray &Arr2);
@@ -81,12 +83,16 @@ void      SetFunctionUpValues(ObjectPtr &Fun, const ObjectPtrArray &Arr);
 void      SetFunctionMethod(ObjectPtr &Fun, const MethodTy &Ptr);
 ObjectPtr GetUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);
 void SetUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtr &Var, unsigned long long OpLoc);
+ObjectPtrArray GetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);
+void SetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtrArray &Var, unsigned long long OpLoc);
 void      BuildModifyExpr(const ObjectPtr& LHS, const ObjectPtr& RHS);
 ObjectPtrArray BuildCallExpr(const ObjectPtr& Function, const ObjectPtrArray &Args);
 ObjectPtr BuildUnOpExpr(const ObjectPtr& Expr, unsigned Op);
 ObjectPtr BuildBinOpExpr(const ObjectPtr& LHSExpr, const ObjectPtr& RHSExpr, unsigned Op);
 ObjectPtrArray BuildEmptyArr();
 bool ConvertToBool(const ObjectPtr &Op);
+ObjectPtr GetObjectPtrArrayN(const ObjectPtrArray &Values, unsigned long long OpLoc);
+void      SetObjectPtrArrayN(const ObjectPtrArray &Values, const ObjectPtr &N, unsigned long long OpLoc);
 
 
 

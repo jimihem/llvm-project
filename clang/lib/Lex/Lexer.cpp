@@ -4635,13 +4635,13 @@ bool Lexer::LexDependencyDirectiveTokenWhileSkipping(Token &Result) {
 
 bool Lexer::IsStartOfLuaBlockComment(const char *CurPtr) {
   const char *p = CurPtr;
+  DashCountOfLuaBlockCommentOrString = 0;
   if (p[0] == '[') {
     if (p[1] == '[') {
       return true;
     } else {
       p++;
       unsigned DashCount = 0;
-      DashCountOfLuaBlockCommentOrString = 0;
       while (*p == '=') {
         DashCount++;
         p++;
@@ -4658,13 +4658,13 @@ bool Lexer::IsStartOfLuaBlockComment(const char *CurPtr) {
 }
 
 bool Lexer::IsStartOfLuaBlockString(const char *CurPtr) {
+  DashCountOfLuaBlockCommentOrString = 0;
   const char *p = CurPtr;
   if (p[0] == '[') {
     LexingLuaBlockString = true;
     return true;
   } else {
     unsigned DashCount = 0;
-    DashCountOfLuaBlockCommentOrString = 0;
     while (*p == '=') {
       DashCount++;
       p++;

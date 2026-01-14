@@ -1715,7 +1715,7 @@ ExprResult Sema::ActOnMemberAccessExpr(Scope *S, Expr *Base,
       Decl *BaseDecl = cast<DeclRefExpr>(Base)->getDecl();
       if (isa<VarDecl>(BaseDecl) &&
           cast<VarDecl>(BaseDecl)->isLuaEllipsisVar()) {
-        return BuildLuaBuiltinCallExpr("GetObjectPtrArraySize", {Base},
+        return BuildLuaBuiltinCallExpr("GetObjectPtrArrayN", {Base},
                                        SourceRange(OpLoc, Id.getEndLoc()));
       }
     }

@@ -6040,6 +6040,8 @@ public:
 
   bool IsObjArrayTy(Expr* Epr);
 
+  bool IsObjArrayTy(QualType Ty);
+
   SmallVector<Expr *> ActOnTableConstructor(SmallVector<Expr *> Fields);
 
   SmallVector<Expr *> ActOnClosure(sema::LuaFunctionScopeInfo *FSI,
@@ -6051,7 +6053,7 @@ public:
 
   ExprResult GetUpValue(VarDecl *UpValue, SourceLocation Loc);
 
-  VarDecl* ActOnLocalVariable(UnqualifiedId &Id, bool IsArray = false);
+  VarDecl* ActOnLocalVariable(UnqualifiedId &Id, bool IsArray = false, bool IsRef = false);
 
   ExprResult ActOnTableFieldName(UnqualifiedId &Id);
 
