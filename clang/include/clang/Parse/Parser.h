@@ -2552,11 +2552,6 @@ private:
   /// Determine whether this is a C++1z for-range-identifier.
   bool isForRangeIdentifier();
 
-  bool isLuaTopDeclContext() {
-    return getLangOpts().LUA &&
-           Actions.getCurFunctionDecl() == Actions.Context.getTopFunctionDecl();
-  }
-
   /// Determine whether we are currently at the start of an Objective-C
   /// class message that appears to be missing the open bracket '['.
   bool isStartOfObjCClassMessageMissingOpenBracket();

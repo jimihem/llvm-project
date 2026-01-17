@@ -1657,7 +1657,7 @@ StmtResult Parser::ParseLuaIfStatement(StmtVector &Stmts,
     Sema::ConditionResult Cond = Actions.ActOnCondition(
         getCurScope(), CondExpr->getExprLoc(),
         Actions
-            .BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr},
+            .BuildLuaBuiltinCallExpr("__lua_to_bool", {CondExpr},
                                      CondExpr->getSourceRange())
             .get(),
         Sema::ConditionKind::Boolean,
@@ -1677,7 +1677,7 @@ StmtResult Parser::ParseLuaIfStatement(StmtVector &Stmts,
     Sema::ConditionResult Cond = Actions.ActOnCondition(
         getCurScope(), CondExpr->getExprLoc(),
         Actions
-            .BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr},
+            .BuildLuaBuiltinCallExpr("__lua_to_bool", {CondExpr},
                                      CondExpr->getSourceRange())
             .get(),
         Sema::ConditionKind::Boolean,
@@ -2055,7 +2055,7 @@ StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc,
     Cond = Actions.ActOnCondition(
         getCurScope(), WhileLoc,
         Actions
-            .BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr.get()},
+            .BuildLuaBuiltinCallExpr("__lua_to_bool", {CondExpr.get()},
                                      CondExpr.get()->getSourceRange())
             .get(),
         Sema::ConditionKind::Boolean,
@@ -2185,7 +2185,7 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
         ActonBinOp(ActonBinOp(StepDeclRef, tok::less, ZeroExpr), tok::kw_and,
                    ActonBinOp(VarDeclRef, tok::greaterequal, LimitDeclRef)));
 
-    CondExpr = Actions.BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr.get()},
+    CondExpr = Actions.BuildLuaBuiltinCallExpr("__lua_to_bool", {CondExpr.get()},
                                     CondExpr.get()->getSourceRange());
 
     ExprResult IncExpr = ActonBinOp(
@@ -2297,7 +2297,7 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
 
     ExprResult CondExpr = ActonBinOp(Var1Ref, tok::tildeequal, Nil);
     CondExpr = Actions.BuildLuaBuiltinCallExpr(
-        "ConvertToBool", {CondExpr.get()}, CondExpr.get()->getSourceRange());
+        "__lua_to_bool", {CondExpr.get()}, CondExpr.get()->getSourceRange());
     Sema::ConditionResult Cond = Actions.ActOnCondition(
         getCurScope(), ForLoc, CondExpr.get(), Sema::ConditionKind::Boolean,
         /*MissingOK=*/false);
@@ -2321,7 +2321,7 @@ StmtResult Parser::ParseRepeatStatement() {
   ExprResult CondExpr =
       ParseLuaExpression(NotTypeCast, &Stmts, ParsedStmtContext::Compound);
   CondExpr = Actions.ConvertObjArrayToScalar(CondExpr.get());
-  CondExpr = Actions.BuildLuaBuiltinCallExpr("ConvertToBool", {CondExpr.get()},
+  CondExpr = Actions.BuildLuaBuiltinCallExpr("__lua_to_bool", {CondExpr.get()},
                                              CondExpr.get()->getSourceRange());
   InnerScope.Exit();
   RepeatScope.Exit();
@@ -2871,7 +2871,7 @@ StmtResult Parser::ParseLuaReturnStatement(StmtVector &Stmts,
   if (Tok.isOneOf(tok::semi, tok::kw_end)) {
     TryConsumeToken(tok::semi);
     Ret = Actions
-              .BuildLuaBuiltinCallExpr("BuildEmptyArr", SmallVector<Expr *>(),
+              .BuildLuaBuiltinCallExpr("__lua_build_array", SmallVector<Expr *>(),
                                        ReturnLoc)
               .get();
   } else {
@@ -2998,7 +2998,7 @@ Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
       if (!isa<ReturnStmt>(Body->body_back())) {
         Expr *E =
             Actions
-                .BuildLuaBuiltinCallExpr("BuildEmptyArr", {}, Body->getEndLoc())
+                .BuildLuaBuiltinCallExpr("__lua_build_array", {}, Body->getEndLoc())
                 .get();
         StmtResult R =
             Actions.ActOnReturnStmt(Body->getEndLoc(), E, getCurScope());

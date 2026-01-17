@@ -360,28 +360,6 @@ class ASTContext : public RefCountedBase<ASTContext> {
   /// The typedef for the predefined 'BOOL' type.
   mutable TypedefDecl *BOOLDecl = nullptr;
 
-  mutable CXXRecordDecl *CharArray = nullptr;
-
-  mutable CXXRecordDecl *String = nullptr;
-
-  mutable CXXRecordDecl *Function = nullptr;
-
-  mutable CXXRecordDecl *Thread = nullptr;
-
-  mutable CXXRecordDecl *UserData = nullptr;
-
-  mutable CXXRecordDecl *Object = nullptr;
-
-  mutable CXXRecordDecl *ObjectPtr = nullptr;
-
-  mutable CXXRecordDecl *ObjectPtrArray = nullptr;
-
-  mutable CXXRecordDecl *ObjectPtrHashTable = nullptr;
-
-  mutable CXXRecordDecl *Table = nullptr;
-
-  mutable FunctionDecl *LuaTopFun = nullptr;
-
   // Typedefs which may be provided defining the structure of Objective-C
   // pseudo-builtins
   QualType ObjCIdRedefinitionType;
@@ -1397,30 +1375,6 @@ public:
   /// Gets the struct used to keep track of the extended descriptor for
   /// pointer to blocks.
   QualType getBlockDescriptorExtendedType() const;
-
-  RecordDecl *getCharArrayDecl();
-
-  RecordDecl *getStringDecl();
-
-  RecordDecl *getObjectDecl();
-
-  RecordDecl *getObjectPtrDecl();
-
-  RecordDecl *getObjectPtrArrayDecl();
-
-  RecordDecl *getObjectPtrHashTableDecl();
-
-  RecordDecl *getTableDecl();
-
-  VarDecl *getENVDecl();
-
-  VarDecl *getGDecl();
-
-  TypeDecl *getMethodDecl();
-
-  QualType getLuaMethodTy();
-
-  FunctionDecl *getTopFunctionDecl();
 
   /// Map an AST Type to an OpenCLTypeKind enum value.
   OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;

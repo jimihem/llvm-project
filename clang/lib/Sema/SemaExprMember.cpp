@@ -1715,13 +1715,13 @@ ExprResult Sema::ActOnMemberAccessExpr(Scope *S, Expr *Base,
       Decl *BaseDecl = cast<DeclRefExpr>(Base)->getDecl();
       if (isa<VarDecl>(BaseDecl) &&
           cast<VarDecl>(BaseDecl)->isLuaEllipsisVar()) {
-        return BuildLuaBuiltinCallExpr("GetObjectPtrArrayN", {Base},
+        return BuildLuaBuiltinCallExpr("__lua_get_array_n", {Base},
                                        SourceRange(OpLoc, Id.getEndLoc()));
       }
     }
     Base = ConvertObjArrayToScalar(Base);
     Expr *Idx = BuildStringFromId(Id).get();
-    return BuildLuaBuiltinCallExpr("GetMember", {Base, Idx},
+    return BuildLuaBuiltinCallExpr("__lua_get_member", {Base, Idx},
                                    SourceRange(OpLoc, Id.getEndLoc()));
   }
   if (SS.isSet() && SS.isInvalid())

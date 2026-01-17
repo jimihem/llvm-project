@@ -1654,8 +1654,6 @@ public:
   /// Indicate RISC-V SiFive vector builtin functions enabled or not.
   bool DeclareRISCVSiFiveVectorBuiltins = false;
 
-  void AddLuaBuiltinFun();
-
 private:
   std::unique_ptr<sema::RISCVIntrinsicManager> RVIntrinsicManager;
 
@@ -6036,13 +6034,9 @@ public:
 
   DeclGroupPtrTy ActOnLuaFunctionParmInit();
 
-  std::string GetLuaFunctionParmInitStr();
-
   bool IsObjArrayTy(Expr* Epr);
 
   bool IsObjArrayTy(QualType Ty);
-
-  SmallVector<Expr *> ActOnTableConstructor(SmallVector<Expr *> Fields);
 
   SmallVector<Expr *> ActOnClosure(sema::LuaFunctionScopeInfo *FSI,
                                    VarDecl *Closure, Decl *Fun);

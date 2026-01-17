@@ -1837,7 +1837,7 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
           LocalVar, LocalVar->getType(), VK_LValue, Id.getBeginLoc());
 
       ExprResult ModExpr = Actions.BuildLuaBuiltinCallExpr(
-          "BuildModifyExpr", {LocalVarRef, Body}, Id.getSourceRange());
+          "__lua_assign_local_var", {LocalVarRef, Body}, Id.getSourceRange());
       Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
     } else if (Tok.is(tok::kw_function)) {
       ConsumeToken(); // eat 'function'

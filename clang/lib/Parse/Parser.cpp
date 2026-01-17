@@ -566,100 +566,109 @@ void Parser::Initialize() {
 
   if (getLangOpts().LUA) {
     std::string str = "\
-    class Object;\
-    class ObjectPtr {\
+    class __lua_object;\
+    \
+    class __lua_object_ptr {\
     private:\
-      Object *ptr;\
+      __lua_object *ptr;\
       unsigned int *ref_count;\
 \
       void release();\
 \
     public:\
-      ObjectPtr();\
+      __lua_object_ptr();\
 \
-      ObjectPtr(Object *p);\
+      __lua_object_ptr(__lua_object *p);\
 \
-      ObjectPtr(const ObjectPtr &other);\
+      __lua_object_ptr(const __lua_object_ptr &other);\
 \
-      ~ObjectPtr();\
+      ~__lua_object_ptr();\
 \
-      ObjectPtr &operator=(const ObjectPtr &other);\
+      __lua_object_ptr &operator=(const __lua_object_ptr &other);\
 \
-      Object *operator->() const;\
+      __lua_object *operator->() const;\
 \
-      Object &operator*() const;\
+      __lua_object &operator*() const;\
 \
       operator bool() const;\
     };\
 \
-    class ObjectPtrArray {\
+    class __lua_object_ptr_array {\
     private:\
-      ObjectPtr *data;\
+      __lua_object_ptr *data;\
       unsigned capacity;\
       unsigned size;\
+	  unsigned n;\
 \
       void resize(unsigned new_capacity);\
 \
     public:\
-      ObjectPtrArray();\
+      __lua_object_ptr_array();\
 \
-      ObjectPtrArray(const ObjectPtrArray& other);\
+      __lua_object_ptr_array(const __lua_object_ptr_array& other);\
 \
-      ~ObjectPtrArray();\
+      ~__lua_object_ptr_array();\
 \
-      void push_back(const ObjectPtr &value);\
+      void push_back(const __lua_object_ptr &value);\
 \
-      void push_back(const ObjectPtrArray &values);\
+      void append(const __lua_object_ptr_array &values);\
 \
       void pop_back();\
 \
-      ObjectPtr &operator[](unsigned index) const;\
+      __lua_object_ptr &operator[](unsigned index) const;\
 \
       unsigned get_size() const;\
       unsigned get_capacity();\
     };\
 \
-    extern ObjectPtr _ENV;\
-    extern ObjectPtr _G;\
-    typedef ObjectPtrArray (*MethodTy)(const ObjectPtr &Base, const ObjectPtrArray &Parms);\
-    ObjectPtr GetMember(const ObjectPtr &Base, const ObjectPtr &Name, unsigned long long OpLoc);\
-    ObjectPtr GetMemberFromName(const ObjectPtr &Base, char *Name, unsigned NameLen, unsigned long long OpLoc);\
-    void SetMember(const ObjectPtr &Base, const ObjectPtr &Field, const ObjectPtr &Value, unsigned long long OpLoc);\
-    ObjectPtr BuildNil();\
-    ObjectPtr BuildBool(bool bVal);\
-    ObjectPtr BuildNumber(double dVal);\
-    ObjectPtr BuildString(char *data, unsigned length);\
-    ObjectPtr BuildTable(const ObjectPtrArray &Values);\
-    ObjectPtr BuildTableFromArray(const ObjectPtrArray &Values);\
-    ObjectPtr BuildFunction();\
-    ObjectPtr BuildFunctionWithMethod(const MethodTy &Ptr);\
-    ObjectPtr GetObjectPtrFromArray(const ObjectPtrArray &Values, unsigned Index);\
-    ObjectPtr GetObjectPtrArraySize(const ObjectPtrArray &Values);\
-    ObjectPtr GetObjectPtrArrayElement(const ObjectPtrArray &Values, const ObjectPtr &Index);\
-    ObjectPtrArray GetSubArray(const ObjectPtrArray &Values, unsigned Start);\
-    void PushObjPtrIntoArray(ObjectPtrArray & Arr1, const ObjectPtr &Value);\
-    void PushArrayIntoArray(ObjectPtrArray & Arr1, const ObjectPtrArray &Arr2);\
-    void SetAsLocal(ObjectPtr & LocalVar);\
-    void SetFunctionUpValues(ObjectPtr & Fun, const ObjectPtrArray &Arr);\
-    void SetFunctionMethod(ObjectPtr & Fun, const MethodTy &Ptr);\
-    ObjectPtr GetUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);\
-    void BuildModifyExpr(const ObjectPtr &LHS, const ObjectPtr &RHS);\
-    ObjectPtrArray BuildCallExpr(const ObjectPtr &Function, const ObjectPtrArray &Args);\
-    ObjectPtr BuildUnOpExpr(const ObjectPtr &Expr, unsigned Op);\
-    ObjectPtr BuildBinOpExpr(const ObjectPtr &LHSExpr, const ObjectPtr &RHSExpr, unsigned Op);\
-    ObjectPtrArray BuildEmptyArr();\
-    bool ConvertToBool(const ObjectPtr &Op);\
-    ObjectPtr BuildEmptyTable();\
-    void SetUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtr &Var, unsigned long long OpLoc);\
-    void AddMember(const ObjectPtr &Base, const ObjectPtr &Value, unsigned long long OpLoc);\
-    void AddMembers(const ObjectPtr &Base, const ObjectPtrArray &Values, unsigned long long OpLoc);\
-    void SetObjectPtrArrayElement(const ObjectPtrArray &Values, const ObjectPtr &Index, const ObjectPtr &Value, unsigned long long OpLoc);\
-    ObjectPtr GetObjectPtrArrayN(const ObjectPtrArray &Values, unsigned long long OpLoc);\
-    void      SetObjectPtrArrayN(const ObjectPtrArray &Values, const ObjectPtr &N, unsigned long long OpLoc);\
-    ObjectPtrArray GetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Var, unsigned long long OpLoc);\
-    void SetArrayUpValue(const ObjectPtr &Fun, const ObjectPtr &Name, const ObjectPtrArray &Var, unsigned long long OpLoc);\
-    ObjectPtr CloneObjectPtr(const ObjectPtr& other);\
-    ObjectPtrArray CloneObjectPtrArray(const ObjectPtrArray& other);\
+    extern __lua_object_ptr _ENV;\
+    extern __lua_object_ptr _G;\
+\
+    typedef __lua_object_ptr_array (*__lua_method_ty)(const __lua_object_ptr &closure, const __lua_object_ptr_array &parms);\
+\
+    __lua_object_ptr       __lua_get_member(const __lua_object_ptr &tab, const __lua_object_ptr &name, unsigned long long loc);\
+    void                   __lua_set_member(const __lua_object_ptr &tab, const __lua_object_ptr &name, const __lua_object_ptr &value, unsigned long long loc);\
+    void                   __lua_add_member(const __lua_object_ptr &tab, const __lua_object_ptr &val, unsigned long long loc);\
+    void                   __lua_add_members(const __lua_object_ptr &tab, const __lua_object_ptr_array &val, unsigned long long loc);\
+    \
+    __lua_object_ptr       __lua_build_nil();\
+    __lua_object_ptr       __lua_build_bool(bool b);\
+    __lua_object_ptr       __lua_build_number(double d);\
+    __lua_object_ptr       __lua_build_string(char *data, unsigned length);\
+    __lua_object_ptr       __lua_build_function();\
+    __lua_object_ptr       __lua_build_function_method(const __lua_method_ty &ptr);\
+    __lua_object_ptr       __lua_build_table();\
+    __lua_object_ptr_array __lua_build_array();\
+    \
+    \
+    __lua_object_ptr       __lua_get_array_ele(const __lua_object_ptr_array &array, unsigned index);\
+    __lua_object_ptr       __lua_get_array_size(const __lua_object_ptr_array &array);\
+    __lua_object_ptr       __lua_get_array_n(const __lua_object_ptr_array &array, unsigned long long loc);\
+    void                   __lua_set_array_n(const __lua_object_ptr_array &array, const __lua_object_ptr &n, unsigned long long loc);\
+    __lua_object_ptr_array __lua_get_sub_array(const __lua_object_ptr_array &array, unsigned start);\
+    void                   __lua_array_push_back(__lua_object_ptr_array & array, const __lua_object_ptr &value);\
+    void                   __lua_array_append(__lua_object_ptr_array & array, const __lua_object_ptr_array &subArray);\
+    \
+    void                   __lua_set_closure_method(__lua_object_ptr &closure, const __lua_method_ty &ptr);\
+    \
+    void                   __lua_assign_local_var(const __lua_object_ptr &lhs, const __lua_object_ptr &rhs);\
+    \
+    __lua_object_ptr_array __lua_call(const __lua_object_ptr &closure, const __lua_object_ptr_array &args);\
+    __lua_object_ptr       __lua_unop(const __lua_object_ptr &expr, unsigned op);\
+    __lua_object_ptr       __lua_binop(const __lua_object_ptr &lhs, const __lua_object_ptr &rhs, unsigned op);\
+    bool                   __lua_to_bool(const __lua_object_ptr &expr);\
+    \
+    void                   __lua_set_var_arg_ele(const __lua_object_ptr_array &varArg, const __lua_object_ptr &index, const __lua_object_ptr &val, unsigned long long loc);\
+    __lua_object_ptr       __lua_get_var_arg_ele(const __lua_object_ptr_array &varArg, const __lua_object_ptr &index);\
+    \
+    __lua_object_ptr_array __lua_get_var_arg_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, unsigned long long loc);\
+    void                   __lua_set_var_arg_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, const __lua_object_ptr_array &val, unsigned long long loc);\
+    \
+    __lua_object_ptr       __lua_get_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, unsigned long long loc);\
+    void                   __lua_set_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, const __lua_object_ptr &val, unsigned long long loc);\
+    \
+    __lua_object_ptr       __lua_clone_object(const __lua_object_ptr& other);\
+    __lua_object_ptr_array __lua_clone_object_array(const __lua_object_ptr_array& other);\
     ";
     PP.EnterSourceString(SourceLocation(), str);
   }
@@ -728,11 +737,14 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result,
         Actions.ActOnStartOfLuaFunctionDef(getCurScope(), parlist, parLocs);
     TopFunc = ParseFunctionStatementBody(TopFunc, BodyScope);
 
-    std::string SourceStr = "ObjectPtr " + Actions.Context.getLuaTempClosureName();
-    SourceStr += " = BuildFunctionWithMethod(" +
-                 cast<FunctionDecl>(TopFunc)->getNameAsString() + ");";
-    PP.EnterSourceString(Tok.getLocation(), SourceStr);
-    ConsumeToken();
+    Expr *TopFuncRef = Actions.BuildDeclRefExpr(
+        cast<FunctionDecl>(TopFunc), cast<FunctionDecl>(TopFunc)->getType(),
+        VK_LValue, SourceLocation());
+    Expr *Init = Actions.BuildLuaBuiltinCallExpr(
+        "__lua_build_function_method", {TopFuncRef}, SourceLocation()).get();
+    VarDecl * TopClosure = Actions.CreateLuaTempClosureObjPtrVar(SourceLocation(), Init);
+    Result = Actions.ConvertDeclToDeclGroup(TopClosure);
+    return false;
   }
 
   Result = nullptr;

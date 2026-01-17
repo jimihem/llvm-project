@@ -745,19 +745,19 @@ ExprResult Parser::ParseTableConstructor(StmtVector &Stmts,
       if (Ret.size() == 1) {
         if (Actions.IsObjArrayType(Ret[0]->getType())) {
           E = Actions
-                  .BuildLuaBuiltinCallExpr("AddMembers", {TableRef, Ret[0]},
+                  .BuildLuaBuiltinCallExpr("__lua_add_members", {TableRef, Ret[0]},
                                            Ret[0]->getSourceRange())
                   .get();
         } else {
           E = Actions
-                  .BuildLuaBuiltinCallExpr("AddMember", {TableRef, Ret[0]},
+                  .BuildLuaBuiltinCallExpr("__lua_add_member", {TableRef, Ret[0]},
                                            Ret[0]->getSourceRange())
                   .get();
         }
       } else {
         E = Actions
                 .BuildLuaBuiltinCallExpr(
-                    "SetMember", {TableRef, Ret[0], Ret[1]},
+                    "__lua_set_member", {TableRef, Ret[0], Ret[1]},
                     SourceRange(Ret[0]->getBeginLoc(), Ret[1]->getEndLoc()))
                 .get();
       }
@@ -861,7 +861,7 @@ ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
   if (clang::CompoundStmt *Body = dyn_cast<clang::CompoundStmt>(FnBody.get())) {
     if (!isa<ReturnStmt>(Body->body_back())) {
       Expr *E =
-          Actions.BuildLuaBuiltinCallExpr("BuildEmptyArr", {}, FunEndLoc).get();
+          Actions.BuildLuaBuiltinCallExpr("__lua_build_array", {}, FunEndLoc).get();
       StmtResult R = Actions.ActOnReturnStmt(FunEndLoc, E, getCurScope());
       StmtVector TempStmts;
       TempStmts.push_back(R.get());

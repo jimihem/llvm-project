@@ -11695,7 +11695,7 @@ ExprResult Sema::BuildStringFromLitera(StringLiteral &Str) {
   Expr *l = BuildIntLiteral(Str.getByteLength(), LocRange).get();
   SmallVector<Expr *> Args = {Sl, l};
 
-  return BuildLuaBuiltinCallExpr("BuildString", Args, LocRange);
+  return BuildLuaBuiltinCallExpr("__lua_build_string", Args, LocRange);
 }
 
 ExprResult Sema::BuildStringFromId(UnqualifiedId &Id) {
@@ -11713,11 +11713,11 @@ ExprResult Sema::BuildStringFromId(UnqualifiedId &Id) {
 }
 
 ExprResult Sema::BuildNil(SourceRange LR) {
-  return BuildLuaBuiltinCallExpr("BuildNil", SmallVector<Expr *>(), LR);
+  return BuildLuaBuiltinCallExpr("__lua_build_nil", SmallVector<Expr *>(), LR);
 }
 
 ExprResult Sema::BuildBool(Expr *BoolVal, SourceRange LR) {
-  return BuildLuaBuiltinCallExpr("BuildBool", {BoolVal}, LR);
+  return BuildLuaBuiltinCallExpr("__lua_build_bool", {BoolVal}, LR);
 }
 
 ExprResult Sema::BuildObjectPtr(Expr *arg, SourceRange LR) {
@@ -11743,7 +11743,7 @@ ExprResult Sema::BuildObjectPtr(Expr *arg, SourceRange LR) {
                       EmptyArgs, LocRange)
               .get();
   
-  NamedDecl *ObjectPtrDel = getDeclByName("ObjectPtr");
+  NamedDecl *ObjectPtrDel = getDeclByName("__lua_object_ptr");
   MultiExprArg ObjectPtrArgs(Ret);
   return BuildConstructExpr(
       Context.getTypeDeclType(cast<TypeDecl>(ObjectPtrDel)), ObjectPtrArgs,
@@ -11800,7 +11800,7 @@ VarDecl *Sema::CreateLuaTempTableObjPtrObjVar(SourceLocation TokLoc,
   VarDecl *Table = ActOnLocalVariable(Id);
   if (!Init) {
     AddInitializerToDecl(
-        Table, BuildLuaBuiltinCallExpr("BuildEmptyTable", {}, TokLoc).get(), true);
+        Table, BuildLuaBuiltinCallExpr("__lua_build_table", {}, TokLoc).get(), true);
   } else {
     AddInitializerToDecl(Table, Init, true);
   }
@@ -11814,7 +11814,7 @@ VarDecl *Sema::CreateLuaTempLocalObjPtrVar(SourceLocation TokLoc, Expr *Init) {
   VarDecl *LocalObj = ActOnLocalVariable(Id);
   if (!Init) {
     AddInitializerToDecl(
-        LocalObj, BuildLuaBuiltinCallExpr("BuildNil", {}, TokLoc).get(),
+        LocalObj, BuildLuaBuiltinCallExpr("__lua_build_nil", {}, TokLoc).get(),
         true);
   } else {
     AddInitializerToDecl(LocalObj, Init, true);
@@ -11829,7 +11829,7 @@ VarDecl *Sema::CreateLuaTempClosureObjPtrVar(SourceLocation TokLoc,
   VarDecl *Closure = ActOnLocalVariable(Id);
   if (!Init) {
     AddInitializerToDecl(
-        Closure, BuildLuaBuiltinCallExpr("BuildFunction", {}, TokLoc).get(),
+        Closure, BuildLuaBuiltinCallExpr("__lua_build_function", {}, TokLoc).get(),
         true);
   } else {
     AddInitializerToDecl(Closure, Init, true);
@@ -11849,7 +11849,7 @@ VarDecl *Sema::CreateLuaTempObjPtrArrayVar(SourceLocation TokLoc, Expr *Init) {
 }
 
 ExprResult Sema::ActOnLuaFunctionCall(Expr *Fun, Expr *Args) {
-  return BuildLuaBuiltinCallExpr("BuildCallExpr", {Fun, Args},
+  return BuildLuaBuiltinCallExpr("__lua_call", {Fun, Args},
                                  Args->getSourceRange());
 }
 
@@ -11897,7 +11897,7 @@ ExprResult Sema::BuildMemberRefExpr(Expr *Base, Expr *Field) {
   SmallVector<Expr *> Args;
   Args.push_back(Base);
   Args.push_back(Field);
-  return BuildLuaBuiltinCallExpr("GetMember", Args, RLoc);
+  return BuildLuaBuiltinCallExpr("__lua_get_member", Args, RLoc);
 }
 
 ExprResult Sema::BuildENVMemberRefExpr(UnqualifiedId &Id) {

@@ -13564,7 +13564,8 @@ void Sema::AddInitializerToDecl(Decl *RealDecl, Expr *Init, bool DirectInit) {
       VDecl->setStorageClass(SC_Extern);
 
     // C99 6.7.8p4. All file scoped initializers need to be constant.
-    if (!getLangOpts().CPlusPlus && !VDecl->isInvalidDecl())
+    if (!getLangOpts().LUA && !getLangOpts().CPlusPlus &&
+        !VDecl->isInvalidDecl())
       CheckForConstantInitializer(Init, DclT);
   }
 
@@ -15029,16 +15030,16 @@ Decl *Sema::ActOnStartOfLuaFunctionDef(Scope *S,
   Scope *ParentScope = S->getParent();
   FunctionDecl *DP = 0;
   if (/*ParentScope == TUScope*/0) {
-    DP = Context.getTopFunctionDecl();
+    
   } else {
     SourceLocation Loc;
-    QualType T = QualType(getDeclByName("MethodTy")->getFunctionType(), 0);
+    QualType T = QualType(getDeclByName("__lua_method_ty")->getFunctionType(), 0);
     std::string FunName = Context.getLuaTempMethodName();
     DP = FunctionDecl::Create(Context, CurContext, Loc, Loc,
                               &Context.Idents.get(FunName), T, nullptr, SC_None);
 
     QualType ObjectPtrArrayT = Context.getTypeDeclType(
-        cast<CXXRecordDecl>(getDeclByName("ObjectPtrArray")));
+        cast<CXXRecordDecl>(getDeclByName("__lua_object_ptr_array")));
     QualType ObjectPtrArrayRefT =
         Context.getLValueReferenceType(ObjectPtrArrayT);
     Qualifiers Qs;
@@ -15047,15 +15048,15 @@ Decl *Sema::ActOnStartOfLuaFunctionDef(Scope *S,
         Context.getQualifiedType(ObjectPtrArrayRefT, Qs);
 
     QualType ObjectPtrT = Context.getTypeDeclType(
-        cast<CXXRecordDecl>(getDeclByName("ObjectPtr")));
+        cast<CXXRecordDecl>(getDeclByName("__lua_object_ptr")));
     QualType ObjectPtrRefT = Context.getLValueReferenceType(ObjectPtrT);
     QualType ConstObjectPtrRefT = Context.getQualifiedType(ObjectPtrRefT, Qs);
 
     ParmVarDecl *Base =
-        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("Base"),
+        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("closure"),
                             ConstObjectPtrRefT, nullptr, SC_None, nullptr);
     ParmVarDecl *Parms =
-        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("Parms"),
+        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("parms"),
                             ConstObjectPtrArrayRefT, nullptr, SC_None, nullptr);
     DP->setParams({Base, Parms});
     PushOnScopeChains(DP, ParentScope);
