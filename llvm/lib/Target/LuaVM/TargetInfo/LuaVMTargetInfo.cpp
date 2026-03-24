@@ -1,9 +1,14 @@
-#include "LuaVMMCTargetDesc.h"
-#include "llvm/Support/TargetRegistry.h"
+#include "TargetInfo/LuaVMTargetInfo.h"
+#include "llvm/MC/TargetRegistry.h"
+
 using namespace llvm;
+Target &llvm::getTheLuaVMTarget() { 
+  static Target TheLuaVMTarget;
+  return TheLuaVMTarget;
+}
 
 extern "C" void LLVMInitializeLuaVMTargetInfo() {
   // Register the target triple information.
-  RegisterTarget<Triple::luavm> X(TheLuaVMTarget, "lua-vm",
+  RegisterTarget<Triple::luavm> X(getTheLuaVMTarget(), "lua-vm",
                                   "Lua Virtual Machine", "LuaVM");
 }

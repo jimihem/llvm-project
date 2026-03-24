@@ -1,27 +1,21 @@
 #include "LuaVMISelLowering.h"
-#include "LuaVM.h"
+#include "LuaVMInstrInfo.h"
 #include "LuaVMTargetMachine.h"
-#include "llvm/CodeGen/CallingConvLower.h"
-#include "llvm/CodeGen/MachineFunction.h"
-#include "llvm/CodeGen/MachineRegisterInfo.h"
-#include "llvm/CodeGen/TargetLoweringObjectFileImpl.h"
-#include "llvm/IR/DiagnosticInfo.h"
-#include "llvm/IR/Intrinsics.h"
-#include "llvm/Support/Debug.h"
-#include "llvm/Support/raw_ostream.h"
 
 using namespace llvm;
 
 const char *LuaVMTargetLowering::getTargetNodeName(unsigned Opcode) const {
   switch (Opcode) {
-  case LUAVM_ADD: return "LUAVM_ADD";
-  case LUAVM_SUB: return "LUAVM_SUB";
+  case LuaVM::ADD:
+    return "ADD";
+  case LuaVM::SUB:
+    return "SUB";
   default: return nullptr;
   }
 }
 
 LuaVMTargetLowering::LuaVMTargetLowering(const LuaVMTargetMachine &TM, const LuaVMSubtarget &STI)
-    : TargetLowering(TM, STI.computeRegisterProperties()), Subtarget(STI) {
+    : TargetLowering(TM), Subtarget(STI) {
 
   // Set up the operation actions.
   setOperationAction(ISD::SDIV, MVT::i32, Expand);
@@ -34,8 +28,6 @@ LuaVMTargetLowering::LuaVMTargetLowering(const LuaVMTargetMachine &TM, const Lua
   setOperationAction(ISD::BR_CC, MVT::i32, Custom);
   setOperationAction(ISD::SELECT_CC, MVT::i32, Custom);
 
-  // Compute derived properties from the custom actions and global flags.
-  computeKnownBitsForTargetNodes();
 }
 
 SDValue LuaVMTargetLowering::LowerOperation(SDValue Op, SelectionDAG &DAG) const {

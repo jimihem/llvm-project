@@ -1,23 +1,21 @@
 #include "LuaVMAsmBackend.h"
 #include "LuaVMMCTargetDesc.h"
-#include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCAssembler.h"
-#include "llvm/MC/MCDirectives.h"
 #include "llvm/MC/MCELFObjectWriter.h"
 #include "llvm/MC/MCFixupKindInfo.h"
-#include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/ErrorHandling.h"
 
 using namespace llvm;
 
-LuaVMAsmBackend::LuaVMAsmBackend(const MCSubtargetInfo &STI) : STI(STI) {}
+LuaVMAsmBackend::LuaVMAsmBackend(const MCSubtargetInfo &STI)
+    : MCAsmBackend(support::endianness::little), STI(STI) {}
 
 std::unique_ptr<MCObjectTargetWriter>
 LuaVMAsmBackend::createObjectTargetWriter() const {
   // Create an ELF writer for your target.
   // This tells LLVM how to write the final object file format.
-  return createELFObjectWriter(mcfi::getELFHeaderType(mctc::ELF_MT_REL), /*Is64Bit*/ false, getBE());
+  return nullptr;
 }
 
 void LuaVMAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup, const MCValue &Target,
@@ -52,25 +50,21 @@ bool LuaVMAsmBackend::writeNopData(raw_ostream &OS, uint64_t Count,
   return true;
 }
 
-// --- Stub implementations for relaxation ---
-
-// For many targets, these are stubbed out unless you have complex variable-length instructions.
-unsigned LuaVMAsmBackend::getNumMicroPaddingInstructions(MCContext &Ctx, unsigned NumBytes,
-                                                        const MCSubtargetInfo &STI) const {
-  return 0;
-}
-
-bool LuaVMAsmBackend::fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
-                                           const MCRelaxableFragment *DF,
-                                           const MCAsmLayout &Layout,
-                                           const MCSubtargetInfo *STI) const {
-  return false;
-}
-
 void LuaVMAsmBackend::relaxInstruction(MCInst &Inst, const MCSubtargetInfo &STI) const {
   // No relaxation needed for simple fixed-size instructions.
 }
 
 bool LuaVMAsmBackend::mayNeedRelaxation(const MCInst &Inst, const MCSubtargetInfo &STI) const {
   return false;
+}
+
+bool LuaVMAsmBackend::fixupNeedsRelaxation(
+    const MCFixup &Fixup, uint64_t Value,
+    const MCRelaxableFragment* DF,
+    const MCAsmLayout& Layout) const {
+  return false;
+}
+
+unsigned LuaVMAsmBackend::getNumFixupKinds() const { 
+    return 0;
 }

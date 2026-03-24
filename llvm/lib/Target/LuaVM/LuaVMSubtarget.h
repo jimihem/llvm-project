@@ -1,25 +1,37 @@
 #ifndef LLVM_LIB_TARGET_LUAVM_LUAVMSUBTARGET_H
 #define LLVM_LIB_TARGET_LUAVM_LUAVMSUBTARGET_H
-
+#include "LuaVMInstrInfo.h"
+#include "LuaVMRegisterInfo.h"
+#include "LuaVMFrameLowering.h"
+#include "LuaVMISelLowering.h"
 #include "llvm/CodeGen/TargetSubtargetInfo.h"
-#include "llvm/Target/TargetMachine.h"
 
 #define GET_SUBTARGETINFO_HEADER
+#define GET_SUBTARGETINFO_ENUM
 #include "LuaVMGenSubtargetInfo.inc"
 
 namespace llvm {
 class StringRef;
+class LuaVMTargetMachine;
 
 class LuaVMSubtarget : public LuaVMGenSubtargetInfo {
+  LuaVMTargetMachine *TM;
+
 public:
-  LuaVMSubtarget(const Triple &TT, StringRef CPU, StringRef FS, const TargetMachine &TM);
+  LuaVMSubtarget(const Triple &TT, StringRef CPU, StringRef FS,
+                 LuaVMTargetMachine *luaTM);
 
 private:
-  // We don't have any subtarget-specific features yet, so no additional members.
-  // InstrInfo, FrameLowering, and TLInfo are kept here for convenience.
-  std::unique_ptr<const LuaVMInstrInfo> InstrInfo;
-  std::unique_ptr<const LuaVMFrameLowering> FrameLowering;
-  std::unique_ptr<const LuaVMTargetLowering> TLInfo;
+  bool FakeFeature;
+  void ParseSubtargetFeatures(StringRef CPU, StringRef TuneCPU, StringRef FS);
+  
+  const LuaVMInstrInfo *getInstrInfo() const override;
+
+  const LuaVMFrameLowering *getFrameLowering() const override;
+
+  const LuaVMTargetLowering *getTargetLowering() const override;
+
+  const LuaVMRegisterInfo *getRegisterInfo() const override;
 };
 
 } // End namespace llvm

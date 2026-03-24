@@ -1,3 +1,5 @@
+add_llvm_component_group(LuaVM)
+
 set(LLVM_TARGET_DEFINITIONS LuaVM.td)
 
 tablegen(LLVM LuaVMGenAsmMatcher.inc -gen-asm-matcher)
@@ -7,7 +9,6 @@ tablegen(LLVM LuaVMGenDAGISel.inc -gen-dag-isel)
 tablegen(LLVM LuaVMGenDisassemblerTables.inc -gen-disassembler)
 tablegen(LLVM LuaVMGenInstrInfo.inc -gen-instr-info)
 tablegen(LLVM LuaVMGenMCCodeEmitter.inc -gen-emitter)
-tablegen(LLVM LuaVMGenMCPseudoLowering.inc -gen-pseudo-lowering)
 tablegen(LLVM LuaVMGenRegisterInfo.inc -gen-register-info)
 tablegen(LLVM LuaVMGenSubtargetInfo.inc -gen-subtarget)
 
@@ -21,6 +22,7 @@ add_llvm_target(LuaVMCodeGen
   LuaVMRegisterInfo.cpp
   LuaVMSubtarget.cpp
   LuaVMTargetMachine.cpp
+  LuaVMAsmPrinter.cpp
 
   LINK_COMPONENTS
   Analysis
@@ -28,17 +30,20 @@ add_llvm_target(LuaVMCodeGen
   CodeGen
   Core
   MC
-  LuaVMCommonTableGen
   SelectionDAG
   Support
   Target
+  
+  ADD_TO_COMPONENT
+  LuaVM
   )
 
 # Add the new MC and Disassembler components to the library
-add_llvm_component_library(LLVMLuaVM
+add_llvm_component_library(LLVMLuaVMInfo
   MCTargetDesc/LuaVMMCTargetDesc.cpp
   MCTargetDesc/LuaVMAsmBackend.cpp
   MCTargetDesc/LuaVMELFStreamer.cpp
+  MCTargetDesc/LuaVMMCCodeEmiter.cpp
   TargetInfo/LuaVMTargetInfo.cpp
   Disassembler/LuaVMDisassembler.cpp
   InstPrinter/LuaVMInstPrinter.cpp
@@ -46,5 +51,7 @@ add_llvm_component_library(LLVMLuaVM
 
   LINK_COMPONENTS
   MC
-  LuaVMCodeGen
+  
+  ADD_TO_COMPONENT
+  LuaVM
   )

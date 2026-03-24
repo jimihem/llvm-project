@@ -1,8 +1,7 @@
 #include "LuaVMMCTargetDesc.h"
 #include "LuaVMAsmBackend.h"
 #include "LuaVMELFStreamer.h"
-#include "LuaVMInstPrinter.h"
-#include "LuaVMTargetMachine.h"
+#include "LuaVMMCCodeEmiter.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCCodeEmitter.h"
@@ -11,38 +10,56 @@
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCStreamer.h"
+#include "llvm/MC/MCAsmInfo.h"
+#include "TargetInfo/LuaVMTargetInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
-#include "llvm/Support/TargetRegistry.h"
+#include "llvm/MC/TargetRegistry.h"
 
 using namespace llvm;
 
-// This is the name the target is known by in the system.
-Target llvm::TheLuaVMTarget;
+#define GET_SUBTARGETINFO_ENUM
+#define GET_SUBTARGETINFO_MC_DESC
+#include "LuaVMGenSubtargetInfo.inc"
+
+#define GET_REGINFO_MC_DESC
+#define GET_REGINFO_ENUM
+#include "LuaVMGenRegisterInfo.inc"
+
+MCRegisterInfo *createLuaVMMCRegInfo(const Triple &TT) {
+  MCRegisterInfo *MRI = new MCRegisterInfo();
+  InitLuaVMMCRegisterInfo(MRI, 0);
+  return MRI;
+}
+
+
+MCAsmBackend *createLuaVMAsmBackend(const Target &T, const MCSubtargetInfo &STI,
+                                    const MCRegisterInfo &MRI,
+                                    const MCTargetOptions &Options) {
+  return new LuaVMAsmBackend(STI);
+}
+
+MCAsmInfo* createMCAsmInfo(const MCRegisterInfo& MRI, const Triple& TT,
+    const MCTargetOptions& Options) {
+  return new MCAsmInfo();
+}
+
+#define GET_INSTRINFO_MC_DESC
+#define GET_INSTRINFO_ENUM
+#include "LuaVMGenInstrInfo.inc"
+
+MCInstrInfo *createLuaVMMCInstrInfo() { 
+  MCInstrInfo *MII = new MCInstrInfo();
+  InitLuaVMMCInstrInfo(MII);
+  return MII;
+}
 
 extern "C" void LLVMInitializeLuaVMTargetMC() {
-  // Register the target with LLVM's MC layer.
-  // The third parameter is the name used in command lines (e.g., -mtriple=lua-vm-unknown-unknown).
-  RegisterMCAsmInfo<LuaVMELFStreamer> X(TheLuaVMTarget);
-  RegisterMCAsmBackendFactory<LuaVMAsmBackend> Y(TheLuaVMTarget);
-  RegisterMCCodeEmitter<LuaVM MCCodeEmitter> Z(TheLuaVMTarget);
-  RegisterTargetStreamer<LuaVMELFStreamer> A(TheLuaVMTarget);
-}
+  TargetRegistry::RegisterMCAsmInfo(getTheLuaVMTarget(), createMCAsmInfo);
+  TargetRegistry::RegisterMCAsmBackend(getTheLuaVMTarget(),
+                                       createLuaVMAsmBackend);
+  RegisterMCCodeEmitter<LuaVMMCCodeEmitter> MCE(getTheLuaVMTarget());
+  TargetRegistry::RegisterMCInstrInfo(getTheLuaVMTarget(),
+                                      createLuaVMMCInstrInfo);
+  TargetRegistry::RegisterMCRegInfo(getTheLuaVMTarget(), createLuaVMMCRegInfo);
 
-StringRef llvm::selectLuaVMCPU(StringRef CPU) {
-  if (CPU.empty() || CPU == "generic")
-    return "generic-luavm";
-  return CPU;
-}
-
-std::unique_ptr<MCAsmBackend> llvm::createLuaVMAsmBackend(const Target &T,
-                                                          const MCSubtargetInfo &STI,
-                                                          const MCRegisterInfo &MRI,
-                                                          const MCTargetOptions &Options) {
-  return std::make_unique<LuaVMAsmBackend>(STI);
-}
-
-std::unique_ptr<MCCodeEmitter> llvm::createLuaVM MCCodeEmitter(const MCInstrInfo &MCII,
-                                                               const MCRegisterInfo &MRI,
-                                                               MCContext &Ctx) {
-  return std::make_unique<LuaVM MCCodeEmitter>(MCII, MRI, Ctx);
 }

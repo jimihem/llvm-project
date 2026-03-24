@@ -1,8 +1,10 @@
 #ifndef LLVM_LIB_TARGET_LUAVM_MCTARGETDESC_LUAVMELFSTREAMER_H
 #define LLVM_LIB_TARGET_LUAVM_MCTARGETDESC_LUAVMELFSTREAMER_H
 
-#include "llvm/MC/ELFStreamer.h"
-
+#include "llvm/MC/MCELFStreamer.h"
+#include "llvm/MC/MCCodeEmitter.h"
+#include "llvm/MC/MCObjectWriter.h"
+#include "LuaVMAsmBackend.h"
 namespace llvm {
 
 class LuaVMELFStreamer : public MCELFStreamer {
@@ -11,7 +13,7 @@ public:
                    std::unique_ptr<MCObjectWriter> &&OW,
                    std::unique_ptr<MCCodeEmitter> &&Emitter);
 
-  void finish() override;
+  void finishImpl() override;
 };
 
 } // end namespace llvm

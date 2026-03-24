@@ -1,15 +1,6 @@
 #include "LuaVMFrameLowering.h"
-#include "LuaVM.h"
-#include "LuaVMSubtarget.h"
-#include "LuaVMTargetMachine.h"
-#include "llvm/CodeGen/MachineFrameInfo.h"
 #include "llvm/CodeGen/MachineFunction.h"
-#include "llvm/CodeGen/MachineInstrBuilder.h"
-#include "llvm/CodeGen/MachineModuleInfo.h"
-#include "llvm/CodeGen/MachineRegisterInfo.h"
-#include "llvm/CodeGen/RegisterScavenging.h"
-#include "llvm/IR/Function.h"
-#include "llvm/Support/Debug.h"
+#include "llvm/Target/TargetMachine.h"
 
 using namespace llvm;
 
@@ -45,11 +36,4 @@ bool LuaVMFrameLowering::spillCalleeSavedRegisters(MachineBasicBlock &MBB,
   // Implement logic to spill callee-saved registers.
   // This is a placeholder.
   return true; // Return true if not implemented or failed.
-}
-
-const TargetRegisterInfo *
-LuaVMFrameLowering::getCSRInfo(const MachineFunction &MF, const CallSiteInfo &CSI) const {
-  // Return the Callee-Saved Register Info.
-  // This is a placeholder.
-  return nullptr;
 }

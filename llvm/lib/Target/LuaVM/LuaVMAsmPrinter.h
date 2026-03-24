@@ -1,10 +1,7 @@
 #ifndef LLVM_LIB_TARGET_LUAVM_LUAVMASMPRINTER_H
 #define LLVM_LIB_TARGET_LUAVM_LUAVMASMPRINTER_H
 
-#include "LuaVM.h"
 #include "llvm/CodeGen/AsmPrinter.h"
-#include "llvm/MC/MCStreamer.h"
-#include "llvm/Support/FormattedStream.h"
 
 namespace llvm {
 
@@ -23,8 +20,6 @@ public:
 
   void emitInstruction(const MachineInstr *MI) override;
   void emitGlobalVariable(const GlobalVariable *GV) override;
-  void emitFunctionBodyStart(MachineFunction &MF) override;
-  void emitFunctionBodyEnd(MachineFunction &MF) override;
 };
 
 } 

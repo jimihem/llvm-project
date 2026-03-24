@@ -1,10 +1,8 @@
 #include "LuaVM.h"
 #include "LuaVMTargetMachine.h"
-#include "MCTargetDesc/LuaVMMCTargetDesc.h"
-#include "LuaVMISelLowering.h"
+#include "LuaVMInstrInfo.h"
 #include "LuaVMSubtarget.h"
 #include "llvm/CodeGen/SelectionDAGISel.h"
-#include "llvm/Support/Debug.h"
 
 using namespace llvm;
 
@@ -13,8 +11,9 @@ using namespace llvm;
 namespace {
 class LuaVMDAGToDAGISel final : public SelectionDAGISel {
 public:
+  static char ID;
   explicit LuaVMDAGToDAGISel(LuaVMTargetMachine &TM, CodeGenOpt::Level OL)
-      : SelectionDAGISel(TM, OL) {}
+      : SelectionDAGISel(ID, TM, OL) {}
 
   StringRef getPassName() const override {
     return "LuaVM DAG->DAG Pattern Instruction Selection";
@@ -34,7 +33,11 @@ protected:
     // For now, we let the default handling take care of it.
     SelectCode(N);
   }
+
+  #include "LuaVMGenDAGISel.inc"
+
 };
+char LuaVMDAGToDAGISel::ID = 0;
 } // end anonymous namespace
 
 FunctionPass *llvm::createLuaVMISelDag(LuaVMTargetMachine &TM) {

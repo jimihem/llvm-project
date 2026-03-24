@@ -9,11 +9,7 @@ class LuaVMInstPrinter : public MCInstPrinter {
 public:
   LuaVMInstPrinter(const MCAsmInfo &MAI, const MCInstrInfo &MII,
                    const MCRegisterInfo &MRI);
-
-  void printRegName(raw_ostream &OS, unsigned RegNo) const override;
-  void printInst(const MCInst *MI, raw_ostream &O, StringRef Annot,
-                 const MCSubtargetInfo &STI) override;
-
+  
 private:
   void printOperand(const MCInst *MI, unsigned OpNo, raw_ostream &O) const;
 };

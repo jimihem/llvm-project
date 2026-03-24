@@ -1,9 +1,6 @@
 #ifndef LLVM_LIB_TARGET_LUAVM_H
 #define LLVM_LIB_TARGET_LUAVM_H
 
-#include "llvm/Support/ErrorHandling.h"
-#include "llvm/Target/TargetMachine.h"
-
 namespace llvm {
   class LuaVMTargetMachine;
   class FunctionPass;

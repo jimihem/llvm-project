@@ -10,6 +10,6 @@ LuaVMELFStreamer::LuaVMELFStreamer(MCContext &Context,
     : MCELFStreamer(Context, std::move(MAB), std::move(OW), std::move(Emitter)) {
 }
 
-void LuaVMELFStreamer::finish() {
-  MCELFStreamer::finish();
+void LuaVMELFStreamer::finishImpl() {
+  
 }

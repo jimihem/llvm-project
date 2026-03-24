@@ -23,9 +23,6 @@ public:
                                 MachineBasicBlock::iterator MI,
                                 ArrayRef<CalleeSavedInfo> CSI,
                                 const TargetRegisterInfo *TRI) const override;
-
-  const TargetRegisterInfo *
-  getCSRInfo(const MachineFunction &MF, const CallSiteInfo &CSI) const override;
 };
 
 } // End llvm namespace

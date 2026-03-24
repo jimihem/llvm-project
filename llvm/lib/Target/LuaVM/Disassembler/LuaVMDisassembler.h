@@ -13,8 +13,7 @@ public:
 
   DecodeStatus getInstruction(MCInst &Instr, uint64_t &Size,
                               ArrayRef<uint8_t> Bytes, uint64_t Address,
-                              raw_ostream &VStream,
-                              raw_ostream &CStream) const override;
+                              raw_ostream &VStream) const override;
 };
 
 } // end namespace llvm

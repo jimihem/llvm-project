@@ -1,21 +1,20 @@
 #ifndef LLVM_LIB_TARGET_LUAVM_LUAVMINSTRINFO_H
 #define LLVM_LIB_TARGET_LUAVM_LUAVMINSTRINFO_H
+#include "llvm/CodeGen/TargetInstrInfo.h"
 
+#define GET_INSTRINFO_HEADER
+#define GET_INSTRINFO_ENUM
 #include "LuaVMGenInstrInfo.inc"
 
 namespace llvm {
 class LuaVMSubtarget;
-class LuaVMRegisterInfo;
 
 class LuaVMInstrInfo : public LuaVMGenInstrInfo {
-  virtual void anchor();
-protected:
   const LuaVMSubtarget &Subtarget;
 
 public:
   explicit LuaVMInstrInfo(const LuaVMSubtarget &STI);
 
-  const LuaVMRegisterInfo &getRegisterInfo() const override;
 };
 
 } // namespace llvm
