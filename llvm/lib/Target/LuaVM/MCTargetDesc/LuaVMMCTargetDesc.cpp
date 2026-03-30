@@ -40,7 +40,9 @@ MCAsmBackend *createLuaVMAsmBackend(const Target &T, const MCSubtargetInfo &STI,
 
 MCAsmInfo* createMCAsmInfo(const MCRegisterInfo& MRI, const Triple& TT,
     const MCTargetOptions& Options) {
-  return new MCAsmInfo();
+  MCAsmInfo *MAI = new MCAsmInfo();
+  MAI->setExceptionsType(ExceptionHandling::DwarfCFI);
+  return MAI;
 }
 
 #define GET_INSTRINFO_MC_DESC
@@ -53,6 +55,11 @@ MCInstrInfo *createLuaVMMCInstrInfo() {
   return MII;
 }
 
+MCSubtargetInfo* createLuaVMMCSubtargetInfo(const Triple& TT, StringRef CPU,
+    StringRef Features) {
+  return createLuaVMMCSubtargetInfoImpl(TT, CPU, CPU, Features);
+}
+
 extern "C" void LLVMInitializeLuaVMTargetMC() {
   TargetRegistry::RegisterMCAsmInfo(getTheLuaVMTarget(), createMCAsmInfo);
   TargetRegistry::RegisterMCAsmBackend(getTheLuaVMTarget(),
@@ -61,5 +68,6 @@ extern "C" void LLVMInitializeLuaVMTargetMC() {
   TargetRegistry::RegisterMCInstrInfo(getTheLuaVMTarget(),
                                       createLuaVMMCInstrInfo);
   TargetRegistry::RegisterMCRegInfo(getTheLuaVMTarget(), createLuaVMMCRegInfo);
-
+  TargetRegistry::RegisterMCSubtargetInfo(getTheLuaVMTarget(),
+                                          createLuaVMMCSubtargetInfo);
 }

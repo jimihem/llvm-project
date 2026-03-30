@@ -2,7 +2,7 @@
 #define LLVM_LIB_TARGET_LUAVM_H
 
 namespace llvm {
-  class LuaVMTargetMachine;
+  class LLVMTargetMachine;
   class FunctionPass;
   class MCAsmParser;
   class MCSubtargetInfo;
@@ -10,7 +10,7 @@ namespace llvm {
   class MCStreamer;
 
   // Passes
-  FunctionPass *createLuaVMISelDag(LuaVMTargetMachine &TM);
+  FunctionPass *createLuaVMISelDag(LLVMTargetMachine &TM);
 
   // AsmParser
   extern "C" MCAsmParser *createLuaVMAsmParser(const MCSubtargetInfo &STI,

@@ -8,6 +8,18 @@
 
 using namespace llvm;
 
+class LuaVMMCELFObjectTargetWriter : public MCELFObjectTargetWriter {
+public:
+  LuaVMMCELFObjectTargetWriter()
+      : MCELFObjectTargetWriter(false, ELF::ELFOSABI_NONE, ELF::EM_LUAVM,
+                                true) {}
+
+  unsigned getRelocType(MCContext& Ctx, const MCValue& Target,
+      const MCFixup& Fixup, bool IsPCRel) const {
+    return 0;
+  }
+};
+
 LuaVMAsmBackend::LuaVMAsmBackend(const MCSubtargetInfo &STI)
     : MCAsmBackend(support::endianness::little), STI(STI) {}
 
@@ -15,7 +27,7 @@ std::unique_ptr<MCObjectTargetWriter>
 LuaVMAsmBackend::createObjectTargetWriter() const {
   // Create an ELF writer for your target.
   // This tells LLVM how to write the final object file format.
-  return nullptr;
+  return std::make_unique<LuaVMMCELFObjectTargetWriter>();
 }
 
 void LuaVMAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup, const MCValue &Target,

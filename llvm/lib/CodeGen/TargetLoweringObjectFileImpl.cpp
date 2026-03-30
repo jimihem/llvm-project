@@ -246,6 +246,7 @@ void TargetLoweringObjectFileELF::Initialize(MCContext &Ctx,
     }
     CallSiteEncoding = dwarf::DW_EH_PE_udata4;
     break;
+  case Triple::luavm:
   case Triple::riscv32:
   case Triple::riscv64:
     LSDAEncoding = dwarf::DW_EH_PE_pcrel | dwarf::DW_EH_PE_sdata4;

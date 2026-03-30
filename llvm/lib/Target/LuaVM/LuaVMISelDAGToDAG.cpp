@@ -8,11 +8,10 @@ using namespace llvm;
 
 #define DEBUG_TYPE "luavm-isel"
 
-namespace {
 class LuaVMDAGToDAGISel final : public SelectionDAGISel {
 public:
   static char ID;
-  explicit LuaVMDAGToDAGISel(LuaVMTargetMachine &TM, CodeGenOpt::Level OL)
+  explicit LuaVMDAGToDAGISel(LLVMTargetMachine &TM, CodeGenOpt::Level OL)
       : SelectionDAGISel(ID, TM, OL) {}
 
   StringRef getPassName() const override {
@@ -38,8 +37,7 @@ protected:
 
 };
 char LuaVMDAGToDAGISel::ID = 0;
-} // end anonymous namespace
 
-FunctionPass *llvm::createLuaVMISelDag(LuaVMTargetMachine &TM) {
+FunctionPass *llvm::createLuaVMISelDag(LLVMTargetMachine &TM) {
   return new LuaVMDAGToDAGISel(TM, TM.getOptLevel());
 }
