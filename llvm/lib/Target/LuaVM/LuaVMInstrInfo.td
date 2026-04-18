@@ -8,11 +8,34 @@
 // Define the basic instruction layouts (R, I, J types).
 //===----------------------------------------------------------------------===//
 
-def LuaVMCMPNodeSDT  : SDTypeProfile<0, 2, []>;
-def LuaVMCMPNode : SDNode <"LuaVM::CMP", LuaVMCMPNodeSDT, [SDNPOutGlue]>;
+def CMPNodeSDT  : SDTypeProfile<0, 2, [SDTCisInt<0>, SDTCisInt<1>]>;
+def Cmp : SDNode <"LuaVMISD::CMP", CMPNodeSDT, [SDNPOutGlue]>;
+def Cmpu : SDNode <"LuaVMISD::CMPU", CMPNodeSDT, [SDNPOutGlue]>;
 
-def LuaVMBrCondNodeSDT  : SDTypeProfile<0, 1, [SDTCisInt<0>]>;
-def LuaVMBrCondNode : SDNode <"LuaVM::BrCond", LuaVMBrCondNodeSDT, [SDNPInGlue]>;
+def DCMPNodeSDT  : SDTypeProfile<0, 2, [SDTCisVT<0, f64>, SDTCisVT<0, f64>]>;
+def DCmp : SDNode <"LuaVMISD::DCMP", DCMPNodeSDT, [SDNPOutGlue]>;
+
+def Call : SDNode<"LuaVMISD::CALL",
+                   SDTypeProfile<0, -1, []>, // 0 output, variable inputs
+                   [SDNPHasChain,    // Requires a chain for ordering
+                    SDNPOutGlue,     // Provides a glue token to connect with ret
+                    SDNPMayLoad,     // May read from memory
+                    SDNPMayStore]>;  // May write to memory
+
+def Ret : SDNode<"LuaVMISD::RET",
+                     SDTypeProfile<0, -1, []>, // 0 output, variable inputs (return value)
+                     [SDNPHasChain,      // Requires a chain for ordering
+                      SDNPInGlue,        // Takes glue token from call
+                     ]>;
+
+def SDTLuaVMSelect : SDTypeProfile<1, 2, 
+                     [SDTCisSameAs<0, 1>, SDTCisSameAs<0, 2>]>;
+
+def Select : SDNode<"LuaVMISD::Select", SDTLuaVMSelect, [SDNPHasChain, SDNPInGlue]>;
+
+def SDTJCond : SDTypeProfile<0, 2, 
+                     [SDTCisVT<0, OtherVT>, SDTCisVT<1, OtherVT>]>;
+def JCond : SDNode<"LuaVMISD::JCond", SDTJCond, [SDNPHasChain, SDNPInGlue]>;
 
 def imm14 : Operand<i32>{
   string PrintMethod = "printImm14Operand";
@@ -47,6 +70,12 @@ def imm12iFrag : PatFrag<(ops), (imm), [{
   }
   return false;
 }]>;
+
+def IndirectCallFrag : PatFrag<(ops node:$src), (Call node:$src), [{
+  return Node->getOperand(1)->getOpcode() != ISD::TargetGlobalAddress;
+}]>;
+
+def LoadStoreAddr : ComplexPattern<i32, 2, "SelectLSAddr">;
 
 class Inst<string asmstr, list<dag> pattern> : Instruction {
   bits<32> Inst;
@@ -185,12 +214,20 @@ let Defs = [STR] in {
   def SHL : RTypeInst<0b01010110, "shl $rd, $rs, $rt", []>;
   def SHR : RTypeInst<0b01010111, "shr $rd, $rs, $rt", []>;
   def SRA : RTypeInst<0b01011000, "sra $rd, $rs, $rt", []>;
+  
+}
+
+def SELECT : RTypeInst<0b01011001, "sel $rd, $rs, $rt", []>{
+    let Uses = [STR];
 }
 
 def ADDD : FTypeInst<0b01100000, "addd $fd, $fs, $ft", []>;
 def SUBD : FTypeInst<0b01100001, "subd $fd, $fs, $ft", []>;
 def MULD : FTypeInst<0b01100010, "muld $fd, $fs, $ft", []>;
 def DIVD : FTypeInst<0b01100011, "divd $fd, $fs, $ft", []>;
+def SELECTD : FTypeInst<0b01101001, "seld $fd, $fs, $ft", []>{
+    let Uses = [STR];
+}
 
 let Defs = [STR] in {
   def CMPD : FTypeInst<0b01100111, "cmpd $fd, $fs, $ft", []>{
@@ -218,13 +255,27 @@ let isBranch = 1 in {
     def JMP : JTypeInst<0b10000110, "jmp $addr", []>;
   }
 
-  let isCall = 1 in {
-    def JALR : ITypeInst<0b10000111, "jalr $rt", []>;
-    def JSUB : ITypeInst<0b10001000, "jusb $imm", []>;
+  let isCall = 1 ,OutOperandList = (outs), rs = 0 in {
+    def JALR : ITypeInst<0b10000111, "jalr $rt", []>{
+        let InOperandList = (ins GPRRegs:$rt);
+        let imm = 0;
+    }
+
+    def JSUB : ITypeInst<0b10001000, "jusb $imm", []>{
+        let InOperandList = (ins imm14:$imm);
+        let rt = 0;
+    }
+  }
+
+  let OutOperandList = (outs), rs = 0 in {
+    def JIND : ITypeInst<0b10001010, "jind $rt", []>{
+        let InOperandList = (ins GPRRegs:$rt);
+        let imm = 0;
+    }
   }
 }
 
-let isReturn = 1 in {
+let isReturn = 1, InOperandList = (ins), addr = 0 in {
   def RET : JTypeInst<0b10001001, "ret", []>;
 }
 
@@ -260,4 +311,51 @@ def : Pat<(fdiv f64:$src0, f64:$src1), (DIVD f64:$src0, f64:$src1)>;
 def : Pat<(fneg f64:$src0), (NEGD f64:$src0)>;
 def : Pat<(fabs f64:$src0), (ABSD f64:$src0)>;
 def : Pat<(fsqrt f64:$src0), (SQRD f64:$src0)>;
+
+def : Pat<(Ret), (RET)>;
+def : Pat<(Call i32:$fun), (JSUB i32:$fun)>;
+def : Pat<(IndirectCallFrag i32:$fun), (JALR i32:$fun)>;
+
+def : Pat<(i32 (ld (LoadStoreAddr i32:$base, i32:$off))), (LD i32:$base, i32:$off)>;
+def : Pat<(i16 (ld (LoadStoreAddr i32:$base, i32:$off))), (LH i32:$base, i32:$off)>;
+def : Pat<(i8 (ld (LoadStoreAddr i32:$base, i32:$off))), (LB i32:$base, i32:$off)>;
+def : Pat<(f64 (ld (LoadStoreAddr i32:$base, i32:$off))), (LDD i32:$base, i32:$off)>;
+
+def : Pat<(st i32:$data, (LoadStoreAddr i32:$base, i32:$off)), (ST i32:$data, i32:$base, i32:$off)>;
+def : Pat<(st i16:$data, (LoadStoreAddr i32:$base, i32:$off)), (SH i16:$data, i32:$base, i32:$off)>;
+def : Pat<(st i8:$data, (LoadStoreAddr i32:$base, i32:$off)), (SB i8:$data, i32:$base, i32:$off)>;
+def : Pat<(st f64:$data, (LoadStoreAddr i32:$base, i32:$off)), (STD f64:$data, i32:$base, i32:$off)>;
+
+def : Pat<(Cmp i32:$src0, (i32 imm12uFrag:$src1)), (CMPi i32:$src0, i32:$src1)>;
+
+def : Pat<(Cmpu i32:$src0, (i32 imm12uFrag:$src1)), (CMPiu i32:$src0, i32:$src1)>;
+
+def : Pat<(Cmpu i1:$src0, (i32 0)), (CMPiu i1:$src0, (i32 0))>;
+
+def : Pat<(Cmp i32:$src0, i32:$src1), (CMP i32:$src0, i32:$src1)>;
+
+def : Pat<(Cmpu i32:$src0, i32:$src1), (CMPu i32:$src0, i32:$src1)>;
+
+def : Pat<(DCmp f64:$src0, f64:$src1), (CMPD f64:$src0, f64:$src1)>;
+
+def : Pat<(br OtherVT:$block), (JMP OtherVT:$block)>;
+
+def : Pat<(brind i32:$block), (JIND i32:$block)>;
+
+def : Pat<(JCond SETEQ, OtherVT:$block), (JEQ OtherVT:$block)>;
+
+def : Pat<(JCond SETGT, OtherVT:$block), (JGT OtherVT:$block)>;
+
+def : Pat<(JCond SETGE, OtherVT:$block), (JGE OtherVT:$block)>;
+
+def : Pat<(JCond SETLT, OtherVT:$block), (JLT OtherVT:$block)>;
+
+def : Pat<(JCond SETLE, OtherVT:$block), (JLE OtherVT:$block)>;
+
+def : Pat<(JCond SETNE, OtherVT:$block), (JNE OtherVT:$block)>;
+
+def : Pat<(Select f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1)>;
+
+def : Pat<(Select i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1)>;
+
 

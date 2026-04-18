@@ -35,6 +35,9 @@ protected:
 
   #include "LuaVMGenDAGISel.inc"
 
+  bool SelectLSAddr(SDValue N, SDValue& op0, SDValue &op1) {
+      return true;
+  }
 };
 char LuaVMDAGToDAGISel::ID = 0;
 

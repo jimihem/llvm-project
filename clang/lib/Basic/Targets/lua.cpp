@@ -19,7 +19,7 @@ LuaTargetInfo::LuaTargetInfo(const llvm::Triple& Triple,
   BigEndian = false;
   TLSSupported = false;
   VLASupported = false;
-  resetDataLayout("e-S32-p:32:32:32-i64:64:64-f64:64:64", "lua");
+  resetDataLayout("e-m:e-p:32:32-n32", "lua");
 }
 void LuaTargetInfo::getTargetDefines(const LangOptions& Opts,
     MacroBuilder& Builder) const {

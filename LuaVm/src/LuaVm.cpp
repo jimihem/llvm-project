@@ -71,6 +71,7 @@ enum class OpCode : uint8_t {
   SHL = 0b01010110, // 寄存器<<寄存器
   SHR = 0b01010111, // 寄存器>>寄存器
   SRA = 0b01011000, // 算术右移，寄存器>>寄存器
+  SELCT = 0b01011001,
 
   // 双精度浮点指令，都是寄存器之间的运算
   ADDD = 0b01100000, // +
@@ -82,6 +83,7 @@ enum class OpCode : uint8_t {
   SQRD = 0b01100110, // 开平方
   CMPD = 0b01100111, // 比较
   MOVD = 0b01101000, // double寄存器复制
+  SELCTD = 0b01101001,
 
   // 控制流指令,根据状态字的flag决定是否跳转
   JEQ = 0b10000000,
@@ -94,6 +96,7 @@ enum class OpCode : uint8_t {
   JALR = 0b10000111,
   JSUB = 0b10001000,
   RET = 0b10001001,
+  JIND = 0b10001010,
   // 扩展指令
   SYSCALL = 0b10100000, // 系统调用
   DEBUG = 0b10100001    // 调试指令
