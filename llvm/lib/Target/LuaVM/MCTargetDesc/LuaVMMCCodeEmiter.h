@@ -14,6 +14,9 @@ public:
                                  const MCSubtargetInfo &STI) const;
   uint64_t getAddr24OpValue(const MCInst &MI, unsigned OpIdx, SmallVectorImpl<MCFixup> &Fixups,
                             const MCSubtargetInfo &STI) const;
+  uint64_t getCondOpValue(const MCInst &MI, unsigned OpIdx,
+                            SmallVectorImpl<MCFixup> &Fixups,
+                            const MCSubtargetInfo &STI) const;
   uint64_t getMachineOpValue(const MCInst &MI, const MCOperand &Op,
                              SmallVectorImpl<MCFixup> &Fixups,
                              const MCSubtargetInfo &STI) const;

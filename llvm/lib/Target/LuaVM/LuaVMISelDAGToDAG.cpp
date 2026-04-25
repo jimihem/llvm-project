@@ -35,8 +35,15 @@ protected:
 
   #include "LuaVMGenDAGISel.inc"
 
-  bool SelectLSAddr(SDValue N, SDValue& op0, SDValue &op1) {
+  bool SelectLSAddr(SDValue N, SDValue &op0, SDValue &op1) {
+    if (N.getOpcode() == ISD::ADD) {
+      op0 = N.getOperand(0);
+      op1 = N.getOperand(1);
       return true;
+    }
+    op0 = N;
+    op1 = CurDAG->getTargetConstant(0, SDLoc(N), MVT::i32);
+    return true;
   }
 };
 char LuaVMDAGToDAGISel::ID = 0;

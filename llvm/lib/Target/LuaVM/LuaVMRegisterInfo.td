@@ -3,7 +3,7 @@
 //===----------------------------------------------------------------------===//
 let Namespace = "LuaVM" in {
   // Define individual registers
-  // Integer registers r0-r15
+  // Integer registers r0-r12
   foreach i = 0-12 in {
     def R#i : Register<"r"#i>{
        let HWEncoding = i;
@@ -29,6 +29,12 @@ let Namespace = "LuaVM" in {
   def LINK : Register<"link">{
     let HWEncoding = 15;
   }
+  def PDC0 : Register<"pdc0">{
+    let HWEncoding = 16;
+  }
+  def PDC1 : Register<"pdc1">{
+    let HWEncoding = 17;
+  }
 }
   
 // Define register classes
@@ -40,3 +46,5 @@ def GPRRegs : RegisterClass<"LuaVM", [i1, i8, i16, i32], 32, (add (sequence "R%u
 
 // Floating Point Registers (FPRs)
 def FPRRegs : RegisterClass<"LuaVM", [f64], 64, (add (sequence "F%u", 0, 31))>;
+
+def PDCRegs : RegisterClass<"LuaVM", [i1, i8, i16, i32], 32, (add PDC0, PDC1)>;

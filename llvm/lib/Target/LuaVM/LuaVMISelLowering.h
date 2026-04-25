@@ -17,7 +17,8 @@ enum NodeType : unsigned {
   CALL,
   RET,
   Select,
-  JCond
+  JCond,
+  MOVI
 };
 }
 
@@ -42,6 +43,10 @@ private:
   SDValue LowerBRCOND(SDValue Op, SelectionDAG &DAG) const;
   SDValue LowerSELECT(SDValue Op, SelectionDAG &DAG) const;
   SDValue LowerSELECT_CC(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerConstant(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerConstantFP(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerGlobalAddress(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerFrameIndex(SDValue Op, SelectionDAG &DAG) const;
 
 public:
   virtual bool CanLowerReturn(CallingConv::ID CallConv, MachineFunction &MF,

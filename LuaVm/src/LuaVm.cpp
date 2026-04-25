@@ -48,6 +48,8 @@ enum class OpCode : uint8_t {
   SHLi = 0b00110010, // 寄存器<<立即数
   SHRi = 0b00110011, // 寄存器>>立即数
   SRAi = 0b00110100, // 算术右移，寄存器>>立即数
+  MOVi = 0b00110101,
+
   // 算术寄存器指令
   ADD = 0b01000001, // 有符号+，寄存器+寄存器
   SUB = 0b01000010, // 有符号-，寄存器-寄存器
@@ -100,6 +102,11 @@ enum class OpCode : uint8_t {
   // 扩展指令
   SYSCALL = 0b10100000, // 系统调用
   DEBUG = 0b10100001    // 调试指令
+
+};
+
+enum class Cond {
+    EQ, LT, LE, GT, GE, NE
 };
 
 // 指令格式分类

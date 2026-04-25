@@ -17,14 +17,17 @@ LuaVMTargetLowering::LuaVMTargetLowering(const LuaVMTargetMachine &TM,
   addRegisterClass(MVT::f64, TRI->getRegClass(LuaVM::FPRRegsRegClassID));
 
   setOperationAction(ISD::BRCOND, MVT::Other, LegalizeAction::Custom);
-  setOperationAction({ISD::SETCC}, {MVT::i1, MVT::i32, MVT::f64},
+  setOperationAction(ISD::SETCC, {MVT::i1, MVT::i32, MVT::f64},
                      LegalizeAction::Custom);
-  setOperationAction({ISD::SELECT}, {MVT::i32, MVT::f64},
-                     LegalizeAction::Custom);
-  setOperationAction({ISD::SELECT_CC}, {MVT::i32, MVT::f64},
+  setOperationAction(ISD::SELECT, {MVT::i32, MVT::f64}, LegalizeAction::Custom);
+  setOperationAction(ISD::SELECT_CC, {MVT::i32, MVT::f64},
                      LegalizeAction::Custom);
   setOperationAction(ISD::BR_CC, MVT::Other, LegalizeAction::Custom);
   setOperationAction(ISD::BR_JT, MVT::Other, LegalizeAction::Custom);
+  setOperationAction(ISD::GlobalAddress, MVT::i32, LegalizeAction::Custom);
+  setOperationAction(ISD::Constant, MVT::i32, LegalizeAction::Custom);
+  setOperationAction(ISD::ConstantFP, MVT::f64, LegalizeAction::Custom);
+  setOperationAction(ISD::FrameIndex, MVT::i32, LegalizeAction::Custom);
 
   computeRegisterProperties(TRI);
 }
@@ -45,7 +48,50 @@ SDValue LuaVMTargetLowering::LowerOperation(SDValue Op, SelectionDAG &DAG) const
     return LowerSELECT_CC(Op, DAG);
   case ISD::BRCOND:
     return LowerBRCOND(Op, DAG);
+  case ISD::Constant:
+    return LowerConstant(Op, DAG);
+  case ISD::ConstantFP:
+    return LowerConstantFP(Op, DAG);
+  case ISD::GlobalAddress:
+    return LowerGlobalAddress(Op, DAG);
+  case ISD::FrameIndex:
+    return LowerFrameIndex(Op, DAG);
   }
+}
+
+SDValue LuaVMTargetLowering::LowerConstant(SDValue Op,
+                                           SelectionDAG &DAG) const {
+  SDLoc dl(Op);
+  return DAG.getNode(LuaVMISD::MOVI, dl, Op.getValueType(), Op);
+}
+
+SDValue LuaVMTargetLowering::LowerConstantFP(SDValue Op,
+                                             SelectionDAG &DAG) const {
+  SDLoc dl(Op);
+  ConstantFPSDNode *cfpNode = dyn_cast<ConstantFPSDNode>(Op);
+  const ConstantFP *cfp = cfpNode->getConstantFPValue();
+  SDValue cpi = DAG.getTargetConstantPool(cfp, MVT::i32);
+  SDValue addr = DAG.getNode(LuaVMISD::MOVI, dl, MVT::i32, cpi);
+
+  return DAG.getLoad(Op.getValueType(), dl, DAG.getEntryNode(), addr,
+                     MachinePointerInfo(), MaybeAlign(0),
+                     MachineMemOperand::MOLoad);
+}
+
+SDValue LuaVMTargetLowering::LowerGlobalAddress(SDValue Op,
+                                                SelectionDAG &DAG) const {
+  GlobalAddressSDNode *GV = dyn_cast<GlobalAddressSDNode>(Op.getNode());
+  SDValue newGV = DAG.getTargetGlobalAddress(GV->getGlobal(), SDLoc(Op),
+                                    GV->getValueType(0), GV->getOffset(),
+                                    GV->getTargetFlags());
+  return DAG.getNode(LuaVMISD::MOVI, SDLoc(Op), MVT::i32, newGV);
+}
+
+SDValue LuaVMTargetLowering::LowerFrameIndex(SDValue Op,
+                                             SelectionDAG &DAG) const {
+  unsigned fi = dyn_cast<FrameIndexSDNode>(Op)->getIndex();
+  SDValue FI = DAG.getTargetFrameIndex(fi, MVT::i32);
+  return DAG.getNode(LuaVMISD::MOVI, SDLoc(Op), MVT::i32, FI);
 }
 
 SDValue LuaVMTargetLowering::LowerBR_JT(SDValue Op, SelectionDAG &DAG) const {
@@ -81,20 +127,163 @@ SDValue LuaVMTargetLowering::LowerBR_JT(SDValue Op, SelectionDAG &DAG) const {
 }
 
 SDValue LuaVMTargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {
-  return SDValue();
+  SDLoc dl(Op);
+  SDValue Chain;
+  SDValue lhs = Op.getOperand(0);
+  SDValue rhs = Op.getOperand(1);
+  SDValue CC = Op.getOperand(2);
+
+  assert(dyn_cast<CondCodeSDNode>(CC));
+  ISD::CondCode cc = dyn_cast<CondCodeSDNode>(CC)->get();
+
+  bool bFloat = lhs.getValueType().isFloatingPoint();
+  bool bUnsigned =
+      !bFloat && (cc >= ISD::CondCode::SETUEQ && cc <= ISD::CondCode::SETUNE);
+
+  LuaVMISD::NodeType opCode = LuaVMISD::CMP;
+
+  if (bUnsigned) {
+    opCode = LuaVMISD::CMPU;
+  } else if (bFloat) {
+    opCode = LuaVMISD::DCMP;
+  }
+
+  SDValue cmp = DAG.getNode(opCode, dl, MVT::Glue, {lhs, rhs});
+
+  switch (cc) {
+  case ISD::SETEQ:
+  case ISD::SETUEQ:
+    cc = ISD::SETEQ;
+    break;
+  case ISD::SETGT:
+  case ISD::SETUGT:
+    cc = ISD::SETGT;
+    break;
+  case ISD::SETGE:
+  case ISD::SETUGE:
+    cc = ISD::SETGE;
+    break;
+  case ISD::SETLT:
+  case ISD::SETULT:
+    cc = ISD::SETLT;
+    break;
+  case ISD::SETLE:
+  case ISD::SETULE:
+    cc = ISD::SETLE;
+    break;
+  case ISD::SETNE:
+  case ISD::SETUNE:
+    cc = ISD::SETNE;
+    break;
+  default:
+    llvm_unreachable("");
+    break;
+  }
+
+  CC = DAG.getCondCode(cc);
+
+  SDVTList VTs = DAG.getVTList(MVT::i1, MVT::Other);
+
+  SDValue select =
+      DAG.getNode(LuaVMISD::Select, dl, VTs,
+                  {Chain, CC, DAG.getRegister(LuaVM::PDC0, MVT::i1),
+                   DAG.getRegister(LuaVM::PDC1, MVT::i1), cmp});
+  return select;
 }
 
 SDValue LuaVMTargetLowering::LowerBRCOND(SDValue Op, SelectionDAG &DAG) const {
-  return SDValue();
+  const SDLoc dl(Op);
+  SDValue chain = Op.getOperand(0);
+  SDValue cc = Op.getOperand(1);
+  SDValue block = Op.getOperand(2);
+
+  SDValue cmp =
+      DAG.getNode(LuaVMISD::CMPU, dl, MVT::Glue, {cc, DAG.getTargetConstant(0, dl, MVT::i32)});
+
+  SDValue CC = DAG.getCondCode(ISD::SETNE);
+  SDValue jCond =
+      DAG.getNode(LuaVMISD::JCond, dl, MVT::Other, {chain, CC, block, cmp});
+
+  return jCond;
 }
 
 SDValue LuaVMTargetLowering::LowerSELECT(SDValue Op, SelectionDAG &DAG) const {
-  return SDValue();
+  const SDLoc dl(Op);
+  SDValue cc = Op.getOperand(0);
+  SDValue src0 = Op.getOperand(1);
+  SDValue src1 = Op.getOperand(2);
+
+  SDValue cmp = DAG.getNode(LuaVMISD::CMPU, dl, MVT::Glue,
+                            {cc, DAG.getTargetConstant(0, dl, MVT::i32)});
+
+  SDValue CC = DAG.getCondCode(ISD::SETNE);
+  SDValue select = DAG.getNode(LuaVMISD::Select, dl, Op.getValueType(),
+                               {SDValue(), CC, src0, src1, cmp});
+  return select;
 }
 
 SDValue LuaVMTargetLowering::LowerSELECT_CC(SDValue Op,
                                             SelectionDAG &DAG) const {
-  return SDValue();
+  const SDLoc dl(Op);
+  SDValue chain;
+  SDValue lhs = Op.getOperand(0);
+  SDValue rhs = Op.getOperand(1);
+  SDValue src0 = Op.getOperand(2);
+  SDValue src1 = Op.getOperand(3);
+  SDValue CC = Op.getOperand(4);
+
+  assert(dyn_cast<CondCodeSDNode>(CC));
+  ISD::CondCode cc = dyn_cast<CondCodeSDNode>(CC)->get();
+
+  bool bFloat = lhs.getValueType().isFloatingPoint();
+  bool bUnsigned =
+      !bFloat && (cc >= ISD::CondCode::SETUEQ && cc <= ISD::CondCode::SETUNE);
+
+  LuaVMISD::NodeType opCode = LuaVMISD::CMP;
+
+  if (bUnsigned) {
+    opCode = LuaVMISD::CMPU;
+  } else if (bFloat) {
+    opCode = LuaVMISD::DCMP;
+  }
+
+  SDValue cmp = DAG.getNode(opCode, dl, MVT::Glue, {lhs, rhs});
+
+  switch (cc) {
+  case ISD::SETEQ:
+  case ISD::SETUEQ:
+    cc = ISD::SETEQ;
+    break;
+  case ISD::SETGT:
+  case ISD::SETUGT:
+    cc = ISD::SETGT;
+    break;
+  case ISD::SETGE:
+  case ISD::SETUGE:
+    cc = ISD::SETGE;
+    break;
+  case ISD::SETLT:
+  case ISD::SETULT:
+    cc = ISD::SETLT;
+    break;
+  case ISD::SETLE:
+  case ISD::SETULE:
+    cc = ISD::SETLE;
+    break;
+  case ISD::SETNE:
+  case ISD::SETUNE:
+    cc = ISD::SETNE;
+    break;
+  default:
+    llvm_unreachable("");
+    break;
+  }
+
+  CC = DAG.getCondCode(cc);
+  SDValue select =
+      DAG.getNode(LuaVMISD::Select, dl, MVT::Other, {chain, CC, src0, src1, cmp});
+
+  return select;
 }
 
 SDValue LuaVMTargetLowering::LowerBR_CC(SDValue Op, SelectionDAG &DAG) const {
@@ -384,6 +573,8 @@ const char *LuaVMTargetLowering::getTargetNodeName(unsigned Opcode) const {
     return "JCond";
   case LuaVMISD::Select:
     return "Select";
+  case LuaVMISD::MOVI:
+    return "MOVI";
   default:
     return nullptr;
   }

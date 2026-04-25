@@ -12,7 +12,7 @@ def FakeFeature : SubtargetFeature<"FakeFeature", "FakeFeature", "false",
 def : Processor<"LuaVM", NoItineraries, [FakeFeature]>;
 
 def LuaVMInstrInfo : InstrInfo{
-  let isLittleEndianEncoding = true;
+  let isLittleEndianEncoding = false;
 }
 
 def LuaVM : Target {

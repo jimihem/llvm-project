@@ -28,14 +28,29 @@ def Ret : SDNode<"LuaVMISD::RET",
                       SDNPInGlue,        // Takes glue token from call
                      ]>;
 
-def SDTLuaVMSelect : SDTypeProfile<1, 2, 
-                     [SDTCisSameAs<0, 1>, SDTCisSameAs<0, 2>]>;
+def SDTLuaVMSelect : SDTypeProfile<1, 3, 
+                     [SDTCisVT<1, OtherVT>, SDTCisSameAs<0, 2>, SDTCisSameAs<0, 3>]>;
 
 def Select : SDNode<"LuaVMISD::Select", SDTLuaVMSelect, [SDNPHasChain, SDNPInGlue]>;
 
 def SDTJCond : SDTypeProfile<0, 2, 
                      [SDTCisVT<0, OtherVT>, SDTCisVT<1, OtherVT>]>;
 def JCond : SDNode<"LuaVMISD::JCond", SDTJCond, [SDNPHasChain, SDNPInGlue]>;
+
+// Target-independent nodes, but with target-specific formats.
+
+// Target-independent type requirements, but with target-specific formats.
+def SDT_CallSeqStart : SDCallSeqStart<[SDTCisVT<0, i32>,
+                                       SDTCisVT<1, i32>]>;
+def SDT_CallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i32>,
+                                     SDTCisVT<1, i32>]>;
+
+def callseq_start : SDNode<"ISD::CALLSEQ_START", SDT_CallSeqStart,
+                           [SDNPHasChain, SDNPOutGlue]>;
+def callseq_end   : SDNode<"ISD::CALLSEQ_END", SDT_CallSeqEnd,
+                           [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
+
+def Movi : SDNode<"LuaVMISD::MOVI", SDTypeProfile<1, 1, [SDTCisVT<0, i32>, SDTCisVT<0, i32>]>, []>;
 
 def imm14 : Operand<i32>{
   string PrintMethod = "printImm14Operand";
@@ -46,6 +61,12 @@ def imm14 : Operand<i32>{
 def Addr24 : Operand<OtherVT>{
   string PrintMethod = "printAddr24Operand";
   string EncoderMethod = "getAddr24OpValue";
+  string OperandType = "OPERAND_IMMEDIATE";
+}
+
+def Cond : Operand<i32>{
+  string PrintMethod = "printCondOperand";
+  string EncoderMethod = "getCondOpValue";
   string OperandType = "OPERAND_IMMEDIATE";
 }
 
@@ -87,6 +108,16 @@ class Inst<string asmstr, list<dag> pattern> : Instruction {
   let InOperandList = (ins);
 }
 
+class LInst<string asmstr, list<dag> pattern> : Instruction {
+  bits<64> Inst;
+  let Namespace = "LuaVM";
+  let AsmString = asmstr;
+  let Pattern = pattern;
+  let DecoderNamespace = "LuaVM";
+  let OutOperandList = (outs);
+  let InOperandList = (ins);
+}
+
 class RTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pattern> {
   bits<5> rs;
   bits<5> rt;
@@ -112,6 +143,17 @@ class ITypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
   let DecoderMethod = "DecodeITypeInstruction";
   let OutOperandList = (outs GPRRegs:$rt);
   let InOperandList = (ins GPRRegs:$rs, imm14:$imm);
+}
+
+class LITypeInst<bits<8> op, string asmstr, list<dag> pattern> : LInst<asmstr, pattern> {
+  bits<5> rt;
+  bits<51> imm;
+  let Inst{63-56} = op;
+  let Inst{55-51} = rt;
+  let Inst{50-0} = imm;
+  let DecoderMethod = "DecodeLITypeInstruction";
+  let OutOperandList = (outs GPRRegs:$rt);
+  let InOperandList = (ins i32imm:$imm);
 }
 
 class JTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pattern> {
@@ -152,6 +194,27 @@ class MTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
 // These map to your enum luavm_opcodes.
 // The 'pattern' field is for DAG selection.
 //===----------------------------------------------------------------------===//
+
+// Pessimistically assume the stack pointer will be clobbered
+let Defs = [SP], Uses = [SP] in {
+    def ADJCALLSTACKDOWN : Instruction{
+        let Namespace = "LuaVM";
+        let AsmString = "ADJCALLSTACKDOWN $stackSize0, $stackSize1";
+        let OutOperandList = (outs);
+        let InOperandList = (ins i32imm:$stackSize0, i32imm:$stackSize1);
+        let isPseudo = 1;
+        let Pattern = [(callseq_end i32:$stackSize0, i32:$stackSize1)];
+    }
+
+    def ADJCALLSTACKUP : Instruction{
+        let Namespace = "LuaVM";
+        let AsmString = "ADJCALLSTACKUP $stackSize0, $stackSize1";
+        let OutOperandList = (outs);
+        let InOperandList = (ins i32imm:$stackSize0, i32imm:$stackSize1);
+        let isPseudo = 1;
+        let Pattern = [(callseq_start i32:$stackSize0, i32:$stackSize1)];
+    }
+}
 
 let OutOperandList = (outs), InOperandList = (ins GPRRegs:$rt, GPRRegs:$base, imm14:$offset), mayStore = 1 in {
   def ST : MTypeInst<0b00000010, "st $rt, $base, $offset", []>;
@@ -217,16 +280,24 @@ let Defs = [STR] in {
   
 }
 
-def SELECT : RTypeInst<0b01011001, "sel $rd, $rs, $rt", []>{
+def MOVi : LITypeInst<0b00110101, "movi $rt, $imm", []>;
+
+def SELECT : RTypeInst<0b01011001, "sel $rd, $rs, $rt, $cond", []>{
+    bits<9> cond;
     let Uses = [STR];
+    let Inst{8-0} = cond;
+    let InOperandList = (ins GPRRegs:$rs, GPRRegs:$rt, Cond:$cond);
 }
 
 def ADDD : FTypeInst<0b01100000, "addd $fd, $fs, $ft", []>;
 def SUBD : FTypeInst<0b01100001, "subd $fd, $fs, $ft", []>;
 def MULD : FTypeInst<0b01100010, "muld $fd, $fs, $ft", []>;
 def DIVD : FTypeInst<0b01100011, "divd $fd, $fs, $ft", []>;
-def SELECTD : FTypeInst<0b01101001, "seld $fd, $fs, $ft", []>{
+def SELECTD : FTypeInst<0b01101001, "seld $fd, $fs, $ft, $cond", []>{
+    bits<9> cond;
     let Uses = [STR];
+    let Inst{8-0} = cond;
+    let InOperandList = (ins FPRRegs:$fs, FPRRegs:$ft, Cond:$cond);
 }
 
 let Defs = [STR] in {
@@ -354,8 +425,40 @@ def : Pat<(JCond SETLE, OtherVT:$block), (JLE OtherVT:$block)>;
 
 def : Pat<(JCond SETNE, OtherVT:$block), (JNE OtherVT:$block)>;
 
-def : Pat<(Select f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1)>;
+def : Pat<(Select SETEQ, f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1, 0)>;
 
-def : Pat<(Select i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1)>;
+def : Pat<(Select SETLT, f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1, 1)>;
 
+def : Pat<(Select SETLE, f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1, 2)>;
 
+def : Pat<(Select SETGT, f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1, 3)>;
+
+def : Pat<(Select SETGE, f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1, 4)>;
+
+def : Pat<(Select SETNE, f64:$src0, f64:$src1), (SELECTD f64:$src0, f64:$src1, 5)>;
+
+def : Pat<(Select SETEQ, i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1, 0)>;
+
+def : Pat<(Select SETLT, i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1, 1)>;
+
+def : Pat<(Select SETLE, i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1, 2)>;
+
+def : Pat<(Select SETGT, i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1, 3)>;
+
+def : Pat<(Select SETGE, i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1, 4)>;
+
+def : Pat<(Select SETNE, i32:$src0, i32:$src1), (SELECT i32:$src0, i32:$src1, 5)>;
+
+def : Pat<(Select SETEQ, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 0)>;
+
+def : Pat<(Select SETLT, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 1)>;
+
+def : Pat<(Select SETLE, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 2)>;
+
+def : Pat<(Select SETGT, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 3)>;
+
+def : Pat<(Select SETGE, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 4)>;
+
+def : Pat<(Select SETNE, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 5)>;
+
+def : Pat<(Movi i32:$imm), (MOVi i32:$imm)>;
