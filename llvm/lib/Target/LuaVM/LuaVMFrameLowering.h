@@ -12,7 +12,7 @@ protected:
 
 public:
   explicit LuaVMFrameLowering(const LuaVMSubtarget &ST)
-      : TargetFrameLowering(StackGrowsDown, Align(8), 0, Align(8)), STI(ST) {}
+      : TargetFrameLowering(StackGrowsUp, Align(8), 4, Align(8)), STI(ST) {}
 
   bool hasFP(const MachineFunction &MF) const override;
 
@@ -23,6 +23,15 @@ public:
                                 MachineBasicBlock::iterator MI,
                                 ArrayRef<CalleeSavedInfo> CSI,
                                 const TargetRegisterInfo *TRI) const override;
+  virtual MachineBasicBlock::iterator
+  eliminateCallFramePseudoInstr(MachineFunction &MF, MachineBasicBlock &MBB,
+                                MachineBasicBlock::iterator MI) const;
+  virtual bool allocateScavengingFrameIndexesNearIncomingSP(
+      const MachineFunction &MF) const {
+    return false;
+  }
+
+  virtual bool targetHandlesStackFrameRounding() const { return true; }
 };
 
 } // End llvm namespace

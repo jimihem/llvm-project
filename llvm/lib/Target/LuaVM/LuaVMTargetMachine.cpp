@@ -30,6 +30,7 @@ bool LuaVMPassConfig::addInstSelector() {
 }
 
 void LuaVMPassConfig::addMachinePasses() {
+  addPass(&LiveVariablesID);
   addPass(&PHIEliminationID);
   addPass(createGreedyRegisterAllocator());
   addPass(createVirtRegRewriter());

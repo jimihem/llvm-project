@@ -15,6 +15,23 @@ class LuaVMInstrInfo : public LuaVMGenInstrInfo {
 public:
   explicit LuaVMInstrInfo(const LuaVMSubtarget &STI);
 
+  virtual void loadRegFromStackSlot(MachineBasicBlock &MBB,
+                                    MachineBasicBlock::iterator MI,
+                                    Register DestReg, int FrameIndex,
+                                    const TargetRegisterClass *RC,
+                                    const TargetRegisterInfo *TRI,
+                                    Register VReg) const;
+  virtual void storeRegToStackSlot(MachineBasicBlock &MBB,
+                                   MachineBasicBlock::iterator MI,
+                                   Register SrcReg, bool isKill, int FrameIndex,
+                                   const TargetRegisterClass *RC,
+                                   const TargetRegisterInfo *TRI,
+                                   Register VReg) const;
+  virtual unsigned isStoreToStackSlot(const MachineInstr &MI,
+                                      int &FrameIndex) const;
+  virtual unsigned isLoadFromStackSlot(const MachineInstr &MI,
+                                       int &FrameIndex) const;
+  virtual int getSPAdjust(const MachineInstr &MI) const;
 };
 
 } // namespace llvm

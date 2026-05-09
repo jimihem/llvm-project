@@ -1,22 +1,31 @@
 #include "LuaVMFrameLowering.h"
+#include "LuaVMInstrInfo.h"
+#include "LuaVMRegisterInfo.h"
+#include "LuaVMSubtarget.h"
 #include "llvm/CodeGen/MachineFunction.h"
+#include "llvm/CodeGen/MachineFrameInfo.h"
 #include "llvm/Target/TargetMachine.h"
 
 using namespace llvm;
 
 bool LuaVMFrameLowering::hasFP(const MachineFunction &MF) const {
-  // For simplicity, assume no frame pointer optimization.
-  return MF.getTarget().Options.DisableFramePointerElim(MF);
+  return true;
 }
 
-void LuaVMFrameLowering::emitPrologue(MachineFunction &MF, MachineBasicBlock &MBB) const {
+void LuaVMFrameLowering::emitPrologue(MachineFunction &MF,
+                                      MachineBasicBlock &MBB) const {
   // Emit the function prologue.
   // e.g., decrement stack pointer, save frame pointer, save registers.
   // This is a placeholder.
   MachineBasicBlock::iterator MBBI = MBB.begin();
   DebugLoc DL = MBBI != MBB.end() ? MBBI->getDebugLoc() : DebugLoc();
-  // Example: ADDiu SP, SP, -frame_size
-  // This requires detailed knowledge of your stack frame layout.
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::ST))
+      .addReg(LuaVM::FP)
+      .addReg(LuaVM::SP)
+      .addImm(0);
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::ADDi), LuaVM::SP)
+      .addReg(LuaVM::SP)
+      .addImm(MF.getFrameInfo().getStackSize());
 }
 
 void LuaVMFrameLowering::emitEpilogue(MachineFunction &MF, MachineBasicBlock &MBB) const {
@@ -25,8 +34,12 @@ void LuaVMFrameLowering::emitEpilogue(MachineFunction &MF, MachineBasicBlock &MB
   // This is a placeholder.
   MachineBasicBlock::iterator MBBI = MBB.getFirstTerminator();
   DebugLoc DL = MBBI != MBB.end() ? MBBI->getDebugLoc() : DebugLoc();
-  // Example: ADDiu SP, SP, +frame_size
-  // This requires detailed knowledge of your stack frame layout.
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::SUBi), LuaVM::SP)
+      .addReg(LuaVM::SP)
+      .addImm(MF.getFrameInfo().getStackSize());
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::LD), LuaVM::FP)
+      .addReg(LuaVM::SP)
+      .addImm(0);
 }
 
 bool LuaVMFrameLowering::spillCalleeSavedRegisters(MachineBasicBlock &MBB,
@@ -35,5 +48,19 @@ bool LuaVMFrameLowering::spillCalleeSavedRegisters(MachineBasicBlock &MBB,
                                                    const TargetRegisterInfo *TRI) const {
   // Implement logic to spill callee-saved registers.
   // This is a placeholder.
-  return true; // Return true if not implemented or failed.
+  return false; // Return true if not implemented or failed.
+}
+
+MachineBasicBlock::iterator LuaVMFrameLowering::eliminateCallFramePseudoInstr(
+    MachineFunction &MF, MachineBasicBlock &MBB,
+    MachineBasicBlock::iterator MI) const {
+  unsigned OpCode =
+      MI->getOpcode() == LuaVM::ADJCALLSTACKUP ? LuaVM::ADDi : LuaVM::SUBi;
+  if (MI->getOperand(0).getImm() != 0) {
+    const TargetInstrInfo *TII = MF.getSubtarget().getInstrInfo();
+    BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(OpCode), LuaVM::SP)
+        .addReg(LuaVM::SP)
+        .addImm(MI->getOperand(0).getImm());
+  }
+  return MBB.erase(MI);
 }

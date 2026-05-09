@@ -18,14 +18,17 @@ def DCmp : SDNode <"LuaVMISD::DCMP", DCMPNodeSDT, [SDNPOutGlue]>;
 def Call : SDNode<"LuaVMISD::CALL",
                    SDTypeProfile<0, -1, []>, // 0 output, variable inputs
                    [SDNPHasChain,    // Requires a chain for ordering
-                    SDNPOutGlue,     // Provides a glue token to connect with ret
+                    SDNPInGlue,     // Provides a glue token to connect with ret
+                    SDNPOutGlue,
                     SDNPMayLoad,     // May read from memory
-                    SDNPMayStore]>;  // May write to memory
+                    SDNPMayStore,
+                    SDNPVariadic]>;  // May write to memory
 
 def Ret : SDNode<"LuaVMISD::RET",
                      SDTypeProfile<0, -1, []>, // 0 output, variable inputs (return value)
                      [SDNPHasChain,      // Requires a chain for ordering
                       SDNPInGlue,        // Takes glue token from call
+                      SDNPVariadic,
                      ]>;
 
 def SDTLuaVMSelect : SDTypeProfile<1, 3, 
@@ -196,22 +199,16 @@ class MTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
 //===----------------------------------------------------------------------===//
 
 // Pessimistically assume the stack pointer will be clobbered
-let Defs = [SP], Uses = [SP] in {
+let OutOperandList = (outs), Namespace = "LuaVM", isPseudo = 1 in {
     def ADJCALLSTACKDOWN : Instruction{
-        let Namespace = "LuaVM";
         let AsmString = "ADJCALLSTACKDOWN $stackSize0, $stackSize1";
-        let OutOperandList = (outs);
         let InOperandList = (ins i32imm:$stackSize0, i32imm:$stackSize1);
-        let isPseudo = 1;
         let Pattern = [(callseq_end i32:$stackSize0, i32:$stackSize1)];
     }
 
     def ADJCALLSTACKUP : Instruction{
-        let Namespace = "LuaVM";
         let AsmString = "ADJCALLSTACKUP $stackSize0, $stackSize1";
-        let OutOperandList = (outs);
         let InOperandList = (ins i32imm:$stackSize0, i32imm:$stackSize1);
-        let isPseudo = 1;
         let Pattern = [(callseq_start i32:$stackSize0, i32:$stackSize1)];
     }
 }
@@ -239,7 +236,7 @@ def STD : MTypeInst<0b00001000, "std $rt, $base, $offset", []>{
   let mayStore = 1;
 }
 
-let Defs = [STR] in {
+
   def ADDi : ITypeInst<0b00100000, "addi $rt, $rs, $imm", []>;
   def SUBi : ITypeInst<0b00100001, "subi $rt, $rs, $imm", []>;
   def MULi : ITypeInst<0b00100100, "muli $rt, $rs, $imm", []>;
@@ -277,14 +274,12 @@ let Defs = [STR] in {
   def SHL : RTypeInst<0b01010110, "shl $rd, $rs, $rt", []>;
   def SHR : RTypeInst<0b01010111, "shr $rd, $rs, $rt", []>;
   def SRA : RTypeInst<0b01011000, "sra $rd, $rs, $rt", []>;
-  
-}
+
 
 def MOVi : LITypeInst<0b00110101, "movi $rt, $imm", []>;
 
 def SELECT : RTypeInst<0b01011001, "sel $rd, $rs, $rt, $cond", []>{
     bits<9> cond;
-    let Uses = [STR];
     let Inst{8-0} = cond;
     let InOperandList = (ins GPRRegs:$rs, GPRRegs:$rt, Cond:$cond);
 }
@@ -295,16 +290,15 @@ def MULD : FTypeInst<0b01100010, "muld $fd, $fs, $ft", []>;
 def DIVD : FTypeInst<0b01100011, "divd $fd, $fs, $ft", []>;
 def SELECTD : FTypeInst<0b01101001, "seld $fd, $fs, $ft, $cond", []>{
     bits<9> cond;
-    let Uses = [STR];
     let Inst{8-0} = cond;
     let InOperandList = (ins FPRRegs:$fs, FPRRegs:$ft, Cond:$cond);
 }
 
-let Defs = [STR] in {
+
   def CMPD : FTypeInst<0b01100111, "cmpd $fd, $fs, $ft", []>{
     let isMoveReg = isCompare;
   }
-}
+
 
 let ft = 0, InOperandList = (ins FPRRegs:$fs) in {
   def NEGD : FTypeInst<0b01100100, "negd $fd, $fs", []>;
@@ -316,7 +310,7 @@ let ft = 0, InOperandList = (ins FPRRegs:$fs) in {
 }
 
 let isBranch = 1 in {
-  let Uses = [STR] in {
+  
     def JEQ : JTypeInst<0b10000000, "jeq $addr", []>;
     def JNE : JTypeInst<0b10000001, "jne $addr", []>;
     def JLT : JTypeInst<0b10000010, "jlt $addr", []>;
@@ -324,7 +318,7 @@ let isBranch = 1 in {
     def JLE : JTypeInst<0b10000100, "jle $addr", []>;
     def JGE : JTypeInst<0b10000101, "jge $addr", []>;
     def JMP : JTypeInst<0b10000110, "jmp $addr", []>;
-  }
+  
 
   let isCall = 1 ,OutOperandList = (outs), rs = 0 in {
     def JALR : ITypeInst<0b10000111, "jalr $rt", []>{

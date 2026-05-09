@@ -2,6 +2,7 @@
 #include "LuaVMInstrInfo.h"
 #include "LuaVMTargetMachine.h"
 #include "llvm/CodeGen/MachineFrameInfo.h"
+#include "llvm/CodeGen/CallingConvLower.h"
 
 using namespace llvm;
 
@@ -354,90 +355,85 @@ bool LuaVMTargetLowering::CanLowerReturn(
   return true;
 }
 
+#include "LuaVMGenCallingConv.inc"
+
 SDValue
 LuaVMTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
                                  bool isVarArg,
                                  const SmallVectorImpl<ISD::OutputArg> &Outs,
                                  const SmallVectorImpl<SDValue> &OutVals,
                                  const SDLoc &dl, SelectionDAG &DAG) const {
-  unsigned intReg = 0;
-  unsigned fltReg = 0;
-  int stackOffset = 0;
+  int LAO = Subtarget.getFrameLowering()->getOffsetOfLocalArea();
   MachineFunction &MF = DAG.getMachineFunction();
   MachineFrameInfo &MFI = MF.getFrameInfo();
+  
+  SmallVector<CCValAssign> Locs;
+  CCState State(CallConv, false, MF, Locs, *DAG.getContext());
 
   for (unsigned i = 0; i < Outs.size(); ++i) {
-    SDValue Val = OutVals[i];
-    MVT VT = Val.getValueType().getSimpleVT();
-
-    if (VT.isInteger() || VT == MVT::i32) {
-      if (intReg <= 12) {
-        unsigned Reg = LuaVM::R0 + intReg++;
-        Chain = DAG.getCopyToReg(Chain, dl, Reg, Val);
-      } else {
-        int FI = MFI.CreateFixedObject(4, stackOffset, false);
-        SDValue Addr = DAG.getFrameIndex(FI, MVT::i32);
-        Chain = DAG.getStore(Chain, dl, Val, Addr, MachinePointerInfo());
-        stackOffset += 4;
-      }
-    } else if (VT == MVT::f64) {
-      if (fltReg <= 31) {
-        unsigned Reg = LuaVM::F0 + fltReg++;
-        Chain = DAG.getCopyToReg(Chain, dl, Reg, Val);
-      } else {
-        int FI = MFI.CreateFixedObject(8, stackOffset, false);
-        SDValue Addr = DAG.getFrameIndex(FI, MVT::i32);
-        Chain = DAG.getStore(Chain, dl, Val, Addr, MachinePointerInfo());
-        stackOffset += 8;
-      }
+    if (LuaVMCC(i, Outs[i].VT, Outs[i].VT, CCValAssign::Full, Outs[i].Flags, State)) {
+      llvm_unreachable("Cann't assign arg");
     }
   }
 
-  return DAG.getNode(LuaVMISD::RET, dl, MVT::Other, Chain);
+  SDValue Glue;
+  SmallVector<SDValue> RegPass;
+  for (auto &loc : Locs) {
+    SDValue Val = OutVals[loc.getValNo()];
+    if (loc.isRegLoc()) {
+      Chain = DAG.getCopyToReg(Chain, dl, loc.getLocReg(), Val, Glue);
+      Glue = Chain.getValue(1);
+      RegPass.push_back(DAG.getRegister(loc.getLocReg(), loc.getLocVT()));
+    } else {
+      int FI = MFI.CreateFixedObject(4, loc.getLocMemOffset() + LAO, false);
+      SDValue Addr = DAG.getFrameIndex(FI, MVT::i32);
+      Chain = DAG.getStore(Chain, dl, Val, Addr, MachinePointerInfo());
+    }
+  }
+
+  SmallVector<SDValue> Ops;
+  Ops.push_back(Chain);
+  Ops.append(RegPass);
+  if (Glue)
+    Ops.push_back(Glue);
+
+  return DAG.getNode(LuaVMISD::RET, dl, MVT::Other, Ops);
 }
 
 SDValue LuaVMTargetLowering::LowerFormalArguments(
     SDValue Chain, CallingConv::ID CallConv, bool isVarArg,
     const SmallVectorImpl<ISD::InputArg> &Ins, const SDLoc &dl,
     SelectionDAG &DAG, SmallVectorImpl<SDValue> &InVals) const {
-  unsigned intReg = 0;
-  unsigned fltReg = 0;
-  int stackOffset = 0;
+  MachineFunction &MF = DAG.getMachineFunction();
+  MachineRegisterInfo &MRI = MF.getRegInfo();
+  const LuaVMGenRegisterInfo *TRI = Subtarget.getRegisterInfo();
 
-  for (const ISD::InputArg &In : Ins) {
-    if (!In.Used)
-      continue;
+  SmallVector<CCValAssign> Locs;
+  CCState State(CallConv, isVarArg, MF, Locs, *DAG.getContext(), true);
 
-    MVT VT = In.VT;
-    SDValue Arg;
-
-    if (VT.isInteger() || VT == MVT::i32) {
-      if (intReg <= 12 && !isVarArg) {
-        unsigned Reg = LuaVM::R0 + intReg++;
-        Arg = DAG.getCopyFromReg(Chain, dl, Reg, VT);
-      } else {
-        SDValue FP = DAG.getRegister(LuaVM::FP, MVT::i32);
-        SDValue Off = DAG.getConstant(-stackOffset, dl, MVT::i32);
-        SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, FP, Off);
-        Arg = DAG.getLoad(VT, dl, Chain, Addr, MachinePointerInfo());
-        stackOffset += 4;
-      }
-    } else if (VT == MVT::f64) {
-      if (fltReg <= 31 && !isVarArg) {
-        unsigned Reg = LuaVM::F0 + fltReg++;
-        Arg = DAG.getCopyFromReg(Chain, dl, Reg, VT);
-      } else {
-        SDValue FP = DAG.getRegister(LuaVM::FP, MVT::i32);
-        SDValue Off = DAG.getConstant(-stackOffset, dl, MVT::i32);
-        SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, FP, Off);
-        Arg = DAG.getLoad(VT, dl, Chain, Addr, MachinePointerInfo());
-        stackOffset += 8;
-      }
+  for (unsigned i = 0; i < Ins.size(); ++i) {
+    if (LuaVMCC(i, Ins[i].VT, Ins[i].VT, CCValAssign::Full, Ins[i].Flags,
+                State)) {
+      llvm_unreachable("Cann't assign arg");
     }
-
-    InVals.push_back(Arg);
   }
 
+  for (auto &loc : Locs) {
+    MVT VT = loc.getLocVT();
+    SDValue Arg;
+    if (loc.isRegLoc()) {
+      unsigned Reg = MRI.createVirtualRegister(TRI->getRegClass(loc.getLocReg()));
+      Arg = DAG.getCopyFromReg(Chain, dl, Reg, VT);
+      MRI.addLiveIn(loc.getLocReg(), Reg);
+    } else {
+      SDValue FP = DAG.getRegister(LuaVM::FP, MVT::i32);
+      SDValue Off = DAG.getConstant(loc.getLocMemOffset(), dl, MVT::i32);
+      SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, FP, Off);
+      Arg = DAG.getLoad(VT, dl, Chain, Addr, MachinePointerInfo());
+    }
+    Chain = Arg.getValue(1);
+    InVals.push_back(Arg);
+  }
   return Chain;
 }
 
@@ -447,112 +443,84 @@ SDValue LuaVMTargetLowering::LowerCall(CallLoweringInfo &CLI,
   SDLoc dl = CLI.DL;
   SDValue Chain = CLI.Chain, Glue;
   SDValue Callee = CLI.Callee;
-  unsigned StackBytes = 0;
+  const LuaVMRegisterInfo *TRI = Subtarget.getRegisterInfo();
 
-  unsigned intReg = 0;
-  unsigned fltReg = 0;
-  int stackOffset = 0;
+  MachineFunction &MF = DAG.getMachineFunction();
+  SmallVector<CCValAssign> Locs;
+  CCState State(CLI.CallConv, CLI.IsVarArg, MF, Locs, *DAG.getContext(), true);
 
   for (size_t i = 0; i < CLI.Outs.size(); i++) {
-    MVT VT = CLI.Outs[i].VT;
-
-    if (VT.isInteger() || VT == MVT::i32) {
-      if (intReg <= 12 && !CLI.IsVarArg) {
-        intReg++;
-      } else {
-        stackOffset += 4;
-      }
-    } else if (VT == MVT::f64) {
-      if (fltReg <= 31 && !CLI.IsVarArg) {
-        fltReg++;
-      } else {
-        stackOffset += 8;
-      }
+    if (LuaVMCC(i, CLI.Outs[i].VT, CLI.Outs[i].VT, CCValAssign::Full,
+                CLI.Outs[i].Flags, State)) {
+      llvm_unreachable("Cann't assign arg");
     }
   }
-  StackBytes = stackOffset;
 
-  stackOffset = 0;
+  unsigned StackBytes = State.getStackSize();
 
   Chain = DAG.getCALLSEQ_START(Chain, StackBytes, 0, dl);
-
-  intReg = 0;
-  fltReg = 0;
-
+  Glue = Chain.getValue(1);
   SDValue MemChain = Chain;
-
-  for (size_t i = 0; i < CLI.Outs.size(); i++) {
-    MVT VT = CLI.Outs[i].VT;
-
-    if (VT.isInteger() || VT == MVT::i32) {
-      if (intReg <= 12 && !CLI.IsVarArg) {
-        unsigned Reg = LuaVM::R0 + intReg++;
-        Chain = DAG.getCopyToReg(Chain, dl, Reg, CLI.OutVals[i], Glue);
-        Glue = Chain.getValue(1);
-      } else {
-        SDValue SP = DAG.getRegister(LuaVM::SP, MVT::i32);
-        SDValue Off = DAG.getConstant(-stackOffset, dl, MVT::i32);
-        SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, SP, Off);
-        MemChain = DAG.getStore(MemChain, dl, CLI.OutVals[i], Addr,
-                                MachinePointerInfo());
-        stackOffset += 4;
-      }
-    } else if (VT == MVT::f64) {
-      if (fltReg <= 31 && !CLI.IsVarArg) {
-        unsigned Reg = LuaVM::F0 + fltReg++;
-        Chain = DAG.getCopyToReg(Chain, dl, Reg, CLI.OutVals[i], Glue);
-        Glue = Chain.getValue(1);
-      } else {
-        SDValue SP = DAG.getRegister(LuaVM::SP, MVT::i32);
-        SDValue Off = DAG.getConstant(-stackOffset, dl, MVT::i32);
-        SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, SP, Off);
-        MemChain = DAG.getStore(MemChain, dl, CLI.OutVals[i], Addr,
-                                MachinePointerInfo());
-        stackOffset += 8;
-      }
+  SmallVector<SDValue> RegPass;
+  for (auto &loc : Locs) {
+    MVT VT = loc.getLocVT();
+    if (loc.isRegLoc()) {
+      Chain = DAG.getCopyToReg(Chain, dl, loc.getLocReg(),
+                               CLI.OutVals[loc.getValNo()], Glue);
+      Glue = Chain.getValue(1);
+      RegPass.push_back(DAG.getRegister(loc.getLocReg(), VT));
+    } else {
+      SDValue SP = DAG.getRegister(LuaVM::SP, MVT::i32);
+      SDValue Off = DAG.getConstant(loc.getLocMemOffset(), dl, MVT::i32);
+      SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, SP, Off);
+      MemChain = DAG.getStore(MemChain, dl, CLI.OutVals[loc.getValNo()], Addr,
+                              MachinePointerInfo());
     }
   }
 
   Chain = DAG.getMergeValues({Chain, MemChain}, dl);
 
-  Chain = DAG.getNode(LuaVMISD::CALL, dl, MVT::Other, Chain, Callee);
+  SmallVector<SDValue> Ops;
+  Ops.push_back(Chain);
+  Ops.push_back(Callee);
+  Ops.append(RegPass);
 
-  unsigned retIntReg = 0;
-  unsigned retFltReg = 0;
-  stackOffset = 0;
+  SDValue RegMsk = DAG.getRegisterMask(TRI->getCallPreservedMask(MF, CLI.CallConv));
+  Ops.push_back(RegMsk);
+
+  if (Glue)
+    Ops.push_back(Glue);
+
+  Chain = DAG.getNode(LuaVMISD::CALL, dl, {MVT::Other, MVT::Glue}, Ops);
+  Glue = Chain.getValue(1);
+  unsigned LAO = Subtarget.getFrameLowering()->getOffsetOfLocalArea();
+  Locs.clear();
+  CCState RetState(CLI.CallConv, false, MF, Locs, *DAG.getContext(), false);
 
   for (size_t i = 0; i < CLI.Ins.size(); i++) {
-    MVT VT = CLI.Ins[i].VT;
-    SDValue RetVal;
+    if (LuaVMCC(i, CLI.Ins[i].VT, CLI.Ins[i].VT, CCValAssign::Full,
+                CLI.Ins[i].Flags, RetState)) {
+      llvm_unreachable("Cann't assign arg");
+    }
+  }
 
-    if (VT.isInteger() || VT == MVT::i32) {
-      if (retIntReg <= 12) {
-        unsigned Reg = LuaVM::R0 + retIntReg++;
-        RetVal = DAG.getCopyFromReg(Chain, dl, Reg, VT);
-      } else {
-        SDValue SPFinal = DAG.getRegister(LuaVM::SP, MVT::i32);
-        SDValue RetOff = DAG.getConstant(stackOffset, dl, MVT::i32);
-        SDValue RetAddr = DAG.getNode(ISD::ADD, dl, MVT::i32, SPFinal, RetOff);
-        RetVal = DAG.getLoad(VT, dl, Chain, RetAddr, MachinePointerInfo());
-        stackOffset += 4;
-      }
-    } else if (VT == MVT::f64) {
-      if (retFltReg <= 31) {
-        unsigned Reg = LuaVM::F0 + retFltReg++;
-        RetVal = DAG.getCopyFromReg(Chain, dl, Reg, VT);
-      } else {
-        SDValue SPFinal = DAG.getRegister(LuaVM::SP, MVT::i32);
-        SDValue RetOff = DAG.getConstant(stackOffset, dl, MVT::i32);
-        SDValue RetAddr = DAG.getNode(ISD::ADD, dl, MVT::i32, SPFinal, RetOff);
-        RetVal = DAG.getLoad(VT, dl, Chain, RetAddr, MachinePointerInfo());
-        stackOffset += 8;
-      }
+  for (auto &loc : Locs) {
+    MVT VT = loc.getLocVT();
+    SDValue RetVal;
+    if (loc.isRegLoc()) {
+      RetVal = DAG.getCopyFromReg(Chain, dl, loc.getLocReg(), VT, Glue);
+      Glue = RetVal.getValue(2);
+    } else {
+      SDValue SPFinal = DAG.getRegister(LuaVM::SP, MVT::i32);
+      SDValue RetOff = DAG.getConstant(loc.getLocMemOffset() + LAO, dl, MVT::i32);
+      SDValue RetAddr = DAG.getNode(ISD::ADD, dl, MVT::i32, SPFinal, RetOff);
+      RetVal = DAG.getLoad(VT, dl, Chain, RetAddr, MachinePointerInfo());
     }
     Chain = RetVal.getValue(1);
     InVals.push_back(RetVal);
   }
 
-  Chain = DAG.getCALLSEQ_END(Chain, StackBytes, 0, SDValue(), dl);
+  Chain = DAG.getCALLSEQ_END(Chain, StackBytes, 0, Glue, dl);
 
   return Chain;
 }

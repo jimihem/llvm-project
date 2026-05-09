@@ -18,6 +18,8 @@ public:
   LuaVMRegisterInfo(const LuaVMSubtarget &ST);
 
   const uint16_t *getCalleeSavedRegs(const MachineFunction *MF) const override;
+  virtual const uint32_t *getCallPreservedMask(const MachineFunction &MF,
+                                               CallingConv::ID) const;
 
   BitVector getReservedRegs(const MachineFunction &MF) const override;
 

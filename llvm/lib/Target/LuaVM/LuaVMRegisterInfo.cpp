@@ -2,6 +2,7 @@
 #include "LuaVMSubtarget.h"
 #include "LuaVMFrameLowering.h"
 #include "llvm/CodeGen/MachineFunction.h"
+#include "llvm/CodeGen//MachineFrameInfo.h"
 
 using namespace llvm;
 
@@ -13,15 +14,26 @@ LuaVMRegisterInfo::LuaVMRegisterInfo(const LuaVMSubtarget &ST) : LuaVMGenRegiste
 }
 
 const uint16_t *LuaVMRegisterInfo::getCalleeSavedRegs(const MachineFunction *MF) const {
-  // Define which registers are callee-saved (preserved across function calls).
-  // This is a placeholder. You need to define the actual list based on your ABI.
-  static const uint16_t CalleeSavedRegs[] = { 0 }; // Placeholder, return null or real list
-  return CalleeSavedRegs;
+  return LuaVM_CC_CalleeSavedRegs_SaveList;
+}
+
+const uint32_t *
+LuaVMRegisterInfo::getCallPreservedMask(const MachineFunction &MF,
+                                        CallingConv::ID) const {
+  return LuaVM_CC_CalleeSavedRegs_RegMask;
 }
 
 BitVector LuaVMRegisterInfo::getReservedRegs(const MachineFunction &MF) const {
   BitVector Reserved(getNumRegs());
-  
+  Reserved.set(LuaVM::R0);
+  Reserved.set(LuaVM::FP);
+  Reserved.set(LuaVM::SP);
+  Reserved.set(LuaVM::LINK);
+  Reserved.set(LuaVM::STR);
+  Reserved.set(LuaVM::HI);
+  Reserved.set(LuaVM::LO);
+  Reserved.set(LuaVM::PDC0);
+  Reserved.set(LuaVM::PDC1);
   return Reserved;
 }
 
@@ -35,9 +47,26 @@ LuaVMRegisterInfo::intRegClass(unsigned Size) const {
 bool LuaVMRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator MI,
                                             int SPAdj, unsigned FIOperandNum,
                                             RegScavenger *RS) const {
+  MachineBasicBlock &MBB = *MI->getParent();
+  MachineFunction &MF = *MBB.getParent();
+  unsigned OpCode = MI->getOpcode();
+  unsigned FI = MI->getOperand(FIOperandNum).getIndex();
+  unsigned offset = MF.getFrameInfo().getObjectOffset(FI);
+
+  if (OpCode == LuaVM::ST || OpCode == LuaVM::STD || OpCode == LuaVM::LD ||
+      OpCode == LuaVM::LDD) {
+    MI->getOperand(FIOperandNum).ChangeToRegister(LuaVM::FP, false);
+    MI->getOperand(2).setImm(MI->getOperand(2).getImm() + offset);
+  } else {
+    BuildMI(MBB, MI, MI->getDebugLoc(), STI.getInstrInfo()->get(LuaVM::ADDi),
+            LuaVM::R0)
+        .addReg(LuaVM::SP)
+        .addImm(offset);
+    MI->getOperand(FIOperandNum).ChangeToRegister(LuaVM::R0, false);
+  }
   return false;
 }
 
 Register LuaVMRegisterInfo::getFrameRegister(const MachineFunction& MF) const {
-  return Register();
+  return Register(LuaVM::FP);
 }

@@ -5,6 +5,7 @@
 include "llvm/Target/Target.td"
 include "LuaVMRegisterInfo.td"
 include "LuaVMInstrInfo.td"
+include "LuaVMCallingConv.td"
 
 def FakeFeature : SubtargetFeature<"FakeFeature", "FakeFeature", "false",
                                    "Fake Feature">;

@@ -24,7 +24,7 @@ public:
 private:
   bool FakeFeature;
   void ParseSubtargetFeatures(StringRef CPU, StringRef TuneCPU, StringRef FS);
-  
+ public:
   const LuaVMInstrInfo *getInstrInfo() const override;
 
   const LuaVMFrameLowering *getFrameLowering() const override;
