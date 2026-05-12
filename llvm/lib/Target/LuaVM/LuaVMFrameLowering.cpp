@@ -17,9 +17,19 @@ void LuaVMFrameLowering::emitPrologue(MachineFunction &MF,
   // Emit the function prologue.
   // e.g., decrement stack pointer, save frame pointer, save registers.
   // This is a placeholder.
+  MF.getFrameInfo().setStackSize(MF.getFrameInfo().getStackSize() +
+                                 getOffsetOfLocalArea());
   MachineBasicBlock::iterator MBBI = MBB.begin();
   DebugLoc DL = MBBI != MBB.end() ? MBBI->getDebugLoc() : DebugLoc();
   BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::ST))
+      .addReg(LuaVM::FP)
+      .addReg(LuaVM::SP)
+      .addImm(0);
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::ST))
+      .addReg(LuaVM::LINK)
+      .addReg(LuaVM::SP)
+      .addImm(4);
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::ADDi))
       .addReg(LuaVM::FP)
       .addReg(LuaVM::SP)
       .addImm(0);
@@ -40,6 +50,9 @@ void LuaVMFrameLowering::emitEpilogue(MachineFunction &MF, MachineBasicBlock &MB
   BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::LD), LuaVM::FP)
       .addReg(LuaVM::SP)
       .addImm(0);
+  BuildMI(MBB, MBBI, DL, STI.getInstrInfo()->get(LuaVM::LD), LuaVM::LINK)
+      .addReg(LuaVM::SP)
+      .addImm(4);
 }
 
 bool LuaVMFrameLowering::spillCalleeSavedRegisters(MachineBasicBlock &MBB,

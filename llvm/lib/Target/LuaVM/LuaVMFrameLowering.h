@@ -12,7 +12,7 @@ protected:
 
 public:
   explicit LuaVMFrameLowering(const LuaVMSubtarget &ST)
-      : TargetFrameLowering(StackGrowsUp, Align(8), 4, Align(8)), STI(ST) {}
+      : TargetFrameLowering(StackGrowsUp, Align(8), 8/*For FP and LINK*/, Align(8)), STI(ST) {}
 
   bool hasFP(const MachineFunction &MF) const override;
 

@@ -385,7 +385,8 @@ LuaVMTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
       Glue = Chain.getValue(1);
       RegPass.push_back(DAG.getRegister(loc.getLocReg(), loc.getLocVT()));
     } else {
-      int FI = MFI.CreateFixedObject(4, loc.getLocMemOffset() + LAO, false);
+      int FI = MFI.CreateFixedObject(loc.getLocVT() == MVT::f64 ? 8 : 4,
+                                     loc.getLocMemOffset() + LAO, false);
       SDValue Addr = DAG.getFrameIndex(FI, MVT::i32);
       Chain = DAG.getStore(Chain, dl, Val, Addr, MachinePointerInfo());
     }
