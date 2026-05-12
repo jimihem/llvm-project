@@ -12,13 +12,8 @@ LuaVMAsmPrinter::LuaVMAsmPrinter(TargetMachine &TM,
     : AsmPrinter(TM, std::move(Streamer)) {}
 
 bool LuaVMAsmPrinter::runOnMachineFunction(MachineFunction &MF) {
-  
-  for (const auto &MBB : MF) {
-    for (const auto &MI : MBB) {
-      emitInstruction(&MI);
-    }
-  }
-
+  SetupMachineFunction(MF);
+  emitFunctionBody();
   return false;
 }
 
