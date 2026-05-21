@@ -15029,35 +15029,28 @@ Decl *Sema::ActOnStartOfLuaFunctionDef(Scope *S,
                                        SmallVector<SourceLocation> &parLocs) {
   Scope *ParentScope = S->getParent();
   FunctionDecl *DP = 0;
-  if (/*ParentScope == TUScope*/0) {
-    
-  } else {
+  {
     SourceLocation Loc;
-    QualType T = QualType(getDeclByName("__lua_method_ty")->getFunctionType(), 0);
+    QualType T =
+        QualType(getDeclByName("__lua_function_ty")->getFunctionType(), 0);
     std::string FunName = Context.getLuaTempMethodName();
-    DP = FunctionDecl::Create(Context, CurContext, Loc, Loc,
-                              &Context.Idents.get(FunName), T, nullptr, SC_None);
-
-    QualType ObjectPtrArrayT = Context.getTypeDeclType(
-        cast<CXXRecordDecl>(getDeclByName("__lua_object_ptr_array")));
-    QualType ObjectPtrArrayRefT =
-        Context.getLValueReferenceType(ObjectPtrArrayT);
-    Qualifiers Qs;
-    Qs.addConst();
-    QualType ConstObjectPtrArrayRefT =
-        Context.getQualifiedType(ObjectPtrArrayRefT, Qs);
+    DP =
+        FunctionDecl::Create(Context, CurContext, Loc, Loc,
+                             &Context.Idents.get(FunName), T, nullptr, SC_None);
 
     QualType ObjectPtrT = Context.getTypeDeclType(
         cast<CXXRecordDecl>(getDeclByName("__lua_object_ptr")));
     QualType ObjectPtrRefT = Context.getLValueReferenceType(ObjectPtrT);
+    Qualifiers Qs;
+    Qs.addConst();
     QualType ConstObjectPtrRefT = Context.getQualifiedType(ObjectPtrRefT, Qs);
 
-    ParmVarDecl *Base =
-        ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("closure"),
-                            ConstObjectPtrRefT, nullptr, SC_None, nullptr);
+    ParmVarDecl *Base = ParmVarDecl::Create(
+        Context, DP, Loc, Loc, &Context.Idents.get("closure"),
+        ConstObjectPtrRefT, nullptr, SC_None, nullptr);
     ParmVarDecl *Parms =
         ParmVarDecl::Create(Context, DP, Loc, Loc, &Context.Idents.get("parms"),
-                            ConstObjectPtrArrayRefT, nullptr, SC_None, nullptr);
+                            ConstObjectPtrRefT, nullptr, SC_None, nullptr);
     DP->setParams({Base, Parms});
     PushOnScopeChains(DP, ParentScope);
   }

@@ -2116,7 +2116,7 @@ static bool IsStandardConversion(Sema &S, Expr* From, QualType ToType,
 
   // If we have not converted the argument type to the parameter type,
   // this is a bad conversion sequence, unless we're resolving an overload in C.
-  if (S.getLangOpts().CPlusPlus || !InOverloadResolution)
+  if (S.getLangOpts().CPlusPlus || S.getLangOpts().LUA || !InOverloadResolution)
     return false;
 
   ExprResult ER = ExprResult{From};

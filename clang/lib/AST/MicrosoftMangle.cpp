@@ -3457,19 +3457,21 @@ void MicrosoftMangleContextImpl::mangleLuaName(GlobalDecl GD,
   std::string MangledName;
   MangledName += "__lua";
   const Decl *D = GD.getDecl();
+  bool IsCXX = false;
   if (auto Var = dyn_cast<VarDecl>(D)) {
     MangledName += ".var.";
     MangledName += Var->getName();
   } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
     MangledName += ".cxxmethod.";
     MangledName += Method->getNameAsString();
+    IsCXX = true;
   } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
     MangledName += ".fun.";
     MangledName += Fun->getNameAsString();
   }
 
   if (auto Fun = dyn_cast<FunctionDecl>(D)) {
-    for (unsigned i = 0; i < Fun->getNumParams(); i++) {
+    for (unsigned i = 0; i < Fun->getNumParams() && IsCXX; i++) {
       MangledName += ".";
       const ParmVarDecl *P = Fun->getParamDecl(i);
       QualType CoreTy = getCoreType(P->getType());
@@ -3484,6 +3486,7 @@ void MicrosoftMangleContextImpl::mangleLuaName(GlobalDecl GD,
     }
   }
   std::replace(MangledName.begin(), MangledName.end(), ' ', '_');
+  std::replace(MangledName.begin(), MangledName.end(), '~', 'd');
   Out << MangledName;
 }
 

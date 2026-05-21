@@ -2053,9 +2053,6 @@ private:
   bool MayBeDesignationStart();
   ExprResult ParseBraceInitializer();
 
-  SmallVector<Expr *> ParseTableField(StmtVector &Stmts,
-                                      ParsedStmtContext StmtCtx);
-
   ExprResult ParseTableConstructor(StmtVector &Stmts, ParsedStmtContext StmtCtx);
 
   ExprResult ParseLuaFunBody(StmtVector &Stmts, ParsedStmtContext StmtCtx,
@@ -2117,8 +2114,6 @@ private:
   StmtResult ParseLuaExprStatement(StmtVector &Stmts, ParsedStmtContext StmtCtx);
   ExprResult ParseLuaFunCall(ExprResult PreFixExp, StmtVector &Stmts,
                              ParsedStmtContext StmtCtx);
-  ExprResult GenerateTempObjArray(SmallVector<Expr *> &Exprs, StmtVector &Stmts,
-                                  ParsedStmtContext StmtCtx);
   void GenerateAssignStmts(SourceLocation OpLoc, SmallVector<Expr *> &VarList,
                            Expr *TempObjArrRef, StmtVector &Stmts,
                            ParsedStmtContext StmtCtx);

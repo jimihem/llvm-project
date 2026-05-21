@@ -1711,15 +1711,9 @@ ExprResult Sema::ActOnMemberAccessExpr(Scope *S, Expr *Base,
                                        UnqualifiedId &Id,
                                        Decl *ObjCImpDecl) {
   if (getLangOpts().LUA) {
-    if (isa<DeclRefExpr>(Base) && Id.Identifier->getName() == "n") {
-      Decl *BaseDecl = cast<DeclRefExpr>(Base)->getDecl();
-      if (isa<VarDecl>(BaseDecl) &&
-          cast<VarDecl>(BaseDecl)->isLuaEllipsisVar()) {
-        return BuildLuaBuiltinCallExpr("__lua_get_array_n", {Base},
-                                       SourceRange(OpLoc, Id.getEndLoc()));
-      }
-    }
-    Base = ConvertObjArrayToScalar(Base);
+    if (IsLuaCallOrEllipsis(Base))
+      Base = GetIndexMember(Base, 1.0, Base->getSourceRange());
+    
     Expr *Idx = BuildStringFromId(Id).get();
     return BuildLuaBuiltinCallExpr("__lua_get_member", {Base, Idx},
                                    SourceRange(OpLoc, Id.getEndLoc()));

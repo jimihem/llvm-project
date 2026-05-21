@@ -6508,26 +6508,28 @@ void ItaniumMangleContextImpl::mangleLuaName(GlobalDecl GD, raw_ostream &Out) {
   std::string MangledName;
   MangledName += "__lua";
   const Decl *D = GD.getDecl();
+  bool IsCXX = false;
   if (auto Var = dyn_cast<VarDecl>(D)) {
     MangledName += ".var.";
     MangledName += Var->getName();
   } else if (auto Method = dyn_cast<CXXMethodDecl>(D)) {
     MangledName += ".cxxmethod.";
     MangledName += Method->getNameAsString();
+    IsCXX = true;
   } else if (auto Fun = dyn_cast<FunctionDecl>(D)) {
     MangledName += ".fun.";
     MangledName += Fun->getNameAsString();
   }
 
   if (auto Fun = dyn_cast<FunctionDecl>(D)) {
-    for (unsigned i = 0; i < Fun->getNumParams(); i++) {
+    for (unsigned i = 0; i < Fun->getNumParams() && IsCXX; i++) {
       MangledName += ".";
       const ParmVarDecl *P = Fun->getParamDecl(i);
       QualType CoreTy = getCoreType(P->getType());
       if (isa<TypedefType>(CoreTy)) {
-        MangledName += dyn_cast<TypedefType>(CoreTy)->getDecl()->getNameAsString();
-      }
-      else if (auto ID = getCoreType(P->getType()).getBaseTypeIdentifier()) {
+        MangledName +=
+            dyn_cast<TypedefType>(CoreTy)->getDecl()->getNameAsString();
+      } else if (auto ID = getCoreType(P->getType()).getBaseTypeIdentifier()) {
         MangledName += ID->getName();
       } else {
         MangledName += getCoreType(P->getType()).getAsString();
@@ -6535,6 +6537,7 @@ void ItaniumMangleContextImpl::mangleLuaName(GlobalDecl GD, raw_ostream &Out) {
     }
   }
   std::replace(MangledName.begin(), MangledName.end(), ' ', '_');
+  std::replace(MangledName.begin(), MangledName.end(), '~', 'd');
   Out << MangledName;
 }
 

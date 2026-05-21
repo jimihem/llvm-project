@@ -1191,9 +1191,6 @@ public:
   RecordDecl *buildImplicitRecord(StringRef Name,
                                   RecordDecl::TagKind TK = TTK_Struct) const;
 
-  CXXRecordDecl *buildLuaRecord(StringRef Name,
-                             RecordDecl::TagKind TK = TTK_Class) const;
-
   /// Create a new implicit TU-level typedef declaration.
   TypedefDecl *buildImplicitTypedef(QualType T, StringRef Name) const;
 
@@ -3366,16 +3363,11 @@ private:
 
 public:
   unsigned ObjTag = 0;
-  unsigned ObjArrTag = 0;
   unsigned MethodTag = 0;
   unsigned ClosureTag = 0;
   unsigned TableTag = 0;
   std::string getLuaTempObjName() {
     return "__Lua_Temp_Obj_" + std::to_string(ObjTag++);
-  }
-
-  std::string getLuaTempObjArrName() {
-    return "__Lua_Temp_Obj_Arr_" + std::to_string(ObjArrTag++);
   }
 
   std::string getLuaTempMethodName() {

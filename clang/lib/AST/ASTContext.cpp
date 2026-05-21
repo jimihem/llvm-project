@@ -1206,13 +1206,6 @@ RecordDecl *ASTContext::buildImplicitRecord(StringRef Name,
   return NewDecl;
 }
 
-CXXRecordDecl *ASTContext::buildLuaRecord(StringRef Name,
-                                          RecordDecl::TagKind TK) const {
-  SourceLocation Loc;
-  return CXXRecordDecl::Create(*this, TK, getTranslationUnitDecl(), Loc, Loc,
-                               Name.empty() ? nullptr : &Idents.get(Name));
-}
-
 TypedefDecl *ASTContext::buildImplicitTypedef(QualType T,
                                               StringRef Name) const {
   TypeSourceInfo *TInfo = getTrivialTypeSourceInfo(T);

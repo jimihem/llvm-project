@@ -5815,8 +5815,11 @@ public:
   ExprResult ActOnArraySubscriptExpr(Scope *S, Expr *Base, SourceLocation LLoc,
                                      MultiExprArg ArgExprs,
                                      SourceLocation RLoc);
-  Expr *ConvertObjArrayToScalar(Expr* InputExpr);
-  bool IsObjArrayType(QualType Ty);
+  bool IsLuaCallOrEllipsis(Expr *InputExpr);
+  Expr *GetIndexMember(Expr *InputExpr, double Index, SourceRange Loc);
+  Expr *SetIndexMember(Expr *InputExpr, double Index, Expr *Val,
+                       SourceRange Loc);
+
   ExprResult CreateBuiltinArraySubscriptExpr(Expr *Base, SourceLocation LLoc,
                                              Expr *Idx, SourceLocation RLoc);
 
@@ -6010,9 +6013,6 @@ public:
   ExprResult ActOnBinOp(Scope *S, SourceLocation TokLoc,
                         tok::TokenKind Kind, Expr *LHSExpr, Expr *RHSExpr);
 
-  void ActOnLocalVarsInitial(SmallVector<Decl *> VarList,
-                                            Expr *ExprList);
-
   SmallVector<Expr *> ActOnVarsAssign(SourceLocation TokLoc,
                                       SmallVector<Expr *> &VarList, Expr *Expr);
 
@@ -6021,9 +6021,6 @@ public:
   ExprResult ActOnEllipsis(SourceLocation TokLoc);
 
   ExprResult ActOnLuaFunctionCall(Expr* Fun, Expr* Args);
-
-  VarDecl *CreateLuaTempObjPtrArrayVar(SourceLocation TokLoc,
-                                       Expr *Init = nullptr);
 
   VarDecl *CreateLuaTempTableObjPtrObjVar(SourceLocation TokLoc, Expr *Init = nullptr);
 
@@ -6034,20 +6031,12 @@ public:
 
   DeclGroupPtrTy ActOnLuaFunctionParmInit();
 
-  bool IsObjArrayTy(Expr* Epr);
-
-  bool IsObjArrayTy(QualType Ty);
-
   SmallVector<Expr *> ActOnClosure(sema::LuaFunctionScopeInfo *FSI,
                                    VarDecl *Closure, Decl *Fun);
 
-  SmallVector<Expr *> ActOnExpList(SmallVector<Expr *> ExpList);
-
-  SmallVector<Expr *> ActOnFunctionUpValues(sema::LuaFunctionScopeInfo *FSI);
-
   ExprResult GetUpValue(VarDecl *UpValue, SourceLocation Loc);
 
-  VarDecl* ActOnLocalVariable(UnqualifiedId &Id, bool IsArray = false, bool IsRef = false);
+  VarDecl* ActOnLocalVariable(UnqualifiedId &Id);
 
   ExprResult ActOnTableFieldName(UnqualifiedId &Id);
 
@@ -6226,19 +6215,8 @@ public:
 
   NamedDecl *getDeclByName(std::string Name);
 
-  NamedDecl *getMemberDeclByName(std::string MemberName, std::string ClassName);
-
-  void getGlobalOperatorNewAndDelete(FunctionDecl *&OpNew,
-                                     FunctionDecl *&OpDelete);
-
   ExprResult BuildImplCastExpr(Expr *E, QualType ToType, CastKind Kind,
                                SourceRange LocRange);
-
-  ExprResult BuildLuaNew(QualType RecordType, MultiExprArg &MulExpr,
-                         SourceRange LocRange);
-
-  ExprResult BuildConstructExpr(QualType ClassType, MultiExprArg &MulExpr,
-                                SourceRange LocRange);
 
   ExprResult BuildStringFromId(UnqualifiedId &Id);
 
@@ -6248,16 +6226,9 @@ public:
 
   ExprResult BuildStringFromLitera(StringLiteral &Str);
 
-  ExprResult BuildObjectPtr(Expr *arg, SourceRange LR = SourceRange());
-
   ExprResult BuildIntLiteral(unsigned ival, SourceRange LocRange);
 
   ExprResult BuildInt64Literal(unsigned long long ival, SourceRange LocRange);
-
-  ExprResult BuildMemberFunCallExpr(Expr *Base, UnqualifiedId &Fun,
-                                    MultiExprArg &MulExpr);
-
-  ExprResult BuildObjectPtrArrowRefExpr(std::string BaseName, SourceLocation Loc);
 
   ExprResult BuildENVMemberRefExpr(UnqualifiedId &Id);
 

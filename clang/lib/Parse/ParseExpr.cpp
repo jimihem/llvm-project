@@ -687,37 +687,6 @@ ExprResult Parser::ParseRHSOfBinaryExpression(ExprResult LHS,
   }
 }
 
-SmallVector<Expr *> Parser::ParseTableField(StmtVector &Stmts,
-                                     ParsedStmtContext StmtCtx) {
-  SmallVector<Expr *> Fields;
-  bool HasKey = false;
-  if (Tok.is(tok::l_square)) {
-    BalancedDelimiterTracker T(*this, tok::l_square);
-    T.consumeOpen();
-    Fields.push_back(Actions.ConvertObjArrayToScalar(ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get()));
-    T.consumeClose();
-    ConsumeToken();
-    HasKey = true;
-  } else if (Tok.is(tok::identifier) && NextToken().is(tok::equal)) {
-    UnqualifiedId Id;
-    Id.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
-    Fields.push_back(Actions.ActOnTableFieldName(Id).get());
-    ConsumeToken();
-    ConsumeToken();
-    HasKey = true;
-  }
-  
-  Expr *Value = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
-  bool MaybeArr =
-      !HasKey &&
-      ((Tok.isOneOf(tok::comma, tok::semi) && NextToken().is(tok::r_brace)) ||
-       Tok.is(tok::r_brace));
-  if (!MaybeArr)
-    Value = Actions.ConvertObjArrayToScalar(Value);
-  Fields.push_back(Value);
-  return Fields;
-}
-
 //tableconstructor ::= ‘{’ [fieldlist] ‘}’
 //       fieldlist ::= field {fieldsep field} [fieldsep]
 //           field ::= ‘[’ exp ‘]’ ‘=’ exp | Name ‘=’ exp | exp
@@ -736,32 +705,78 @@ ExprResult Parser::ParseTableConstructor(StmtVector &Stmts,
 
   Expr *TableRef = Actions.BuildDeclRefExpr(Table, Table->getType(), VK_LValue,
                                             T.getOpenLocation());
-  SmallVector<Expr *> Fields;
+  
   if (Tok.isNot(tok::r_brace)) {
-
+    double Index = 1.0;
     do {
-      SmallVector<Expr *> Ret = ParseTableField(Stmts, StmtCtx);
-      Expr *E;
-      if (Ret.size() == 1) {
-        if (Actions.IsObjArrayType(Ret[0]->getType())) {
-          E = Actions
-                  .BuildLuaBuiltinCallExpr("__lua_add_members", {TableRef, Ret[0]},
-                                           Ret[0]->getSourceRange())
-                  .get();
-        } else {
-          E = Actions
-                  .BuildLuaBuiltinCallExpr("__lua_add_member", {TableRef, Ret[0]},
-                                           Ret[0]->getSourceRange())
-                  .get();
+      SourceLocation OpLoc;
+      Expr *Key = nullptr;
+      bool IsFakeKey = false;
+
+      if (Tok.is(tok::l_square)) {
+        BalancedDelimiterTracker T(*this, tok::l_square);
+        T.consumeOpen();
+        Expr *Key = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
+        if (Actions.IsLuaCallOrEllipsis(Key)) {
+          Key = Actions.GetIndexMember(Key, 1.0, Key->getSourceRange());
         }
+        T.consumeClose();
+        OpLoc = Tok.getLocation();
+        ConsumeToken();
+      } else if (Tok.is(tok::identifier) && NextToken().is(tok::equal)) {
+        UnqualifiedId Id;
+        Id.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
+        Key = Actions.ActOnTableFieldName(Id).get();
+        ConsumeToken();
+        OpLoc = Tok.getLocation();
+        ConsumeToken();
       } else {
-        E = Actions
-                .BuildLuaBuiltinCallExpr(
-                    "__lua_set_member", {TableRef, Ret[0], Ret[1]},
-                    SourceRange(Ret[0]->getBeginLoc(), Ret[1]->getEndLoc()))
-                .get();
+        llvm::APFloat DVal(Index);
+        FloatingLiteral *Res = FloatingLiteral::Create(
+            Actions.getASTContext(), DVal, true,
+            Actions.getASTContext().DoubleTy, Tok.getLocation());
+
+        Key = Actions
+                  .BuildLuaBuiltinCallExpr("__lua_build_number", {Res},
+                                           Tok.getLocation())
+                  .get();
+        IsFakeKey = true;
       }
-      Stmts.push_back(handleExprStmt(E, StmtCtx).get());
+      Expr *Value = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
+
+      bool IsLastExpr = Tok.is(tok::r_brace) || NextToken().is(tok::r_brace);
+
+      if ((!IsFakeKey && Actions.IsLuaCallOrEllipsis(Value)) ||
+          (IsFakeKey && Actions.IsLuaCallOrEllipsis(Value) && !IsLastExpr)) {
+        if (IsFakeKey)
+          OpLoc = Value->getExprLoc();
+
+        Value = Actions.GetIndexMember(Value, 1.0, Value->getSourceRange());
+        Expr *SetMember =
+            Actions
+                .BuildLuaBuiltinCallExpr("__lua_set_member",
+                                         {TableRef, Key, Value}, OpLoc)
+                .get();
+        Stmts.push_back(handleExprStmt(SetMember, StmtCtx).get());
+      } else if (IsFakeKey && Actions.IsLuaCallOrEllipsis(Value) &&
+                 IsLastExpr) {
+        Expr *AddLastExpr = Actions
+                                .BuildLuaBuiltinCallExpr(
+                                    "__lua_add_last_exp", {TableRef, Value},
+                                    Value->getSourceRange())
+                                .get();
+        Stmts.push_back(handleExprStmt(AddLastExpr, StmtCtx).get());
+      } else {
+        if (IsFakeKey)
+          OpLoc = Value->getExprLoc();
+        Expr *SetMember =
+            Actions
+                .BuildLuaBuiltinCallExpr("__lua_set_member",
+                                         {TableRef, Key, Value}, OpLoc)
+                .get();
+        Stmts.push_back(handleExprStmt(SetMember, StmtCtx).get());
+      }
+
     } while ((TryConsumeToken(tok::comma) || TryConsumeToken(tok::semi)) &&
              Tok.isNot(tok::r_brace));
   }
@@ -832,13 +847,8 @@ ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
     if (Tok.is(tok::ellipsis)) {
       IsVar = true;
       parLocs.push_back(Tok.getLocation());
-      parlist.push_back(&Actions.Context.Idents.get("VarList"));
+      parlist.push_back(&Actions.Context.Idents.get("__lua_ellipsis"));
       ConsumeToken();
-      if (Tok.is(tok::identifier)) {
-        parLocs.push_back(Tok.getLocation());
-        parlist.push_back(Tok.getIdentifierInfo());
-        ConsumeToken();
-      }
     }
   }
   T.consumeClose();
@@ -856,12 +866,11 @@ ExprResult Parser::ParseLuaFunBody(StmtVector &Stmts,
   FD->setLocation(T.getOpenLocation());
 
   StmtResult FnBody(ParseCompoundStatementBody());
-  SourceLocation FunEndLoc = ConsumeToken(); //eat 'end'
-   
+  SourceLocation FunEndLoc = ConsumeToken(); // eat 'end'
+
   if (clang::CompoundStmt *Body = dyn_cast<clang::CompoundStmt>(FnBody.get())) {
     if (!isa<ReturnStmt>(Body->body_back())) {
-      Expr *E =
-          Actions.BuildLuaBuiltinCallExpr("__lua_build_array", {}, FunEndLoc).get();
+      Expr *E = Actions.BuildNil(FunEndLoc).get();
       StmtResult R = Actions.ActOnReturnStmt(FunEndLoc, E, getCurScope());
       StmtVector TempStmts;
       TempStmts.push_back(R.get());
@@ -1159,7 +1168,8 @@ Parser::ParseCastExpression(CastParseKind ParseKind, bool isAddressOfOperand,
       BalancedDelimiterTracker T(*this, tok::l_paren);
       T.consumeOpen();
       Res = ParseLuaExpression(NotTypeCast, Stmts, StmtCtx);
-      Res = Actions.ConvertObjArrayToScalar(Res.get());
+      if (Actions.IsLuaCallOrEllipsis(Res.get()))
+        Res = Actions.GetIndexMember(Res.get(), 1.0, Res.get()->getSourceRange());
       T.consumeClose();
       break;
     }

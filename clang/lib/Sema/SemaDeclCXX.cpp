@@ -11574,98 +11574,6 @@ NamedDecl *Sema::getDeclByName(std::string Name) {
   return FR.getFoundDecl();
 }
 
-NamedDecl *Sema::getMemberDeclByName(std::string MemberName, std::string ClassName) {
-  Scope *S = getCurScope();
-  DeclarationNameInfo NameInfo;
-  NameInfo.setName(PP.getIdentifierInfo(ClassName));
-  NameInfo.setLoc(SourceLocation());
-  LookupResult FR(*this, NameInfo, LookupAnyName);
-  LookupParsedName(FR, S, nullptr, false);
-  CXXRecordDecl *ClassDel = cast<CXXRecordDecl>(FR.getFoundDecl());
-
-  NameInfo.setName(PP.getIdentifierInfo(MemberName));
-  LookupResult MR(*this, NameInfo, LookupAnyName);
-  LookupQualifiedName(MR, ClassDel);
-  return MR.getFoundDecl();
-}
-
-void Sema::getGlobalOperatorNewAndDelete(FunctionDecl *&OpNew,
-                                         FunctionDecl *&OpDelete) {
-  DeclareGlobalNewDelete();
-
-  SourceLocation Loc;
-
-  DeclarationName OperatorNewName =
-      Context.DeclarationNames.getCXXOperatorName(OO_New);
-  LookupResult LR(*this, OperatorNewName, Loc, LookupOrdinaryName);
-  LookupQualifiedName(LR, Context.getTranslationUnitDecl());
-  OpNew = cast<FunctionDecl>(LR.getFoundDecl());
-
-  DeclarationName OperatorDeleteName =
-      Context.DeclarationNames.getCXXOperatorName(OO_Delete);
-  LookupResult FR(*this, OperatorDeleteName, Loc, LookupOrdinaryName);
-  LookupQualifiedName(FR, Context.getTranslationUnitDecl());
-  OpDelete = cast<FunctionDecl>(FR.getFoundDecl());
-}
-
-ExprResult Sema::BuildConstructExpr(QualType ClassType, MultiExprArg &MulExpr,
-                                    SourceRange LocRange) {
-  SourceLocation Loc = LocRange.getBegin();
-
-  DeclarationName ConstructorName =
-      Context.DeclarationNames.getCXXConstructorName(
-          Context.getCanonicalType(ClassType));
-  LookupResult CR(*this, ConstructorName, Loc, LookupOrdinaryName);
-  CXXRecordDecl *DestRecordDecl = ClassType->getAsCXXRecordDecl();
-  LookupQualifiedName(CR, DestRecordDecl);
-
-  CXXConstructorDecl *Constructor = 0;
-  LookupResult::iterator FI = CR.begin();
-  for (; FI != CR.end(); FI++) {
-    const FunctionProtoType *FT =
-        dyn_cast<FunctionProtoType>(FI->getFunctionType());
-    if (FT->getNumParams() != MulExpr.size())
-      continue;
-
-    bool Match = true;
-    for (uint32_t i = 0; i < MulExpr.size(); i++) {
-      if (FT->getParamType(i).getTypePtr() !=
-          MulExpr[i]->getType().getTypePtr()) {
-        Match = false;
-        break;
-      }
-    }
-
-    if (Match) {
-      Constructor = cast<CXXConstructorDecl>(*FI);
-      break;
-    }
-  }
-
-  return BuildCXXConstructExpr(Loc, ClassType, Constructor, false, MulExpr,
-                               false, false, false, false, 0, LocRange);
-}
-
-ExprResult Sema::BuildLuaNew(QualType ClassType, MultiExprArg &MulExpr,
-                             SourceRange LocRange) {
-  SourceLocation Loc = LocRange.getBegin();
-  FunctionDecl *OperatorNew = nullptr;
-  FunctionDecl *OperatorDelete = nullptr;
-
-  getGlobalOperatorNewAndDelete(OperatorNew, OperatorDelete);
-
-  Expr *Initializer = BuildConstructExpr(ClassType, MulExpr, LocRange).get();
-
-  TypeSourceInfo *TLInfo = Context.CreateTypeSourceInfo(ClassType);
-
-  CXXNewExpr *NewExpr = CXXNewExpr::Create(
-      Context, true, OperatorNew, OperatorDelete, false, false, {},
-      SourceRange(), {}, CXXNewExpr::CallInit, Initializer,
-      Context.getPointerType(ClassType), TLInfo, Loc, SourceRange());
-
-  return NewExpr;
-}
-
 ExprResult Sema::BuildImplCastExpr(Expr *E, QualType ToType, CastKind Kind,
                                    SourceRange LocRange) {
   return ImplicitCastExpr::Create(Context, ToType, Kind, E, nullptr, VK_PRValue,
@@ -11720,75 +11628,6 @@ ExprResult Sema::BuildBool(Expr *BoolVal, SourceRange LR) {
   return BuildLuaBuiltinCallExpr("__lua_build_bool", {BoolVal}, LR);
 }
 
-ExprResult Sema::BuildObjectPtr(Expr *arg, SourceRange LR) {
-  SourceRange LocRange = LR;
-  MultiExprArg EmptyArgs;
-  if (arg)
-    LocRange = arg->getSourceRange();
-
-  uint64_t BID = LocRange.getBegin().getRawEncoding();
-  uint64_t EID = LocRange.getEnd().getRawEncoding();
-  Expr* SLoc = BuildInt64Literal(EID << 32 | BID, LocRange).get();
-
-  NamedDecl *ObjectDel = getDeclByName("Object");
-  Expr *Args[2] = {arg, SLoc};
-  MultiExprArg ObjectArgs(Args, 2);
-  Expr *Ret = 0;
-  if (arg)
-    Ret = BuildLuaNew(Context.getTypeDeclType(cast<TypeDecl>(ObjectDel)),
-                      ObjectArgs, LocRange)
-              .get();
-  else
-    Ret = BuildLuaNew(Context.getTypeDeclType(cast<TypeDecl>(ObjectDel)),
-                      EmptyArgs, LocRange)
-              .get();
-  
-  NamedDecl *ObjectPtrDel = getDeclByName("__lua_object_ptr");
-  MultiExprArg ObjectPtrArgs(Ret);
-  return BuildConstructExpr(
-      Context.getTypeDeclType(cast<TypeDecl>(ObjectPtrDel)), ObjectPtrArgs,
-      LocRange);
-}
-
-ExprResult Sema::BuildMemberFunCallExpr(Expr *Base, UnqualifiedId &Fun,
-                                        MultiExprArg &MulExpr) {
-  SourceLocation Loc = Fun.getBeginLoc();
-  DeclarationNameInfo NameInfo = GetNameFromUnqualifiedId(Fun);
-  Scope *S = getCurScope();
-  ActOnMemberAccessExtraArgs ExtraArgs = {S, Fun, nullptr};
-  CXXScopeSpec SS;
-  LookupResult R(*this, NameInfo, LookupOrdinaryName);
-  QualType BaseTy = Base->getType();
-  bool IsArrow = BaseTy->isPointerType();
-  if (IsArrow)
-    BaseTy = BaseTy->getPointeeType();
-
-  LookupQualifiedName(R, BaseTy->getAsCXXRecordDecl());
-  ExprResult Res = BuildMemberReferenceExpr(Base, Base->getType(), Loc, IsArrow,
-                                            SS, SourceLocation(), nullptr, R,
-                                            nullptr, S, false, &ExtraArgs);
-
-  MemberExpr *MemExpr = cast<MemberExpr>(Res.get());
-  CXXMethodDecl *Method = cast<CXXMethodDecl>(MemExpr->getMemberDecl());
-  DeclAccessPair FoundDecl = MemExpr->getFoundDecl();
-
-  QualType ResultType = Method->getReturnType();
-  ResultType = ResultType.getNonLValueExprType(Context);
-  return CXXMemberCallExpr::Create(Context, MemExpr, MulExpr, ResultType,
-                                   VK_PRValue, Loc, CurFPFeatureOverrides(),
-                                   MulExpr.size());
-}
-
-ExprResult Sema::BuildObjectPtrArrowRefExpr(std::string BaseName, SourceLocation Loc) {
-  VarDecl *Base = cast<VarDecl>(getDeclByName(BaseName));
-
-  DeclRefExpr *RefE =
-      DeclRefExpr::Create(Context, NestedNameSpecifierLoc(), Loc, Base, false,
-                          Loc, Base->getType(), VK_LValue);
-
-  return BuildOverloadedArrowExpr(getCurScope(), RefE, Loc);
-}
-
 uint64_t ConvertSourceRangeToU64(SourceLocation B, SourceLocation E) {
   return ((uint64_t)E.getRawEncoding()) << 32 | ((uint64_t)B.getRawEncoding());
 }
@@ -11829,7 +11668,7 @@ VarDecl *Sema::CreateLuaTempClosureObjPtrVar(SourceLocation TokLoc,
   VarDecl *Closure = ActOnLocalVariable(Id);
   if (!Init) {
     AddInitializerToDecl(
-        Closure, BuildLuaBuiltinCallExpr("__lua_build_function", {}, TokLoc).get(),
+        Closure, BuildLuaBuiltinCallExpr("__lua_build_closure", {}, TokLoc).get(),
         true);
   } else {
     AddInitializerToDecl(Closure, Init, true);
@@ -11837,20 +11676,9 @@ VarDecl *Sema::CreateLuaTempClosureObjPtrVar(SourceLocation TokLoc,
   return Closure;
 }
 
-VarDecl *Sema::CreateLuaTempObjPtrArrayVar(SourceLocation TokLoc, Expr *Init) {
-  UnqualifiedId Id;
-  Id.setIdentifier(&Context.Idents.get(Context.getLuaTempObjArrName()), TokLoc);
-  VarDecl *tempObjArr = ActOnLocalVariable(Id, true);
-  if (Init)
-    AddInitializerToDecl(tempObjArr, Init, true);
-  else
-    ActOnUninitializedDecl(tempObjArr);
-  return tempObjArr;
-}
-
 ExprResult Sema::ActOnLuaFunctionCall(Expr *Fun, Expr *Args) {
   return BuildLuaBuiltinCallExpr("__lua_call", {Fun, Args},
-                                 Args->getSourceRange());
+                                 Fun->getSourceRange());
 }
 
 ExprResult Sema::BuildLuaBuiltinCallExpr(std::string Fn,

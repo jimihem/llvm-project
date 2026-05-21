@@ -1817,28 +1817,23 @@ void Parser::stripTypeAttributesOffDeclSpec(ParsedAttributes &Attrs,
 void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
   if (getLangOpts().LUA) {
     if (Tok.is(tok::kw_local) && NextToken().is(tok::kw_function)) {
-      ConsumeToken(); //eat 'local'
-      ConsumeToken(); //eat 'function'
+      ConsumeToken(); // eat 'local'
+      ConsumeToken(); // eat 'function'
       assert(Tok.is(tok::identifier));
       UnqualifiedId Id;
       CXXScopeSpec SS;
       ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
                          nullptr, Id);
       VarDecl *LocalVar = Actions.ActOnLocalVariable(Id);
-      Actions.AddInitializerToDecl(LocalVar, Actions.BuildNil().get(), false);
+
+      Expr *Body = ParseLuaFunBody(Stmts, StmtCtx).get();
+
+      Actions.AddInitializerToDecl(LocalVar, Body, false);
       Stmts.push_back(
           Actions
               .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
                              Id.getBeginLoc(), Id.getEndLoc())
               .get());
-
-      Expr *Body = ParseLuaFunBody(Stmts, StmtCtx).get();
-      Expr *LocalVarRef = Actions.BuildDeclRefExpr(
-          LocalVar, LocalVar->getType(), VK_LValue, Id.getBeginLoc());
-
-      ExprResult ModExpr = Actions.BuildLuaBuiltinCallExpr(
-          "__lua_assign_local_var", {LocalVarRef, Body}, Id.getSourceRange());
-      Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
     } else if (Tok.is(tok::kw_function)) {
       ConsumeToken(); // eat 'function'
       bool HaveSelf = false;
@@ -1852,7 +1847,7 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
               .get();
       Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
     } else {
-      ConsumeToken();//eat 'local'
+      ConsumeToken(); // eat 'local'
       SmallVector<IdentifierInfo *> Varlist;
       SmallVector<SourceLocation> VarLocs;
       VarLocs.push_back(Tok.getLocation());
@@ -1863,9 +1858,6 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
         Varlist.push_back(Tok.getIdentifierInfo());
         ConsumeToken(); // eat 'id'
       }
-      ConsumeToken(); // eat '='
-      SmallVector<Expr *> ExprList;
-      Expr *ExprLst = ParseLuaExprList(ExprList, Stmts, StmtCtx).get();
 
       SmallVector<Decl *> LocalVars;
       for (size_t i = 0; i < Varlist.size(); i++) {
@@ -1874,7 +1866,31 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
         LocalVars.push_back(Actions.ActOnLocalVariable(Id));
       }
 
-      Actions.ActOnLocalVarsInitial(LocalVars, ExprLst);
+      ConsumeToken(); // eat '='
+
+      SmallVector<Expr *> ExprList;
+      do {
+        ExprList.push_back(
+            ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+      } while (TryConsumeToken(tok::comma));
+
+      for (size_t i = 0; i < Varlist.size(); i++) {
+        Decl *Lv = LocalVars[i];
+        Expr *expr = nullptr;
+        if (i < ExprList.size()) {
+          expr = ExprList[i];
+          if (Actions.IsLuaCallOrEllipsis(expr))
+            expr = Actions.GetIndexMember(expr, 1.0, expr->getSourceRange());
+        } else {
+          expr = ExprList.back();
+          if (Actions.IsLuaCallOrEllipsis(expr))
+            expr = Actions.GetIndexMember(expr, double(i - ExprList.size() + 1),
+                                          expr->getSourceRange());
+          else
+            expr = Actions.BuildNil(Lv->getSourceRange()).get();
+        }
+        Actions.AddInitializerToDecl(Lv, expr, false);
+      }
 
       Stmts.push_back(
           Actions
