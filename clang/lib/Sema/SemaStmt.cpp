@@ -47,7 +47,8 @@ using namespace sema;
 StmtResult Sema::ActOnExprStmt(ExprResult FE, bool DiscardedValue) {
   if (FE.isInvalid())
     return StmtError();
-
+  if (getLangOpts().LUA)
+    Cleanup.setExprNeedsCleanups(false);
   FE = ActOnFinishFullExpr(FE.get(), FE.get()->getExprLoc(), DiscardedValue);
   if (FE.isInvalid())
     return StmtError();
@@ -2169,7 +2170,7 @@ StmtResult Sema::ActOnForStmt(SourceLocation ForLoc, SourceLocation LParenLoc,
   if (Second.isInvalid())
     return StmtError();
 
-  if (!getLangOpts().CPlusPlus) {
+  if (!getLangOpts().CPlusPlus && !getLangOpts().LUA) {
     if (DeclStmt *DS = dyn_cast_or_null<DeclStmt>(First)) {
       // C99 6.8.5p3: The declaration part of a 'for' statement shall only
       // declare identifiers for objects having storage class 'auto' or

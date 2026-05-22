@@ -16043,10 +16043,11 @@ ExprResult Sema::ActOnBinOp(Scope *S, SourceLocation TokLoc,
 
   if (getLangOpts().LUA) {
     if (Opc == BO_Assign) {
-      if (CXXBindTemporaryExpr *BTE = dyn_cast<CXXBindTemporaryExpr>(LHSExpr)) {
-        LHSExpr = BTE->getSubExpr();
+      Expr *Temp = LHSExpr;
+      if (CXXBindTemporaryExpr *BTE = dyn_cast<CXXBindTemporaryExpr>(Temp)) {
+        Temp = BTE->getSubExpr();
       }
-      if (CallExpr *CE = dyn_cast<CallExpr>(LHSExpr)) {
+      if (CallExpr *CE = dyn_cast<CallExpr>(Temp)) {
         FunctionDecl *Callee = CE->getDirectCallee();
         if (getDeclByName("__lua_get_member") == Callee) {
           SmallVector<Expr *> Args;
@@ -16060,7 +16061,7 @@ ExprResult Sema::ActOnBinOp(Scope *S, SourceLocation TokLoc,
                                          SourceRange(TokLoc));
         }
         assert(0);
-      } else if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(LHSExpr)) {
+      } else if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(Temp)) {
         return BuildLuaBuiltinCallExpr("__lua_assign_local_var", {LHSExpr, RHSExpr},
                                        SourceRange(TokLoc));
       }
@@ -16081,19 +16082,6 @@ ExprResult Sema::ActOnBinOp(Scope *S, SourceLocation TokLoc,
   DiagnoseBinOpPrecedence(*this, Opc, TokLoc, LHSExpr, RHSExpr);
 
   return BuildBinOp(S, TokLoc, Opc, LHSExpr, RHSExpr);
-}
-
-SmallVector<Expr *> Sema::ActOnVarsAssign(SourceLocation TokLoc,
-                                          SmallVector<Expr *> &VarList,
-                                          Expr *ExprList) {
-  SmallVector<Expr *> Ret;
-  for (size_t i = 0; i < VarList.size(); i++) {
-    ExprResult Value  = GetIndexMember(ExprList, double(i), VarList[i]->getSourceRange());
-    ExprResult AssignExpr =
-        ActOnBinOp(getCurScope(), TokLoc, tok::equal, VarList[i], Value.get());
-    Ret.push_back(AssignExpr.get());
-  }
-  return Ret;
 }
 
 ExprResult Sema::ActOnNil(SourceLocation TokLoc) {

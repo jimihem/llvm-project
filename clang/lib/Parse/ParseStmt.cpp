@@ -546,11 +546,12 @@ void Parser::GenerateAssignStmts(SourceLocation OpLoc,
                                  SmallVector<Expr *> &VarList,
                                  Expr *ExprList, StmtVector &Stmts,
                                  ParsedStmtContext StmtCtx) {
-  SmallVector<Expr *> AssignExprs =
-      Actions.ActOnVarsAssign(OpLoc, VarList, ExprList);
-
-  for (uint32_t i = 0; i < AssignExprs.size(); i++) {
-    Stmts.push_back(handleExprStmt(AssignExprs[i], StmtCtx).get());
+  for (size_t i = 0; i < VarList.size(); i++) {
+    ExprResult Value = Actions.GetIndexMember(ExprList, double(i),
+                                              VarList[i]->getSourceRange());
+    ExprResult AssignExpr = Actions.ActOnBinOp(getCurScope(), OpLoc, tok::equal,
+                                               VarList[i], Value.get());
+    Stmts.push_back(handleExprStmt(AssignExpr, StmtCtx).get());
   }
 }
 
@@ -693,42 +694,75 @@ StmtResult Parser::ParseLuaExprStatement(StmtVector &Stmts,
     SourceLocation OpLoc = Tok.getLocation();
     ConsumeToken();
 
-    Expr *LastExpr = nullptr;
-    bool ReachLastExp = false;
-    double Index = 1.0;
-    for (auto Var : VarList) {
-      bool IsExpList = false;
-      bool IsCurLastExp = false;
-      Expr *Val = LastExpr
-                      ? LastExpr
-                      : ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
-      if (!ReachLastExp && !TryConsumeToken(tok::comma)) {
-        ReachLastExp = true;
-        IsCurLastExp = true;
-        LastExpr = Val;
+    SmallVector<Expr *> ExprList;
+    do {
+      ExprList.push_back(
+          ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    } while (TryConsumeToken(tok::comma));
+
+    if (VarList.size() <= ExprList.size()) {
+      for (size_t i = 0; i < VarList.size(); i++) {
+        Expr *Val = ExprList[i];
+        if (Actions.IsLuaCallOrEllipsis(Val))
+          Val = Actions.GetIndexMember(Val, 1.0, OpLoc);
+
+        Expr *Assign =
+            Actions.ActOnBinOp(getCurScope(), OpLoc, tok::equal, VarList[i], Val)
+                .get();
+        Stmts.push_back(handleExprStmt(Assign, StmtCtx).get());
+      }
+      for (size_t i = VarList.size(); i < ExprList.size(); i++) {
+        Stmts.push_back(handleExprStmt(ExprList[i], StmtCtx).get());
+      }
+    } else {
+      Expr *LastExpr = nullptr;
+      if (Actions.IsLuaCallOrEllipsis(ExprList.back())) {
+        VarDecl *LocalVar = Actions.CreateLuaTempLocalObjPtrVar(OpLoc);
+        Stmts.push_back(
+            Actions
+                .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                               LocalVar->getSourceRange().getBegin(),
+                               LocalVar->getSourceRange().getEnd())
+                .get());
+        Expr *LastExprVarRef =
+            Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                     LocalVar->getSourceRange().getBegin());
+        Expr *Assign = Actions
+                           .ActOnBinOp(getCurScope(), OpLoc, tok::equal,
+                                       LastExprVarRef, ExprList.back())
+                           .get();
+        Stmts.push_back(handleExprStmt(Assign, StmtCtx).get());
+        LastExpr = LastExprVarRef;
       }
 
-      IsExpList = Actions.IsLuaCallOrEllipsis(Val);
+      for (size_t i = 0; i < ExprList.size() - 1; i++) {
+        Expr *Val = ExprList[i];
+        if (Actions.IsLuaCallOrEllipsis(Val))
+          Val = Actions.GetIndexMember(Val, 1.0, OpLoc);
 
-      if (IsExpList && ReachLastExp) {
-        Val = Actions.GetIndexMember(Val, Index, OpLoc);
-        Index += 1.0;
-      } else if (IsExpList && !ReachLastExp) {
-        Val = Actions.GetIndexMember(Val, 1.0, OpLoc);
-      } else if (!IsExpList && ReachLastExp && !IsCurLastExp) {
-        Val = Actions.BuildLuaBuiltinCallExpr("__lua_build_nil", {}, OpLoc).get();
+        Expr *Assign =
+            Actions
+                .ActOnBinOp(getCurScope(), OpLoc, tok::equal, VarList[i], Val)
+                .get();
+        Stmts.push_back(handleExprStmt(Assign, StmtCtx).get());
       }
 
-      Expr* Assign = Actions.ActOnBinOp(getCurScope(), OpLoc, tok::equal, Var, Val).get();
-      Stmts.push_back(handleExprStmt(Assign, StmtCtx).get());
+      double Index = 1.0;
+      for (size_t i = ExprList.size() - 1; i < VarList.size(); i++) {
+        Expr *Val = nullptr;
+        if (LastExpr) {
+          Val = Actions.BuildNil(OpLoc).get();
+        } else {
+          Val = Actions.GetIndexMember(Val, Index, OpLoc);
+        }
+        Expr *Assign =
+            Actions
+                .ActOnBinOp(getCurScope(), OpLoc, tok::equal, VarList[i], Val)
+                .get();
+        Stmts.push_back(handleExprStmt(Assign, StmtCtx).get());
+      }
     }
 
-    do {
-      if (ReachLastExp)
-        break;
-      Expr* E = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
-      Stmts.push_back(handleExprStmt(E, StmtCtx).get());
-    } while (TryConsumeToken(tok::comma));
     return StmtResult();
   }
   return handleExprStmt(PreFixExp, StmtCtx);
@@ -1460,7 +1494,6 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
                                                {ParmsRef, IndexExpr},
                                                ParamDecl->getSourceRange())
                       .get();
-            break;
           } else {
             Arg = Actions.GetIndexMember(ParmsRef, Index,
                                          ParamDecl->getSourceRange());
@@ -2319,20 +2352,50 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
     SmallVector<Decl *> LocalVars;
 
     VarDecl *LocalVar = Actions.ActOnLocalVariable(Var);
-    Actions.AddInitializerToDecl(LocalVar, Initializer, true);
+    Actions.AddInitializerToDecl(LocalVar, Actions.BuildNil(Var.getSourceRange()).get(), true);
     LocalVars.push_back(LocalVar);
 
     VarDecl *LimitVar =
-        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc(), Limit);
+        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc());
     LocalVars.push_back(LimitVar);
 
     VarDecl *StepVar =
-        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc(), Step);
+        Actions.CreateLuaTempLocalObjPtrVar(Var.getBeginLoc());
     LocalVars.push_back(StepVar);
 
-    StmtResult FirstPart = Actions.ActOnDeclStmt(
-        Actions.BuildDeclaratorGroup(LocalVars),
-        LocalVars.front()->getLocation(), LocalVars.back()->getLocation());
+    Stmts.push_back(Actions
+                        .ActOnDeclStmt(Actions.BuildDeclaratorGroup(LocalVars),
+                                       LocalVars.front()->getLocation(),
+                                       LocalVars.back()->getLocation())
+                        .get());
+
+    Expr *LocalVarRef =
+        Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue, Var.getSourceRange().getBegin());
+
+    Expr *LimitVarRef =
+        Actions.BuildDeclRefExpr(LimitVar, LimitVar->getType(), VK_LValue,
+                                 LimitVar->getSourceRange().getBegin());
+    Expr *StepVarRef =
+        Actions.BuildDeclRefExpr(StepVar, StepVar->getType(), VK_LValue,
+                                 StepVar->getSourceRange().getBegin());
+
+    Expr *ModExpr = Actions
+                        .ActOnBinOp(getCurScope(), LocalVarRef->getBeginLoc(),
+                                    tok::equal, LocalVarRef, Initializer)
+                        .get();
+    Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+
+    ModExpr = Actions
+                  .ActOnBinOp(getCurScope(), LimitVarRef->getBeginLoc(),
+                              tok::equal, LimitVarRef, Limit)
+                  .get();
+    Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+
+    ModExpr = Actions
+                  .ActOnBinOp(getCurScope(), StepVarRef->getBeginLoc(),
+                              tok::equal, StepVarRef, Step)
+                  .get();
+    Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
 
     SourceLocation DoLoc = ConsumeToken(); // eat 'do'
 
@@ -2377,7 +2440,7 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
     FullExprArg ThirdPart = Actions.MakeFullDiscardedValueExpr(IncExpr.get());
 
     ForScope.Exit();
-    return Actions.ActOnForStmt(ForLoc, Var.getBeginLoc(), FirstPart.get(),
+    return Actions.ActOnForStmt(ForLoc, Var.getBeginLoc(), nullptr,
                                 SecondPart, ThirdPart, DoLoc, Body.get());
   } else {
     SmallVector<IdentifierInfo *> Varlist;
@@ -2431,69 +2494,127 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
                                        LocalVars.front()->getLocation(),
                                        LocalVars.back()->getLocation())
                         .get());
-
-    Expr *lastExpr = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
     
-    double Index = 1.0;
-    Expr *fExpr = lastExpr;
-    if (Actions.IsLuaCallOrEllipsis(lastExpr))
-      fExpr =
-          Actions.GetIndexMember(lastExpr, 1.0, lastExpr->getSourceRange());
+    Expr *fExpr = nullptr, *sExpr = nullptr, *varExpr = nullptr;
 
-    Expr *assignExpr = Actions
-                           .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
-                                                    {FSVARVarRefs[0], fExpr},
-                                                    fExpr->getSourceRange())
-                           .get();
-    Stmts.push_back(handleExprStmt(assignExpr, StmtCtx).get());
+    SmallVector<Expr *> ExprList;
+    do {
+      ExprList.push_back(
+          ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
+    } while (TryConsumeToken(tok::comma));
 
-    Expr *sExpr = nullptr;
-    if (TryConsumeToken(tok::comma)) {
-      lastExpr = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
-      sExpr = lastExpr;
-      if (Actions.IsLuaCallOrEllipsis(lastExpr))
-        sExpr = Actions.GetIndexMember(lastExpr, 1.0,
-                                       lastExpr->getSourceRange());
+    for (size_t i = 3; i < ExprList.size(); i++) {
+      Stmts.push_back(handleExprStmt(ExprList[i], StmtCtx).get());
+    }
 
-    } else {
-      if (Actions.IsLuaCallOrEllipsis(lastExpr))
-        sExpr = Actions.GetIndexMember(lastExpr, Index = 2.0,
-                                       lastExpr->getSourceRange());
+    if (ExprList.size() == 3) {
+      fExpr = ExprList[0];
+      if (Actions.IsLuaCallOrEllipsis(fExpr))
+        fExpr = Actions.GetIndexMember(fExpr, 1.0, fExpr->getSourceRange());
+
+      sExpr = ExprList[1];
+      if (Actions.IsLuaCallOrEllipsis(sExpr))
+        sExpr = Actions.GetIndexMember(sExpr, 1.0, sExpr->getSourceRange());
+
+      varExpr = ExprList[2];
+      if (Actions.IsLuaCallOrEllipsis(varExpr))
+        varExpr = Actions.GetIndexMember(varExpr, 1.0, sExpr->getSourceRange());
+    } else if (ExprList.size() == 2) {
+      fExpr = ExprList[0];
+      if (Actions.IsLuaCallOrEllipsis(fExpr))
+        fExpr = Actions.GetIndexMember(fExpr, 1.0, fExpr->getSourceRange());
+
+      if (Actions.IsLuaCallOrEllipsis(ExprList[1])) {
+        VarDecl *LocalVar =
+            Actions.CreateLuaTempLocalObjPtrVar(ExprList.back()->getExprLoc());
+        Stmts.push_back(
+            Actions
+                .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                               LocalVar->getSourceRange().getBegin(),
+                               LocalVar->getSourceRange().getEnd())
+                .get());
+        Expr* LastExprVarRef =
+            Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                     LocalVar->getSourceRange().getBegin());
+
+        Expr *ModExpr =
+            Actions
+                .ActOnBinOp(getCurScope(),
+                            LastExprVarRef->getSourceRange().getBegin(),
+                            tok::equal, LastExprVarRef, ExprList.back())
+                .get();
+        Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+
+        sExpr = Actions.GetIndexMember(LastExprVarRef, 1.0,
+                                       LastExprVarRef->getSourceRange());
+        varExpr = Actions.GetIndexMember(LastExprVarRef, 2.0,
+                                       LastExprVarRef->getSourceRange());
+      }
+      else {
+        sExpr = ExprList[1];
+        varExpr = Actions.BuildNil(sExpr->getSourceRange()).get();
+      }
+    } else if (ExprList.size() == 1) {
+      if (Actions.IsLuaCallOrEllipsis(ExprList[0])) {
+        VarDecl *LocalVar =
+            Actions.CreateLuaTempLocalObjPtrVar(ExprList.back()->getExprLoc());
+        Stmts.push_back(
+            Actions
+                .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                               LocalVar->getSourceRange().getBegin(),
+                               LocalVar->getSourceRange().getEnd())
+                .get());
+        Expr *LastExprVarRef =
+            Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                     LocalVar->getSourceRange().getBegin());
+
+        Expr *ModExpr =
+            Actions
+                .ActOnBinOp(getCurScope(),
+                            LastExprVarRef->getSourceRange().getBegin(),
+                            tok::equal, LastExprVarRef, ExprList.back())
+                .get();
+        Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+
+        fExpr = Actions.GetIndexMember(LastExprVarRef, 1.0,
+                                       LastExprVarRef->getSourceRange());
+        sExpr = Actions.GetIndexMember(LastExprVarRef, 2.0,
+                                       LastExprVarRef->getSourceRange());
+        varExpr = Actions.GetIndexMember(LastExprVarRef, 3.0,
+                                         LastExprVarRef->getSourceRange());
+      } else {
+        fExpr = ExprList[0];
+        sExpr = Actions.BuildNil(fExpr->getSourceRange()).get();
+        varExpr = Actions.BuildNil(fExpr->getSourceRange()).get();
+      }
+    }
+
+    if (fExpr) {
+      Expr *assignExpr = Actions
+                             .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
+                                                      {FSVARVarRefs[0], fExpr},
+                                                      fExpr->getSourceRange())
+                             .get();
+      Stmts.push_back(handleExprStmt(assignExpr, StmtCtx).get());
     }
 
     if (sExpr) {
-      assignExpr = Actions
-                       .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
-                                                {FSVARVarRefs[1], sExpr},
-                                                sExpr->getSourceRange())
-                       .get();
+      Expr *assignExpr = Actions
+                             .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
+                                                      {FSVARVarRefs[1], sExpr},
+                                                      sExpr->getSourceRange())
+                             .get();
       Stmts.push_back(handleExprStmt(assignExpr, StmtCtx).get());
-    }
-
-    Expr *varExpr = nullptr;
-    if (TryConsumeToken(tok::comma)) {
-      lastExpr = ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get();
-      varExpr = lastExpr;
-      if (Actions.IsLuaCallOrEllipsis(lastExpr))
-        varExpr =
-            Actions.GetIndexMember(lastExpr, 1.0, lastExpr->getSourceRange());
-    } else {
-      if (Actions.IsLuaCallOrEllipsis(lastExpr))
-        varExpr = Actions.GetIndexMember(lastExpr, ++Index,
-                                         lastExpr->getSourceRange());
     }
 
     if (varExpr) {
-      assignExpr = Actions
-                       .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
-                                                {FSVARVarRefs[2], varExpr},
-                                                varExpr->getSourceRange())
-                       .get();
+      Expr *assignExpr =
+          Actions
+              .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
+                                       {FSVARVarRefs[2], varExpr},
+                                       varExpr->getSourceRange())
+              .get();
       Stmts.push_back(handleExprStmt(assignExpr, StmtCtx).get());
-    }
-    
-    while (TryConsumeToken(tok::comma)) {
-      ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx);
     }
 
     SourceLocation DoLoc = ConsumeToken(); // eat 'do'
@@ -2520,10 +2641,33 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
     Expr *CallExpr =
         Actions.ActOnLuaFunctionCall(FSVARVarRefs[0], ArgTableRef).get();
 
+    if (LocalVarRefs.size() > 1) {
+      VarDecl *LocalVar =
+          Actions.CreateLuaTempLocalObjPtrVar(CallExpr->getExprLoc());
+      Stmts.push_back(
+          Actions
+              .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                             LocalVar->getSourceRange().getBegin(),
+                             LocalVar->getSourceRange().getEnd())
+              .get());
+      Expr *LastExprVarRef =
+          Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                   LocalVar->getSourceRange().getBegin());
+
+      Expr *ModExpr =
+          Actions
+              .ActOnBinOp(getCurScope(),
+                          LastExprVarRef->getSourceRange().getBegin(),
+                          tok::equal, LastExprVarRef, CallExpr)
+              .get();
+      Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+      CallExpr = LastExprVarRef;
+    }
+
     GenerateAssignStmts(InLoc, LocalVarRefs, CallExpr, Stmts, StmtCtx);
 
     StmtVector TempStmts;
-    assignExpr =
+    Expr *assignExpr =
         Actions
             .BuildLuaBuiltinCallExpr("__lua_assign_local_var",
                                      {FSVARVarRefs[2], LocalVarRefs[0]},
@@ -2542,6 +2686,29 @@ StmtResult Parser::ParseLuaForStatement(StmtVector &Stmts,
     TempStmts.push_back(handleExprStmt(SetMember, StmtCtx).get());
 
     CallExpr = Actions.ActOnLuaFunctionCall(FSVARVarRefs[0], ArgTableRef).get();
+
+    if (LocalVarRefs.size() > 1) {
+      VarDecl *LocalVar =
+          Actions.CreateLuaTempLocalObjPtrVar(CallExpr->getExprLoc());
+      TempStmts.push_back(
+          Actions
+              .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                             LocalVar->getSourceRange().getBegin(),
+                             LocalVar->getSourceRange().getEnd())
+              .get());
+      Expr *LastExprVarRef =
+          Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                   LocalVar->getSourceRange().getBegin());
+
+      Expr *ModExpr =
+          Actions
+              .ActOnBinOp(getCurScope(),
+                          LastExprVarRef->getSourceRange().getBegin(),
+                          tok::equal, LastExprVarRef, CallExpr)
+              .get();
+      TempStmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+      CallExpr = LastExprVarRef;
+    }
 
     GenerateAssignStmts(InLoc, LocalVarRefs, CallExpr, TempStmts, StmtCtx);
     

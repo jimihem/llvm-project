@@ -1825,15 +1825,25 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
       ParseUnqualifiedId(SS, ParsedType(), false, false, false, false, false,
                          nullptr, Id);
       VarDecl *LocalVar = Actions.ActOnLocalVariable(Id);
+      Actions.AddInitializerToDecl(
+          LocalVar, Actions.BuildNil(LocalVar->getSourceRange()).get(), true);
+      Expr *LocalVarRef =
+          Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                   LocalVar->getSourceRange().getBegin());
 
-      Expr *Body = ParseLuaFunBody(Stmts, StmtCtx).get();
-
-      Actions.AddInitializerToDecl(LocalVar, Body, false);
       Stmts.push_back(
           Actions
               .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
                              Id.getBeginLoc(), Id.getEndLoc())
               .get());
+      Expr *Body = ParseLuaFunBody(Stmts, StmtCtx).get();
+
+      Expr *ModExpr =
+          Actions
+              .ActOnBinOp(getCurScope(), Body->getSourceRange().getBegin(),
+                          tok::equal, LocalVarRef, Body)
+              .get();
+      Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
     } else if (Tok.is(tok::kw_function)) {
       ConsumeToken(); // eat 'function'
       bool HaveSelf = false;
@@ -1860,11 +1870,28 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
       }
 
       SmallVector<Decl *> LocalVars;
+      SmallVector<Expr *> LocalVarsRef;
       for (size_t i = 0; i < Varlist.size(); i++) {
         UnqualifiedId Id;
         Id.setIdentifier(Varlist[i], VarLocs[i]);
         LocalVars.push_back(Actions.ActOnLocalVariable(Id));
+        Actions.AddInitializerToDecl(
+            LocalVars[i],
+            Actions.BuildNil(LocalVars[i]->getSourceRange()).get(),
+            true);
+        Expr *LocalVarRef = Actions.BuildDeclRefExpr(
+            dyn_cast<VarDecl>(LocalVars[i]),
+            dyn_cast<VarDecl>(LocalVars[i])->getType(), VK_LValue,
+            LocalVars[i]->getSourceRange().getBegin());
+        LocalVarsRef.push_back(LocalVarRef);
       }
+
+      Stmts.push_back(
+          Actions
+              .ActOnDeclStmt(Actions.BuildDeclaratorGroup(LocalVars),
+                             LocalVars.front()->getLocation(),
+                             LocalVars.back()->getLocation())
+              .get());
 
       ConsumeToken(); // eat '='
 
@@ -1873,6 +1900,36 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
         ExprList.push_back(
             ParseLuaExpression(NotTypeCast, &Stmts, StmtCtx).get());
       } while (TryConsumeToken(tok::comma));
+
+      if (Varlist.size() < ExprList.size()) {
+        for (size_t i = Varlist.size(); i < ExprList.size(); i++) {
+          Stmts.push_back(handleExprStmt(ExprList[i], StmtCtx).get());
+        }
+      }
+
+      Expr *LastExprVarRef = nullptr;
+      if (Varlist.size() > ExprList.size() &&
+          Actions.IsLuaCallOrEllipsis(ExprList.back())) {
+        VarDecl *LocalVar =
+            Actions.CreateLuaTempLocalObjPtrVar(ExprList.back()->getExprLoc());
+        Stmts.push_back(
+            Actions
+                .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(LocalVar),
+                               LocalVar->getSourceRange().getBegin(),
+                               LocalVar->getSourceRange().getEnd())
+                .get());
+        LastExprVarRef =
+            Actions.BuildDeclRefExpr(LocalVar, LocalVar->getType(), VK_LValue,
+                                     LocalVar->getSourceRange().getBegin());
+
+        Expr *ModExpr =
+            Actions
+                .ActOnBinOp(getCurScope(),
+                            LastExprVarRef->getSourceRange().getBegin(),
+                            tok::equal, LastExprVarRef, ExprList.back())
+                .get();
+        Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
+      }
 
       for (size_t i = 0; i < Varlist.size(); i++) {
         Decl *Lv = LocalVars[i];
@@ -1884,20 +1941,19 @@ void Parser::ParseLuaDeclaration(StmtVector &Stmts, ParsedStmtContext StmtCtx) {
         } else {
           expr = ExprList.back();
           if (Actions.IsLuaCallOrEllipsis(expr))
-            expr = Actions.GetIndexMember(expr, double(i - ExprList.size() + 1),
+            expr = Actions.GetIndexMember(LastExprVarRef,
+                                          double(i - ExprList.size() + 1),
                                           expr->getSourceRange());
           else
             expr = Actions.BuildNil(Lv->getSourceRange()).get();
         }
-        Actions.AddInitializerToDecl(Lv, expr, false);
+        Expr *ModExpr =
+            Actions
+                .ActOnBinOp(getCurScope(), expr->getSourceRange().getBegin(),
+                            tok::equal, LocalVarsRef[i], expr)
+                .get();
+        Stmts.push_back(handleExprStmt(ModExpr, StmtCtx).get());
       }
-
-      Stmts.push_back(
-          Actions
-              .ActOnDeclStmt(Actions.BuildDeclaratorGroup(LocalVars),
-                             LocalVars.front()->getLocation(),
-                             LocalVars.back()->getLocation())
-              .get());
     }
   }
 }

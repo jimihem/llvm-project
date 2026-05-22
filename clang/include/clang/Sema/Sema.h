@@ -6013,9 +6013,6 @@ public:
   ExprResult ActOnBinOp(Scope *S, SourceLocation TokLoc,
                         tok::TokenKind Kind, Expr *LHSExpr, Expr *RHSExpr);
 
-  SmallVector<Expr *> ActOnVarsAssign(SourceLocation TokLoc,
-                                      SmallVector<Expr *> &VarList, Expr *Expr);
-
   ExprResult ActOnNil(SourceLocation TokLoc);
 
   ExprResult ActOnEllipsis(SourceLocation TokLoc);
