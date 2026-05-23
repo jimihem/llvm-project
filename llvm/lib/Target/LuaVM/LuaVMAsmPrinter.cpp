@@ -1,5 +1,6 @@
 #include "LuaVMAsmPrinter.h"
 #include "TargetInfo/LuaVMTargetInfo.h"
+#include "LuaVMTargetMachine.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/TargetRegistry.h"
 
@@ -17,17 +18,82 @@ bool LuaVMAsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   return false;
 }
 
+static MCOperand lowerSymbolOperand(const MachineOperand &MO, MCSymbol *Sym,
+                                    const AsmPrinter &AP) {
+  MCContext &Ctx = AP.OutContext;
+
+  const MCExpr *ME =
+      MCSymbolRefExpr::create(Sym, MCSymbolRefExpr::VK_None, Ctx);
+
+  if (!MO.isJTI() && !MO.isMBB() && MO.getOffset())
+    ME = MCBinaryExpr::createAdd(
+        ME, MCConstantExpr::create(MO.getOffset(), Ctx), Ctx);
+
+  return MCOperand::createExpr(ME);
+}
+
+bool LuaVMAsmPrinter::lowerOperand(const MachineOperand &MO,
+                                   MCOperand &MCOp) const {
+  switch (MO.getType()) {
+  default:
+    report_fatal_error("lowerOperand: unknown operand type");
+  case MachineOperand::MO_Register:
+    // Ignore all implicit register operands.
+    if (MO.isImplicit())
+      return false;
+    MCOp = MCOperand::createReg(MO.getReg());
+    break;
+  case MachineOperand::MO_Immediate:
+    MCOp = MCOperand::createImm(MO.getImm());
+    break;
+  case MachineOperand::MO_MachineBasicBlock:
+    MCOp = lowerSymbolOperand(MO, MO.getMBB()->getSymbol(), *this);
+    break;
+  case MachineOperand::MO_GlobalAddress:
+    MCOp = lowerSymbolOperand(MO, getSymbolPreferLocal(*MO.getGlobal()), *this);
+    break;
+  case MachineOperand::MO_BlockAddress:
+    MCOp = lowerSymbolOperand(MO, GetBlockAddressSymbol(MO.getBlockAddress()),
+                              *this);
+    break;
+  case MachineOperand::MO_ExternalSymbol:
+    MCOp = lowerSymbolOperand(MO, GetExternalSymbolSymbol(MO.getSymbolName()),
+                              *this);
+    break;
+  case MachineOperand::MO_ConstantPoolIndex:
+    MCOp = lowerSymbolOperand(MO, GetCPISymbol(MO.getIndex()), *this);
+    break;
+  case MachineOperand::MO_JumpTableIndex:
+    MCOp = lowerSymbolOperand(MO, GetJTISymbol(MO.getIndex()), *this);
+    break;
+  case MachineOperand::MO_MCSymbol:
+    MCOp = lowerSymbolOperand(MO, MO.getMCSymbol(), *this);
+    break;
+  }
+  return true;
+
+}
+
+bool LuaVMAsmPrinter::lowerToMCInst(const MachineInstr *MI, MCInst &OutMI) {
+  if (MI->getOpcode() == LuaVM::KILL || 
+      MI->getOpcode() == LuaVM::IMPLICIT_DEF) {
+    return false;
+  }
+  assert(!MI->isPseudo() && "Need expand pseudo instruction");
+  OutMI.setOpcode(MI->getOpcode());
+  for (size_t i = 0; i < MI->getNumExplicitOperands(); i++) {
+    MCOperand MCOp;
+    if (lowerOperand(MI->getOperand(i), MCOp))
+      OutMI.addOperand(MCOp);
+  }
+  return true;
+}
+
 void LuaVMAsmPrinter::emitInstruction(const MachineInstr *MI) {
-  
-
-  report_fatal_error("Unknown instruction encountered in LuaVMAsmPrinter!");
+  MCInst OutMI;
+  if (lowerToMCInst(MI, OutMI))
+    OutStreamer->emitInstruction(OutMI, *TM.getMCSubtargetInfo());
 }
-
-void LuaVMAsmPrinter::emitGlobalVariable(const GlobalVariable *GV) {
-  // Handle global variable emission for LuaVM if necessary
-  // OutStreamer->emitRawText("\t.global " + GV->getName().str());
-}
-
 
 
 extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeLuaVMAsmPrinter() {

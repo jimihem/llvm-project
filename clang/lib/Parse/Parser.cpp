@@ -597,10 +597,10 @@ void Parser::Initialize() {
 \
     typedef __lua_object_ptr (*__lua_function_ty)(const __lua_object_ptr &closure, const __lua_object_ptr &parms);\
 \
-    __lua_object_ptr       __lua_get_member(const __lua_object_ptr &tab, const __lua_object_ptr &name, unsigned long long loc);\
-    void                   __lua_set_member(const __lua_object_ptr &tab, const __lua_object_ptr &name, const __lua_object_ptr &value, unsigned long long loc);\
-	void                   __lua_add_last_exp(const __lua_object_ptr &tab, const __lua_object_ptr &members, unsigned long long loc);\
-	__lua_object_ptr       __lua_get_ellipsis(const __lua_object_ptr &parms, const __lua_object_ptr &Index, unsigned long long loc);\
+    __lua_object_ptr       __lua_get_member(const __lua_object_ptr &tab, const __lua_object_ptr &name, unsigned loc);\
+    void                   __lua_set_member(const __lua_object_ptr &tab, const __lua_object_ptr &name, const __lua_object_ptr &value, unsigned loc);\
+	void                   __lua_add_last_exp(const __lua_object_ptr &tab, const __lua_object_ptr &members, unsigned loc);\
+	__lua_object_ptr       __lua_get_ellipsis(const __lua_object_ptr &parms, const __lua_object_ptr &Index, unsigned loc);\
     \
     __lua_object_ptr       __lua_build_nil();\
     __lua_object_ptr       __lua_build_bool(bool b);\
@@ -610,17 +610,17 @@ void Parser::Initialize() {
     __lua_object_ptr       __lua_build_closure_with_function(const __lua_function_ty &ptr);\
     __lua_object_ptr       __lua_build_table();\
         \
-    void                   __lua_set_closure_function(__lua_object_ptr &closure, const __lua_function_ty &ptr, unsigned long long loc);\
+    void                   __lua_set_closure_function(__lua_object_ptr &closure, const __lua_function_ty &ptr, unsigned loc);\
     \
-    void                   __lua_assign_local_var(const __lua_object_ptr &lhs, const __lua_object_ptr &rhs, unsigned long long loc);\
+    void                   __lua_assign_local_var(const __lua_object_ptr &lhs, const __lua_object_ptr &rhs, unsigned loc);\
     \
-    __lua_object_ptr       __lua_call(const __lua_object_ptr &closure, const __lua_object_ptr &args, unsigned long long loc);\
-    __lua_object_ptr       __lua_unop(const __lua_object_ptr &expr, unsigned op, unsigned long long loc);\
-    __lua_object_ptr       __lua_binop(const __lua_object_ptr &lhs, const __lua_object_ptr &rhs, unsigned op, unsigned long long loc);\
-    bool                   __lua_to_bool(const __lua_object_ptr &expr, unsigned long long loc);\
+    __lua_object_ptr       __lua_call(const __lua_object_ptr &closure, const __lua_object_ptr &args, unsigned loc);\
+    __lua_object_ptr       __lua_unop(const __lua_object_ptr &expr, unsigned op, unsigned loc);\
+    __lua_object_ptr       __lua_binop(const __lua_object_ptr &lhs, const __lua_object_ptr &rhs, unsigned op, unsigned loc);\
+    bool                   __lua_to_bool(const __lua_object_ptr &expr, unsigned loc);\
 \
-    __lua_object_ptr       __lua_get_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, unsigned long long loc);\
-    void                   __lua_set_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, const __lua_object_ptr &val, unsigned long long loc);\
+    __lua_object_ptr       __lua_get_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, unsigned loc);\
+    void                   __lua_set_up_value(const __lua_object_ptr &closure, const __lua_object_ptr &name, const __lua_object_ptr &val, unsigned loc);\
     \
     ";
     PP.EnterSourceString(SourceLocation(), str);

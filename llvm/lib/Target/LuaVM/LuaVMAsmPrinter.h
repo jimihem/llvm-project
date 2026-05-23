@@ -19,7 +19,8 @@ public:
   }
 
   void emitInstruction(const MachineInstr *MI) override;
-  void emitGlobalVariable(const GlobalVariable *GV) override;
+  bool lowerOperand(const MachineOperand &MO, MCOperand &MCOp) const;
+  bool lowerToMCInst(const MachineInstr *MI, MCInst &OutMI);
 };
 
 } 

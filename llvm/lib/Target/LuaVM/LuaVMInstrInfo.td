@@ -53,7 +53,7 @@ def callseq_start : SDNode<"ISD::CALLSEQ_START", SDT_CallSeqStart,
 def callseq_end   : SDNode<"ISD::CALLSEQ_END", SDT_CallSeqEnd,
                            [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
 
-def Movi : SDNode<"LuaVMISD::MOVI", SDTypeProfile<1, 1, [SDTCisVT<0, i32>, SDTCisVT<0, i32>]>, []>;
+def Movi : SDNode<"LuaVMISD::MOVI", SDTypeProfile<1, 1, [SDTCisInt<0>, SDTCisInt<1>]>, []>;
 
 def imm14 : Operand<i32>{
   string PrintMethod = "printImm14Operand";
@@ -309,7 +309,7 @@ let ft = 0, InOperandList = (ins FPRRegs:$fs) in {
   }
 }
 
-let isBranch = 1 in {
+let isBranch = 1, isTerminator = true in {
   
     def JEQ : JTypeInst<0b10000000, "jeq $addr", []>;
     def JNE : JTypeInst<0b10000001, "jne $addr", []>;
@@ -319,19 +319,6 @@ let isBranch = 1 in {
     def JGE : JTypeInst<0b10000101, "jge $addr", []>;
     def JMP : JTypeInst<0b10000110, "jmp $addr", []>;
   
-
-  let isCall = 1 ,OutOperandList = (outs), rs = 0 in {
-    def JALR : ITypeInst<0b10000111, "jalr $rt", []>{
-        let InOperandList = (ins GPRRegs:$rt);
-        let imm = 0;
-    }
-
-    def JSUB : ITypeInst<0b10001000, "jusb $imm", []>{
-        let InOperandList = (ins imm14:$imm);
-        let rt = 0;
-    }
-  }
-
   let OutOperandList = (outs), rs = 0 in {
     def JIND : ITypeInst<0b10001010, "jind $rt", []>{
         let InOperandList = (ins GPRRegs:$rt);
@@ -340,7 +327,21 @@ let isBranch = 1 in {
   }
 }
 
-let isReturn = 1, InOperandList = (ins), addr = 0 in {
+
+
+let isCall = 1 ,OutOperandList = (outs), rs = 0 in {
+  def JALR : ITypeInst<0b10000111, "jalr $rt", []>{
+      let InOperandList = (ins GPRRegs:$rt);
+      let imm = 0;
+  }
+
+  def JSUB : ITypeInst<0b10001000, "jusb $imm", []>{
+      let InOperandList = (ins imm14:$imm);
+      let rt = 0;
+  }
+}
+
+let isReturn = 1, isTerminator = true, InOperandList = (ins), addr = 0 in {
   def RET : JTypeInst<0b10001001, "ret", []>;
 }
 
@@ -384,11 +385,13 @@ def : Pat<(IndirectCallFrag i32:$fun), (JALR i32:$fun)>;
 def : Pat<(i32 (ld (LoadStoreAddr i32:$base, i32:$off))), (LD i32:$base, i32:$off)>;
 def : Pat<(i16 (ld (LoadStoreAddr i32:$base, i32:$off))), (LH i32:$base, i32:$off)>;
 def : Pat<(i8 (ld (LoadStoreAddr i32:$base, i32:$off))), (LB i32:$base, i32:$off)>;
+def : Pat<(i1 (ld (LoadStoreAddr i32:$base, i32:$off))), (LB i32:$base, i32:$off)>;
 def : Pat<(f64 (ld (LoadStoreAddr i32:$base, i32:$off))), (LDD i32:$base, i32:$off)>;
 
 def : Pat<(st i32:$data, (LoadStoreAddr i32:$base, i32:$off)), (ST i32:$data, i32:$base, i32:$off)>;
 def : Pat<(st i16:$data, (LoadStoreAddr i32:$base, i32:$off)), (SH i16:$data, i32:$base, i32:$off)>;
 def : Pat<(st i8:$data, (LoadStoreAddr i32:$base, i32:$off)), (SB i8:$data, i32:$base, i32:$off)>;
+def : Pat<(st i1:$data, (LoadStoreAddr i32:$base, i32:$off)), (SB i1:$data, i32:$base, i32:$off)>;
 def : Pat<(st f64:$data, (LoadStoreAddr i32:$base, i32:$off)), (STD f64:$data, i32:$base, i32:$off)>;
 
 def : Pat<(Cmp i32:$src0, (i32 imm12uFrag:$src1)), (CMPi i32:$src0, i32:$src1)>;
@@ -399,7 +402,11 @@ def : Pat<(Cmpu i1:$src0, (i32 0)), (CMPiu i1:$src0, (i32 0))>;
 
 def : Pat<(Cmp i32:$src0, i32:$src1), (CMP i32:$src0, i32:$src1)>;
 
+def : Pat<(Cmp i1:$src0, i1:$src1), (CMP i1:$src0, i1:$src1)>;
+
 def : Pat<(Cmpu i32:$src0, i32:$src1), (CMPu i32:$src0, i32:$src1)>;
+
+def : Pat<(Cmpu i1:$src0, i1:$src1), (CMPu i1:$src0, i1:$src1)>;
 
 def : Pat<(DCmp f64:$src0, f64:$src1), (CMPD f64:$src0, f64:$src1)>;
 
@@ -455,4 +462,6 @@ def : Pat<(Select SETGE, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 4)>;
 
 def : Pat<(Select SETNE, i1:$src0, i1:$src1), (SELECT i1:$src0, i1:$src1, 5)>;
 
-def : Pat<(Movi i32:$imm), (MOVi i32:$imm)>;
+def : Pat<(i32 (Movi i32:$imm)), (MOVi i32:$imm)>;
+
+def : Pat<(i1 (Movi i32:$imm)), (MOVi i32:$imm)>;

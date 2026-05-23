@@ -60,11 +60,17 @@ MCSubtargetInfo* createLuaVMMCSubtargetInfo(const Triple& TT, StringRef CPU,
   return createLuaVMMCSubtargetInfoImpl(TT, CPU, CPU, Features);
 }
 
+MCCodeEmitter *createLuaVMMCCodeEmitter(const MCInstrInfo &II, MCContext &Ctx) {
+  LuaVMMCCodeEmitter *MII = new LuaVMMCCodeEmitter(Ctx);
+  return MII;
+}
+
 extern "C" void LLVMInitializeLuaVMTargetMC() {
   TargetRegistry::RegisterMCAsmInfo(getTheLuaVMTarget(), createMCAsmInfo);
   TargetRegistry::RegisterMCAsmBackend(getTheLuaVMTarget(),
                                        createLuaVMAsmBackend);
-  RegisterMCCodeEmitter<LuaVMMCCodeEmitter> MCE(getTheLuaVMTarget());
+  TargetRegistry::RegisterMCCodeEmitter(getTheLuaVMTarget(),
+                                        createLuaVMMCCodeEmitter);
   TargetRegistry::RegisterMCInstrInfo(getTheLuaVMTarget(),
                                       createLuaVMMCInstrInfo);
   TargetRegistry::RegisterMCRegInfo(getTheLuaVMTarget(), createLuaVMMCRegInfo);

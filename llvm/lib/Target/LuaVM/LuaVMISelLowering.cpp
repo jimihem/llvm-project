@@ -23,10 +23,11 @@ LuaVMTargetLowering::LuaVMTargetLowering(const LuaVMTargetMachine &TM,
   setOperationAction(ISD::SELECT, {MVT::i32, MVT::f64}, LegalizeAction::Custom);
   setOperationAction(ISD::SELECT_CC, {MVT::i32, MVT::f64},
                      LegalizeAction::Custom);
-  setOperationAction(ISD::BR_CC, MVT::Other, LegalizeAction::Custom);
+  setOperationAction(ISD::BR_CC, {MVT::i32, MVT::i1, MVT::i8, MVT::i16},
+                     LegalizeAction::Custom);
   setOperationAction(ISD::BR_JT, MVT::Other, LegalizeAction::Custom);
   setOperationAction(ISD::GlobalAddress, MVT::i32, LegalizeAction::Custom);
-  setOperationAction(ISD::Constant, MVT::i32, LegalizeAction::Custom);
+  setOperationAction(ISD::Constant, {MVT::i32, MVT::i1, MVT::i8, MVT::i16}, LegalizeAction::Custom);
   setOperationAction(ISD::ConstantFP, MVT::f64, LegalizeAction::Custom);
   setOperationAction(ISD::FrameIndex, MVT::i32, LegalizeAction::Custom);
 
@@ -63,7 +64,9 @@ SDValue LuaVMTargetLowering::LowerOperation(SDValue Op, SelectionDAG &DAG) const
 SDValue LuaVMTargetLowering::LowerConstant(SDValue Op,
                                            SelectionDAG &DAG) const {
   SDLoc dl(Op);
-  return DAG.getNode(LuaVMISD::MOVI, dl, Op.getValueType(), Op);
+  unsigned Val = dyn_cast<ConstantSDNode>(Op)->getZExtValue();
+  SDValue newVal = DAG.getTargetConstant(Val, dl, MVT::i32);
+  return DAG.getNode(LuaVMISD::MOVI, dl, Op.getValueType(), newVal);
 }
 
 SDValue LuaVMTargetLowering::LowerConstantFP(SDValue Op,
@@ -407,7 +410,6 @@ SDValue LuaVMTargetLowering::LowerFormalArguments(
     SelectionDAG &DAG, SmallVectorImpl<SDValue> &InVals) const {
   MachineFunction &MF = DAG.getMachineFunction();
   MachineRegisterInfo &MRI = MF.getRegInfo();
-  const LuaVMGenRegisterInfo *TRI = Subtarget.getRegisterInfo();
 
   SmallVector<CCValAssign> Locs;
   CCState State(CallConv, isVarArg, MF, Locs, *DAG.getContext(), true);
@@ -423,7 +425,7 @@ SDValue LuaVMTargetLowering::LowerFormalArguments(
     MVT VT = loc.getLocVT();
     SDValue Arg;
     if (loc.isRegLoc()) {
-      unsigned Reg = MRI.createVirtualRegister(TRI->getRegClass(loc.getLocReg()));
+      unsigned Reg = MRI.createVirtualRegister(getRegClassFor(VT));
       Arg = DAG.getCopyFromReg(Chain, dl, Reg, VT);
       MRI.addLiveIn(loc.getLocReg(), Reg);
     } else {
@@ -474,12 +476,10 @@ SDValue LuaVMTargetLowering::LowerCall(CallLoweringInfo &CLI,
       SDValue SP = DAG.getRegister(LuaVM::SP, MVT::i32);
       SDValue Off = DAG.getConstant(loc.getLocMemOffset(), dl, MVT::i32);
       SDValue Addr = DAG.getNode(ISD::ADD, dl, MVT::i32, SP, Off);
-      MemChain = DAG.getStore(MemChain, dl, CLI.OutVals[loc.getValNo()], Addr,
+      Chain = DAG.getStore(Chain, dl, CLI.OutVals[loc.getValNo()], Addr,
                               MachinePointerInfo());
     }
   }
-
-  Chain = DAG.getMergeValues({Chain, MemChain}, dl);
 
   SmallVector<SDValue> Ops;
   Ops.push_back(Chain);

@@ -6225,8 +6225,6 @@ public:
 
   ExprResult BuildIntLiteral(unsigned ival, SourceRange LocRange);
 
-  ExprResult BuildInt64Literal(unsigned long long ival, SourceRange LocRange);
-
   ExprResult BuildENVMemberRefExpr(UnqualifiedId &Id);
 
   ExprResult BuildMemberRefExpr(Expr *Base, Expr *Field);

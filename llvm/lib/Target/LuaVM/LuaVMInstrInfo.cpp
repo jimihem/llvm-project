@@ -1,6 +1,6 @@
 #include "LuaVMInstrInfo.h"
 #include "LuaVMRegisterInfo.h"
-
+#include "LuaVMSubtarget.h"
 #define GET_INSTRINFO_CTOR_DTOR
 #include "LuaVMGenInstrInfo.inc"
 using namespace llvm;
@@ -70,4 +70,19 @@ unsigned LuaVMInstrInfo::isLoadFromStackSlot(const MachineInstr &MI,
 
 int LuaVMInstrInfo::getSPAdjust(const MachineInstr &MI) const {
   return MI.getOperand(0).getImm();
+}
+
+void LuaVMInstrInfo::copyPhysReg(MachineBasicBlock &MBB,
+                                 MachineBasicBlock::iterator MI,
+                                 const DebugLoc &DL, MCRegister DestReg,
+                                 MCRegister SrcReg, bool KillSrc) const {
+  if (Subtarget.getRegisterInfo()->getPhysRegBaseClass(DestReg)->getID() ==
+      LuaVM::FPRRegsRegClassID) {
+    BuildMI(MBB, MI, DL, get(LuaVM::MOVD), DestReg)
+        .addReg(SrcReg, KillSrc ? RegState::Kill : 0);
+  } else {
+    BuildMI(MBB, MI, DL, get(LuaVM::ADDi), DestReg)
+        .addReg(SrcReg, KillSrc ? RegState::Kill : 0)
+        .addImm(0);
+  }
 }

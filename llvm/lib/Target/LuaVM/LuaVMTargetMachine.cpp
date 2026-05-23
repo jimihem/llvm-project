@@ -35,6 +35,7 @@ void LuaVMPassConfig::addMachinePasses() {
   addPass(createGreedyRegisterAllocator());
   addPass(createVirtRegRewriter());
   addPass(createPrologEpilogInserterPass());
+  addPass(&ExpandPostRAPseudosID);
 }
 
 LuaVMTargetMachine::LuaVMTargetMachine(

@@ -6,7 +6,7 @@
 -- $Id: testes/vararg.lua $
 -- See Copyright Notice in file lua.h
 ]]
-
+--[==[]==]
 print('testing vararg')
 
 _G.arg = nil
@@ -139,8 +139,7 @@ do
 
   assert(aux({1, 2})[1] == 1 and aux({1, 2})[2] == 2)
 
-end]
-
+end
 -- bug in 5.2.2
 
 function f(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10,
@@ -158,3 +157,4 @@ f()
 
 print('OK')
 
+--[==[]==]

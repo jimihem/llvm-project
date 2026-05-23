@@ -70,3 +70,13 @@ bool LuaVMRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator MI,
 Register LuaVMRegisterInfo::getFrameRegister(const MachineFunction& MF) const {
   return Register(LuaVM::FP);
 }
+
+const TargetRegisterClass *
+LuaVMRegisterInfo::getPhysRegBaseClass(MCRegister Reg) const {
+  for (const TargetRegisterClass *RC : regclasses()) {
+    if (RC->contains(Reg))
+      return RC;
+  }
+  assert(false && "Couldn't find the register class");
+  return nullptr;
+}

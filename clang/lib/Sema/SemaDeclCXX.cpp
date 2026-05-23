@@ -11586,13 +11586,6 @@ ExprResult Sema::BuildIntLiteral(unsigned ival, SourceRange LocRange) {
                                 LocRange.getBegin());
 }
 
-ExprResult Sema::BuildInt64Literal(unsigned long long ival,
-                                   SourceRange LocRange) {
-  llvm::APInt IntVal(64, ival);
-  return IntegerLiteral::Create(Context, IntVal, Context.UnsignedLongLongTy,
-                                LocRange.getBegin());
-}
-
 ExprResult Sema::BuildStringFromLitera(StringLiteral &Str) {
   SourceRange LocRange = Str.getSourceRange();
   Expr *Sl =
@@ -11626,10 +11619,6 @@ ExprResult Sema::BuildNil(SourceRange LR) {
 
 ExprResult Sema::BuildBool(Expr *BoolVal, SourceRange LR) {
   return BuildLuaBuiltinCallExpr("__lua_build_bool", {BoolVal}, LR);
-}
-
-uint64_t ConvertSourceRangeToU64(SourceLocation B, SourceLocation E) {
-  return ((uint64_t)E.getRawEncoding()) << 32 | ((uint64_t)B.getRawEncoding());
 }
 
 VarDecl *Sema::CreateLuaTempTableObjPtrObjVar(SourceLocation TokLoc,
@@ -11691,8 +11680,8 @@ ExprResult Sema::BuildLuaBuiltinCallExpr(std::string Fn,
   FunExpr = CallExprUnaryConversions(FunExpr).get();
 
   if (FnDecl->getNumParams() == Args.size() + 1) {
-    uint64_t LocR = ConvertSourceRangeToU64(SR.getBegin(), SR.getEnd());
-    Expr *OpLoc = BuildInt64Literal(LocR, SourceLocation()).get();
+    Expr *OpLoc =
+        BuildIntLiteral(SR.getBegin().getRawEncoding(), SourceLocation()).get();
     Args.push_back(OpLoc);
   }
 

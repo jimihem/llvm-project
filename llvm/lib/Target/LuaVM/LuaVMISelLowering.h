@@ -69,7 +69,6 @@ public:
 
   virtual SDValue LowerCall(CallLoweringInfo &CLI,
                             SmallVectorImpl<SDValue> &InVals) const override;
-
 };
 
 }

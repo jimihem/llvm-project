@@ -30,6 +30,7 @@ public:
                                    RegScavenger *RS = nullptr) const override;
 
   Register getFrameRegister(const MachineFunction &MF) const override;
+  virtual const TargetRegisterClass *getPhysRegBaseClass(MCRegister Reg) const;
 };
 
 } // end namespace llvm

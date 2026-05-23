@@ -32,6 +32,11 @@ public:
   virtual unsigned isLoadFromStackSlot(const MachineInstr &MI,
                                        int &FrameIndex) const;
   virtual int getSPAdjust(const MachineInstr &MI) const;
+
+  virtual void copyPhysReg(MachineBasicBlock &MBB,
+                           MachineBasicBlock::iterator MI, const DebugLoc &DL,
+                           MCRegister DestReg, MCRegister SrcReg,
+                           bool KillSrc) const;
 };
 
 } // namespace llvm
