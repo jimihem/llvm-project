@@ -25,16 +25,16 @@ public:
   bool writeNopData(raw_ostream &OS, uint64_t Count,
                     const MCSubtargetInfo *STI) const override;
 
-
-  void relaxInstruction(MCInst &Inst, const MCSubtargetInfo &STI) const override;
-
-  bool mayNeedRelaxation(const MCInst &Inst, const MCSubtargetInfo &STI) const override;
-
   virtual bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
                                     const MCRelaxableFragment *DF,
                                     const MCAsmLayout &Layout) const override;
 
   virtual unsigned getNumFixupKinds() const override;
+  /// Map a relocation name used in .reloc to a fixup kind.
+  virtual std::optional<MCFixupKind> getFixupKind(StringRef Name) const;
+
+  /// Get information on a fixup kind.
+  virtual const MCFixupKindInfo &getFixupKindInfo(MCFixupKind Kind) const;
 };
 
 } // end namespace llvm

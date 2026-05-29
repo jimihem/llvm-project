@@ -36,9 +36,13 @@ protected:
   #include "LuaVMGenDAGISel.inc"
 
   bool SelectLSAddr(SDValue N, SDValue &op0, SDValue &op1) {
-    if (N.getOpcode() == ISD::ADD) {
+    if (N.getOpcode() == ISD::ADD && isa<ConstantSDNode>(N.getOperand(1))) {
       op0 = N.getOperand(0);
       op1 = N.getOperand(1);
+      return true;
+    } else if (isa<ConstantPoolSDNode>(N)) {
+      op0 = CurDAG->getRegister(LuaVM::PDC0, MVT::i32);
+      op1 = N;
       return true;
     }
     op0 = N;

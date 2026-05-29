@@ -1,5 +1,6 @@
 #include "LuaVMAsmBackend.h"
 #include "LuaVMMCTargetDesc.h"
+#include "LuaVMFixUpKind.h"
 #include "llvm/MC/MCAssembler.h"
 #include "llvm/MC/MCELFObjectWriter.h"
 #include "llvm/MC/MCFixupKindInfo.h"
@@ -34,40 +35,32 @@ void LuaVMAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup, c
                                  MutableArrayRef<char> Data, uint64_t Value,
                                  bool IsResolved,
                                  const MCSubtargetInfo *STI) const {
-  // Apply the calculated fixup value to the encoded data.
-  // This is where relocations and symbol resolution happen.
-  // The `Value` is the resolved address or offset.
-  // `Data` is the raw bytes of the instruction being patched.
-  // `Fixup.getOffset()` tells you where in `Data` to start patching.
-  // `Fixup.getKind()` tells you the type of fixup (e.g., 32-bit absolute, PC-relative).
-
-  // Example: Patch a 32-bit value at the fixup location.
-  if (Fixup.getKind() == FK_Data_4) {
-    support::endian::write<uint32_t>(&Data[Fixup.getOffset()], Value, support::little);
+  if (IsResolved) {
+    if (Fixup.getKind() == FK_PCRel_addr24) {
+      uint32_t *ptr = (uint32_t *)(Data.data() + Fixup.getOffset());
+      uint32_t Val = *ptr;
+      Val &= ~0x00ffffff;
+      Val |= Value & 0x00ffffff;
+      *ptr = Val;
+    } else if (Fixup.getKind() == FK_PCRel_OFFSET_imm32) {
+      uint64_t *ptr = (uint64_t *)(Data.data() + Fixup.getOffset());
+      uint64_t Val = *ptr;
+      Val &= ~0xffffffff;
+      Val |= (Value - 8) & 0xffffffff;
+      *ptr = Val;
+    } else {
+      llvm_unreachable("Not support fixup kind");
+    }
   }
-  // Add more cases for other fixup kinds as needed by your instruction set.
-  // If a fixup cannot be applied (e.g., value too large), you must handle it.
 }
 
 bool LuaVMAsmBackend::writeNopData(raw_ostream &OS, uint64_t Count,
                                    const MCSubtargetInfo *STI) const {
-  // Write a sequence of NOP instructions to fill padding.
-  // For a RISC-like ISA, a common NOP is `add r0, r0, r0`.
-  // The exact encoding depends on your `nop` instruction definition.
-  // This is a placeholder. You need the real machine code bytes for your NOP.
-  uint32_t NopInstruction = 0x00000021; // Example: ADDu r0, r0, r0 (opcode + funct)
+  uint32_t NopInstruction = 0x00000000; 
   for (uint64_t i = 0; i < Count; i += 4) {
       OS.write(reinterpret_cast<const char*>(&NopInstruction), 4);
   }
   return true;
-}
-
-void LuaVMAsmBackend::relaxInstruction(MCInst &Inst, const MCSubtargetInfo &STI) const {
-  // No relaxation needed for simple fixed-size instructions.
-}
-
-bool LuaVMAsmBackend::mayNeedRelaxation(const MCInst &Inst, const MCSubtargetInfo &STI) const {
-  return false;
 }
 
 bool LuaVMAsmBackend::fixupNeedsRelaxation(
@@ -78,5 +71,35 @@ bool LuaVMAsmBackend::fixupNeedsRelaxation(
 }
 
 unsigned LuaVMAsmBackend::getNumFixupKinds() const { 
-    return 0;
+    return 4;
+}
+
+/// Map a relocation name used in .reloc to a fixup kind.
+std::optional<MCFixupKind> LuaVMAsmBackend::getFixupKind(StringRef Name) const {
+  if (Name == "FK_PCRel_addr24") {
+      return MCFixupKind(LuaVMMCFixupKind::FK_PCRel_addr24);
+  } else if (Name == "FK_PCRel_OFFSET_imm32") {
+      return MCFixupKind(LuaVMMCFixupKind::FK_PCRel_OFFSET_imm32);
+  } else if (Name == "FK_DATA_imm14") {
+      return MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm14);
+  } else if (Name == "FK_DATA_imm32") {
+      return MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm32);
+  }
+  return FK_NONE;
+}
+
+/// Get information on a fixup kind.
+const MCFixupKindInfo &
+LuaVMAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
+  static const MCFixupKindInfo TargetFixUpInfo[] = {
+      {"FK_PCRel_addr24", 0, 24, MCFixupKindInfo::FKF_IsPCRel},
+      {"FK_PCRel_OFFSET_imm32", 0, 32, MCFixupKindInfo::FKF_IsPCRel},
+      {"FK_DATA_imm14", 0, 14, 0},
+      {"FK_DATA_imm32", 0, 32, 0},
+  };
+  if (Kind < FirstTargetFixupKind)
+      return MCAsmBackend::getFixupKindInfo(Kind);
+
+  Kind = MCFixupKind(Kind - FirstTargetFixupKind);
+  return TargetFixUpInfo[Kind];
 }

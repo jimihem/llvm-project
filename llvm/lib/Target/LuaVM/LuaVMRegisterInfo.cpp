@@ -57,10 +57,14 @@ bool LuaVMRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator MI,
       OpCode == LuaVM::LDD) {
     MI->getOperand(FIOperandNum).ChangeToRegister(LuaVM::FP, false);
     MI->getOperand(2).setImm(MI->getOperand(2).getImm() + offset);
+  } else if (OpCode == LuaVM::MOVi) {
+    MI->setDesc(STI.getInstrInfo()->get(LuaVM::ADDi));
+    MI->getOperand(FIOperandNum).ChangeToRegister(LuaVM::FP, false);
+    MI->addOperand(MachineOperand::CreateImm(offset));
   } else {
     BuildMI(MBB, MI, MI->getDebugLoc(), STI.getInstrInfo()->get(LuaVM::ADDi),
             LuaVM::R0)
-        .addReg(LuaVM::SP)
+        .addReg(LuaVM::FP)
         .addImm(offset);
     MI->getOperand(FIOperandNum).ChangeToRegister(LuaVM::R0, false);
   }

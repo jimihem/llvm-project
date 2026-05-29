@@ -2,6 +2,7 @@
 #include "LuaVMAsmBackend.h"
 #include "LuaVMELFStreamer.h"
 #include "LuaVMMCCodeEmiter.h"
+#include "InstPrinter/LuaVMInstPrinter.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCCodeEmitter.h"
@@ -65,6 +66,12 @@ MCCodeEmitter *createLuaVMMCCodeEmitter(const MCInstrInfo &II, MCContext &Ctx) {
   return MII;
 }
 
+MCInstPrinter* createLuaVMInstPrinter(const Triple& T, unsigned SyntaxVariant,
+    const MCAsmInfo& MAI, const MCInstrInfo& MII,
+    const MCRegisterInfo& MRI) {
+  return new LuaVMInstPrinter(MAI, MII, MRI);
+}
+
 extern "C" void LLVMInitializeLuaVMTargetMC() {
   TargetRegistry::RegisterMCAsmInfo(getTheLuaVMTarget(), createMCAsmInfo);
   TargetRegistry::RegisterMCAsmBackend(getTheLuaVMTarget(),
@@ -76,4 +83,6 @@ extern "C" void LLVMInitializeLuaVMTargetMC() {
   TargetRegistry::RegisterMCRegInfo(getTheLuaVMTarget(), createLuaVMMCRegInfo);
   TargetRegistry::RegisterMCSubtargetInfo(getTheLuaVMTarget(),
                                           createLuaVMMCSubtargetInfo);
+  TargetRegistry::RegisterMCInstPrinter(getTheLuaVMTarget(),
+                                        createLuaVMInstPrinter);
 }

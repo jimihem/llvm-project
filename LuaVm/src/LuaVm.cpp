@@ -27,6 +27,14 @@ enum class OpCode : uint8_t {
   SB = 0b00000110,  // 存储i8
   LDD = 0b00000111, // 加载double
   STD = 0b00001000, // 存储double
+  LD_PIC = 0b00001001,  // 加载i32
+  ST_PIC = 0b00001010, // 存储i32
+  LH_PIC = 0b00001011, // 加载i16
+  SH_PIC = 0b00001100, // 存储i16
+  LB_PIC = 0b00001101, // 加载i8
+  SB_PIC = 0b00001110, // 存储i8
+  LDD_PIC = 0b00001111, // 加载double
+  STD_PIC = 0b00010000, // 存储double
   // 算术立即数指令
   ADDi = 0b00100000,  // 有符号+，寄存器+立即数
   SUBi = 0b00100001,  // 有符号-，寄存器-立即数
@@ -99,6 +107,8 @@ enum class OpCode : uint8_t {
   JSUB = 0b10001000,
   RET = 0b10001001,
   JIND = 0b10001010,
+  JALR_PIC = 0b10001011,
+  JSUB_PIC = 0b10001100,
   // 扩展指令
   SYSCALL = 0b10100000, // 系统调用
   DEBUG = 0b10100001    // 调试指令

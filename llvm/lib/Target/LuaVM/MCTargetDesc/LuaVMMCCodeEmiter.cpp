@@ -3,6 +3,8 @@
 #include "llvm/Support/EndianStream.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/MC/MCRegisterInfo.h"
+#include "llvm/MC/MCExpr.h"
+#include "llvm/Support/Casting.h"
 #define GET_INSTRINFO_ENUM
 #include "LuaVMGenInstrInfo.inc"
 #define GET_REGINFO_ENUM
@@ -36,8 +38,10 @@ LuaVMMCCodeEmitter::getAddr24OpValue(const MCInst &MI, unsigned OpIdx,
                                      const MCSubtargetInfo &STI) const {
   if (MI.getOperand(OpIdx).isExpr()) {
     MCFixup F = MCFixup::create(0, MI.getOperand(OpIdx).getExpr(),
-                                MCFixupKind(LuaVMMCFixupKind::FK_Data_3));
+                                MCFixupKind(LuaVMMCFixupKind::FK_PCRel_addr24));
     Fixups.push_back(F);
+  } else {
+    llvm_unreachable("Addr24 must be block symble");
   }
   return 0;
 }
@@ -58,7 +62,18 @@ LuaVMMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &Op,
   } else if (Op.isReg()) {
     return Context.getRegisterInfo()->getEncodingValue(Op.getReg());
   } else if (Op.isExpr()) {
-    MCFixup F = MCFixup::create(0, Op.getExpr(), MCFixupKind::FK_Data_4);
+    assert(MI.getOpcode() == LuaVM::MOVi);
+    MCFixupKind Kind = MCFixupKind::FK_NONE;
+    MCSymbolRefExpr::VariantKind SymKind =
+        dyn_cast<MCSymbolRefExpr>(Op.getExpr())->getKind();
+
+    if (SymKind == MCSymbolRefExpr::VK_BLOCK ||
+        SymKind == MCSymbolRefExpr::VK_LABEL) {
+      Kind = MCFixupKind(LuaVMMCFixupKind::FK_PCRel_OFFSET_imm32);
+    } else {
+      Kind = MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm32);
+    }
+    MCFixup F = MCFixup::create(0, Op.getExpr(), Kind);
     Fixups.push_back(F);
     return 0;
   }
@@ -69,6 +84,12 @@ LuaVMMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &Op,
 uint64_t LuaVMMCCodeEmitter::getImm14OpValue(const MCInst &MI, unsigned OpIdx,
                          SmallVectorImpl<MCFixup> &Fixups,
                                              const MCSubtargetInfo &STI) const {
+  if (MI.getOperand(OpIdx).isExpr()) {
+    MCFixup F = MCFixup::create(0, MI.getOperand(OpIdx).getExpr(),
+                                MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm14));
+    Fixups.push_back(F);
+    return 0;
+  }
   return MI.getOperand(OpIdx).getImm();
 }
 

@@ -86,3 +86,134 @@ void LuaVMInstrInfo::copyPhysReg(MachineBasicBlock &MBB,
         .addImm(0);
   }
 }
+
+unsigned LuaVMInstrInfo::getInstSizeInBytes(const MachineInstr &MI) const {
+  if (MI.getOpcode() == LuaVM::MOVi)
+    return 8;
+  if (MI.isPseudo())
+    return 0;
+  return 4;
+}
+
+bool LuaVMInstrInfo::isBranchOffsetInRange(unsigned BranchOpc,
+                                           int64_t BrOffset) const {
+  int64_t min = -(1 << 23);
+  int64_t max = (1 << 23) - 1;
+  return BrOffset >= min && BrOffset <= max;
+}
+
+/// \returns The block that branch instruction \p MI jumps to.
+MachineBasicBlock *
+LuaVMInstrInfo::getBranchDestBlock(const MachineInstr &MI) const {
+  if (MI.isBranch() && !MI.isIndirectBranch())
+    return MI.getOperand(0).getMBB();
+  return nullptr;
+}
+void LuaVMInstrInfo::insertIndirectBranch(MachineBasicBlock &MBB,
+                                          MachineBasicBlock &NewDestBB,
+                                          MachineBasicBlock &RestoreBB,
+                                          const DebugLoc &DL, int64_t BrOffset,
+                                          RegScavenger *RS) const {
+  BuildMI(&MBB, DL, get(LuaVM::MOVi), LuaVM::R0).addMBB(&NewDestBB);
+  BuildMI(&MBB, DL, get(LuaVM::JIND)).addReg(LuaVM::R0);
+}
+
+bool LuaVMInstrInfo::analyzeBranch(MachineBasicBlock &MBB,
+                                   MachineBasicBlock *&TBB,
+                                   MachineBasicBlock *&FBB,
+                                   SmallVectorImpl<MachineOperand> &Cond,
+                                   bool AllowModify) const {
+  auto MI = MBB.getFirstTerminator();
+  auto JMP = MBB.getLastNonDebugInstr();
+  if (MI->isReturn() || MI->isIndirectBranch()) {
+    TBB = nullptr;
+    FBB = nullptr;
+    return false;
+  }
+  if (MI == JMP) {
+    TBB = MI->getOperand(0).getMBB();
+    FBB = nullptr;
+    return false;
+  } else {
+    TBB = MI->getOperand(0).getMBB();
+    FBB = JMP->getOperand(0).getMBB();
+    if (MI->getOpcode() == LuaVM::JNE) {
+      Cond.push_back(MachineOperand::CreatePredicate((unsigned)Cond::NE));
+    } else if (MI->getOpcode() == LuaVM::JEQ) {
+      Cond.push_back(MachineOperand::CreatePredicate((unsigned)Cond::EQ));
+    } else if (MI->getOpcode() == LuaVM::JLT) {
+      Cond.push_back(MachineOperand::CreatePredicate((unsigned)Cond::LT));
+    } else if (MI->getOpcode() == LuaVM::JLE) {
+      Cond.push_back(MachineOperand::CreatePredicate((unsigned)Cond::LE));
+    } else if (MI->getOpcode() == LuaVM::JGT) {
+      Cond.push_back(MachineOperand::CreatePredicate((unsigned)Cond::GT));
+    } else if (MI->getOpcode() == LuaVM::JGE) {
+      Cond.push_back(MachineOperand::CreatePredicate((unsigned)Cond::GE));
+    }
+    return false;
+  }
+  return true;
+}
+
+bool LuaVMInstrInfo::reverseBranchCondition(
+    SmallVectorImpl<MachineOperand>& Cond) const {
+  return true;
+}
+
+unsigned LuaVMInstrInfo::insertBranch(MachineBasicBlock &MBB,
+                                            MachineBasicBlock *TBB,
+    MachineBasicBlock* FBB,
+    ArrayRef<MachineOperand> Cond, const DebugLoc& DL,
+    int* BytesAdded) const {
+  auto MI = MBB.getLastNonDebugInstr();
+  if (!FBB) {
+    BuildMI(MBB, MI, DL, get(LuaVM::JMP)).addMBB(TBB);
+    if (BytesAdded)
+      *BytesAdded = 4;
+    return 1;
+  } else {
+    assert(TBB && !Cond.empty());
+    unsigned OpCode = 0;
+    unsigned Pred = Cond[0].getPredicate();
+    if (Pred == (unsigned)Cond::EQ)
+      OpCode = LuaVM::JEQ;
+    else if (Pred == (unsigned)Cond::NE)
+      OpCode = LuaVM::JNE;
+    else if (Pred == (unsigned)Cond::LT)
+      OpCode = LuaVM::JLT;
+    else if (Pred == (unsigned)Cond::LE)
+      OpCode = LuaVM::JLE;
+    else if (Pred == (unsigned)Cond::GT)
+      OpCode = LuaVM::JGT;
+    else if (Pred == (unsigned)Cond::GE)
+      OpCode = LuaVM::JGE;
+    BuildMI(MBB, MI, DL, get(OpCode)).addMBB(TBB);
+    BuildMI(MBB, MI, DL, get(LuaVM::JMP)).addMBB(FBB);
+    if (BytesAdded)
+      *BytesAdded = 8;
+    return 2;
+  }
+}
+
+unsigned LuaVMInstrInfo::removeBranch(MachineBasicBlock &MBB,
+    int* BytesRemoved) const {
+  auto MI = MBB.getFirstTerminator();
+  auto JMP = MBB.getLastNonDebugInstr();
+  if (MI->isReturn() || MI->isIndirectBranch()) {
+    if (BytesRemoved)
+      *BytesRemoved = 0;
+    return 0;
+  }
+  if (MI == JMP) {
+    MI->eraseFromParent();
+    if (BytesRemoved)
+      *BytesRemoved = 4;
+    return 1;
+  } else {
+    MI->eraseFromParent();
+    JMP->eraseFromParent();
+    if (BytesRemoved)
+      *BytesRemoved = 8;
+    return 2;
+  }
+}

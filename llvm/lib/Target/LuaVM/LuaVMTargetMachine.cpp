@@ -36,6 +36,7 @@ void LuaVMPassConfig::addMachinePasses() {
   addPass(createVirtRegRewriter());
   addPass(createPrologEpilogInserterPass());
   addPass(&ExpandPostRAPseudosID);
+  addPass(&BranchRelaxationPassID);
 }
 
 LuaVMTargetMachine::LuaVMTargetMachine(
@@ -53,6 +54,7 @@ LuaVMTargetMachine::LuaVMTargetMachine(
   TFI = std::make_unique<LuaVMFrameLowering>(*STI.get());
   TLI = std::make_unique<LuaVMTargetLowering>(*this, *STI.get());
   TLO = std::make_unique<TargetLoweringObjectFileELF>();
+  this->Options.MCOptions.ShowMCEncoding = true;
 }
 
 const LuaVMRegisterInfo* LuaVMTargetMachine::getRegisterInfo() const {

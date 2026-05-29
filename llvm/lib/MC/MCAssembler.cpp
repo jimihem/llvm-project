@@ -242,7 +242,10 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
     } else {
       const MCSymbolRefExpr *A = Target.getSymA();
       const MCSymbol &SA = A->getSymbol();
-      if (A->getKind() != MCSymbolRefExpr::VK_None || SA.isUndefined()) {
+      if ((A->getKind() != MCSymbolRefExpr::VK_None &&
+           A->getKind() != MCSymbolRefExpr::VK_BLOCK &&
+           A->getKind() != MCSymbolRefExpr::VK_LABEL) ||
+          SA.isUndefined()) {
         IsResolved = false;
       } else if (auto *Writer = getWriterPtr()) {
         IsResolved = (FixupFlags & MCFixupKindInfo::FKF_Constant) ||

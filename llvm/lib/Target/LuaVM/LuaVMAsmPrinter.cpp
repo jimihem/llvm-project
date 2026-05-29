@@ -19,11 +19,10 @@ bool LuaVMAsmPrinter::runOnMachineFunction(MachineFunction &MF) {
 }
 
 static MCOperand lowerSymbolOperand(const MachineOperand &MO, MCSymbol *Sym,
-                                    const AsmPrinter &AP) {
+                                    const AsmPrinter &AP, MCSymbolRefExpr::VariantKind Kind) {
   MCContext &Ctx = AP.OutContext;
 
-  const MCExpr *ME =
-      MCSymbolRefExpr::create(Sym, MCSymbolRefExpr::VK_None, Ctx);
+  const MCExpr *ME = MCSymbolRefExpr::create(Sym, Kind, Ctx);
 
   if (!MO.isJTI() && !MO.isMBB() && MO.getOffset())
     ME = MCBinaryExpr::createAdd(
@@ -47,31 +46,33 @@ bool LuaVMAsmPrinter::lowerOperand(const MachineOperand &MO,
     MCOp = MCOperand::createImm(MO.getImm());
     break;
   case MachineOperand::MO_MachineBasicBlock:
-    MCOp = lowerSymbolOperand(MO, MO.getMBB()->getSymbol(), *this);
+    MCOp = lowerSymbolOperand(MO, MO.getMBB()->getSymbol(), *this,
+                              MCSymbolRefExpr::VK_BLOCK);
     break;
-  case MachineOperand::MO_GlobalAddress:
-    MCOp = lowerSymbolOperand(MO, getSymbolPreferLocal(*MO.getGlobal()), *this);
+  case MachineOperand::MO_GlobalAddress: {
+    MCSymbolRefExpr::VariantKind Kind;
+    if (const Function *fun = dyn_cast<Function>(MO.getGlobal()))
+      Kind = MCSymbolRefExpr::VK_FUN;
+    else
+      Kind = MCSymbolRefExpr::VK_GV;
+    MCOp = lowerSymbolOperand(MO, getSymbolPreferLocal(*MO.getGlobal()), *this,
+                              Kind);
     break;
-  case MachineOperand::MO_BlockAddress:
-    MCOp = lowerSymbolOperand(MO, GetBlockAddressSymbol(MO.getBlockAddress()),
-                              *this);
-    break;
-  case MachineOperand::MO_ExternalSymbol:
-    MCOp = lowerSymbolOperand(MO, GetExternalSymbolSymbol(MO.getSymbolName()),
-                              *this);
-    break;
+  }
   case MachineOperand::MO_ConstantPoolIndex:
-    MCOp = lowerSymbolOperand(MO, GetCPISymbol(MO.getIndex()), *this);
+    MCOp = lowerSymbolOperand(MO, GetCPISymbol(MO.getIndex()), *this,
+                              MCSymbolRefExpr::VK_CP);
     break;
   case MachineOperand::MO_JumpTableIndex:
-    MCOp = lowerSymbolOperand(MO, GetJTISymbol(MO.getIndex()), *this);
+    MCOp = lowerSymbolOperand(MO, GetJTISymbol(MO.getIndex()), *this,
+                              MCSymbolRefExpr::VK_JT);
     break;
   case MachineOperand::MO_MCSymbol:
-    MCOp = lowerSymbolOperand(MO, MO.getMCSymbol(), *this);
+    MCOp = lowerSymbolOperand(MO, MO.getMCSymbol(), *this,
+                              MCSymbolRefExpr::VK_LABEL);
     break;
   }
   return true;
-
 }
 
 bool LuaVMAsmPrinter::lowerToMCInst(const MachineInstr *MI, MCInst &OutMI) {
@@ -81,6 +82,7 @@ bool LuaVMAsmPrinter::lowerToMCInst(const MachineInstr *MI, MCInst &OutMI) {
   }
   assert(!MI->isPseudo() && "Need expand pseudo instruction");
   OutMI.setOpcode(MI->getOpcode());
+  OutMI.setFlags(MI->getFlags());
   for (size_t i = 0; i < MI->getNumExplicitOperands(); i++) {
     MCOperand MCOp;
     if (lowerOperand(MI->getOperand(i), MCOp))

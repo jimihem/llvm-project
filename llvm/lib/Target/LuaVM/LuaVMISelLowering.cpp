@@ -65,8 +65,7 @@ SDValue LuaVMTargetLowering::LowerConstant(SDValue Op,
                                            SelectionDAG &DAG) const {
   SDLoc dl(Op);
   unsigned Val = dyn_cast<ConstantSDNode>(Op)->getZExtValue();
-  SDValue newVal = DAG.getTargetConstant(Val, dl, MVT::i32);
-  return DAG.getNode(LuaVMISD::MOVI, dl, Op.getValueType(), newVal);
+  return DAG.getTargetConstant(Val, dl, Op.getValueType());
 }
 
 SDValue LuaVMTargetLowering::LowerConstantFP(SDValue Op,
@@ -75,9 +74,8 @@ SDValue LuaVMTargetLowering::LowerConstantFP(SDValue Op,
   ConstantFPSDNode *cfpNode = dyn_cast<ConstantFPSDNode>(Op);
   const ConstantFP *cfp = cfpNode->getConstantFPValue();
   SDValue cpi = DAG.getTargetConstantPool(cfp, MVT::i32);
-  SDValue addr = DAG.getNode(LuaVMISD::MOVI, dl, MVT::i32, cpi);
 
-  return DAG.getLoad(Op.getValueType(), dl, DAG.getEntryNode(), addr,
+  return DAG.getLoad(Op.getValueType(), dl, DAG.getEntryNode(), cpi,
                      MachinePointerInfo(), MaybeAlign(0),
                      MachineMemOperand::MOLoad);
 }
@@ -88,14 +86,13 @@ SDValue LuaVMTargetLowering::LowerGlobalAddress(SDValue Op,
   SDValue newGV = DAG.getTargetGlobalAddress(GV->getGlobal(), SDLoc(Op),
                                     GV->getValueType(0), GV->getOffset(),
                                     GV->getTargetFlags());
-  return DAG.getNode(LuaVMISD::MOVI, SDLoc(Op), MVT::i32, newGV);
+  return newGV;
 }
 
 SDValue LuaVMTargetLowering::LowerFrameIndex(SDValue Op,
                                              SelectionDAG &DAG) const {
   unsigned fi = dyn_cast<FrameIndexSDNode>(Op)->getIndex();
-  SDValue FI = DAG.getTargetFrameIndex(fi, MVT::i32);
-  return DAG.getNode(LuaVMISD::MOVI, SDLoc(Op), MVT::i32, FI);
+  return DAG.getTargetFrameIndex(fi, MVT::i32);
 }
 
 SDValue LuaVMTargetLowering::LowerBR_JT(SDValue Op, SelectionDAG &DAG) const {
@@ -202,7 +199,7 @@ SDValue LuaVMTargetLowering::LowerBRCOND(SDValue Op, SelectionDAG &DAG) const {
   SDValue block = Op.getOperand(2);
 
   SDValue cmp =
-      DAG.getNode(LuaVMISD::CMPU, dl, MVT::Glue, {cc, DAG.getTargetConstant(0, dl, MVT::i32)});
+      DAG.getNode(LuaVMISD::CMPU, dl, MVT::Glue, {cc, DAG.getTargetConstant(0, dl, MVT::i1)});
 
   SDValue CC = DAG.getCondCode(ISD::SETNE);
   SDValue jCond =
@@ -384,6 +381,17 @@ LuaVMTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
   for (auto &loc : Locs) {
     SDValue Val = OutVals[loc.getValNo()];
     if (loc.isRegLoc()) {
+      if (isa<GlobalAddressSDNode, FrameIndexSDNode, ConstantSDNode,
+              ConstantPoolSDNode>(Val)) {
+        if (isa<ConstantSDNode>(Val) && Val.getValueType() == MVT::i1) {
+          unsigned value = dyn_cast<ConstantSDNode>(Val)->getZExtValue();
+          Val = DAG.getNode(
+              ISD::OR, dl, MVT::i1, DAG.getRegister(LuaVM::PDC0, MVT::i1),
+              DAG.getRegister(value ? LuaVM::PDC1 : LuaVM::PDC0, MVT::i1));
+        } else {
+          Val = DAG.getNode(LuaVMISD::MOVI, dl, MVT::i32, Val);
+        }
+      }
       Chain = DAG.getCopyToReg(Chain, dl, loc.getLocReg(), Val, Glue);
       Glue = Chain.getValue(1);
       RegPass.push_back(DAG.getRegister(loc.getLocReg(), loc.getLocVT()));
@@ -468,8 +476,19 @@ SDValue LuaVMTargetLowering::LowerCall(CallLoweringInfo &CLI,
   for (auto &loc : Locs) {
     MVT VT = loc.getLocVT();
     if (loc.isRegLoc()) {
-      Chain = DAG.getCopyToReg(Chain, dl, loc.getLocReg(),
-                               CLI.OutVals[loc.getValNo()], Glue);
+      SDValue Val = CLI.OutVals[loc.getValNo()];
+      if (isa<GlobalAddressSDNode, FrameIndexSDNode, ConstantSDNode,
+              ConstantPoolSDNode>(Val)) {
+        if (isa<ConstantSDNode>(Val) && Val.getValueType() == MVT::i1) {
+          unsigned value = dyn_cast<ConstantSDNode>(Val)->getZExtValue();
+          Val = DAG.getNode(
+              ISD::OR, dl, MVT::i1, DAG.getRegister(LuaVM::PDC0, MVT::i1),
+              DAG.getRegister(value ? LuaVM::PDC1 : LuaVM::PDC0, MVT::i1));
+        } else {
+          Val = DAG.getNode(LuaVMISD::MOVI, dl, MVT::i32, Val);
+        }
+      }
+      Chain = DAG.getCopyToReg(Chain, dl, loc.getLocReg(), Val, Glue);
       Glue = Chain.getValue(1);
       RegPass.push_back(DAG.getRegister(loc.getLocReg(), VT));
     } else {

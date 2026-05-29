@@ -55,7 +55,7 @@ def callseq_end   : SDNode<"ISD::CALLSEQ_END", SDT_CallSeqEnd,
 
 def Movi : SDNode<"LuaVMISD::MOVI", SDTypeProfile<1, 1, [SDTCisInt<0>, SDTCisInt<1>]>, []>;
 
-def imm14 : Operand<i32>{
+def imm14 : Operand<iAny>{
   string PrintMethod = "printImm14Operand";
   string EncoderMethod = "getImm14OpValue";
   string OperandType = "OPERAND_IMMEDIATE";
@@ -73,10 +73,14 @@ def Cond : Operand<i32>{
   string OperandType = "OPERAND_IMMEDIATE";
 }
 
+def AnyImm : Operand<iAny>{
+  string OperandType = "OPERAND_IMMEDIATE";
+}
+
 def imm12uFrag : PatFrag<(ops), (imm), [{
   if(Node->getOpcode() == ISD::TargetConstant || Node->getOpcode() == ISD::Constant){
     uint64_t imm = dyn_cast<ConstantSDNode>(Node)->getZExtValue();
-    if(imm >= 1 << 12)
+    if(imm >= 1 << 14)
       return false;
     else
       return true;
@@ -87,7 +91,7 @@ def imm12uFrag : PatFrag<(ops), (imm), [{
 def imm12iFrag : PatFrag<(ops), (imm), [{
   if(Node->getOpcode() == ISD::TargetConstant || Node->getOpcode() == ISD::Constant){
     int64_t imm = dyn_cast<ConstantSDNode>(Node)->getSExtValue();
-    if(imm > ((1 << 12) - 1) || imm < -(1 << 12))
+    if(imm > ((1 << 14) - 1) || imm < -(1 << 14))
       return false;
     else
       return true;
@@ -133,6 +137,7 @@ class RTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
   let DecoderMethod = "DecodeRTypeInstruction";
   let OutOperandList = (outs GPRRegs:$rd);
   let InOperandList = (ins GPRRegs:$rs, GPRRegs:$rt);
+  let TSFlags{1} = 1;
 }
 
 class ITypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pattern> {
@@ -146,6 +151,7 @@ class ITypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
   let DecoderMethod = "DecodeITypeInstruction";
   let OutOperandList = (outs GPRRegs:$rt);
   let InOperandList = (ins GPRRegs:$rs, imm14:$imm);
+  let TSFlags{2} = 1;
 }
 
 class LITypeInst<bits<8> op, string asmstr, list<dag> pattern> : LInst<asmstr, pattern> {
@@ -156,7 +162,8 @@ class LITypeInst<bits<8> op, string asmstr, list<dag> pattern> : LInst<asmstr, p
   let Inst{50-0} = imm;
   let DecoderMethod = "DecodeLITypeInstruction";
   let OutOperandList = (outs GPRRegs:$rt);
-  let InOperandList = (ins i32imm:$imm);
+  let InOperandList = (ins AnyImm:$imm);
+  let TSFlags{0} = 1;
 }
 
 class JTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pattern> {
@@ -165,6 +172,7 @@ class JTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
   let Inst{23-0} = addr;
   let DecoderMethod = "DecodeJTypeInstruction";
   let InOperandList = (ins Addr24:$addr);
+  let TSFlags{3} = 1;
 }
 
 class FTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pattern> {
@@ -179,6 +187,7 @@ class FTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
   let DecoderMethod = "DecodeFTypeInstruction";
   let OutOperandList = (outs FPRRegs:$fd);
   let InOperandList = (ins FPRRegs:$fs, FPRRegs:$ft);
+  let TSFlags{04} = 1;
 }
 
 class MTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pattern> {
@@ -190,6 +199,7 @@ class MTypeInst<bits<8> op, string asmstr, list<dag> pattern> : Inst<asmstr, pat
   let Inst{18-14} = rt;
   let Inst{13-0} = offset;
   let DecoderMethod = "DecodeFTypeInstruction";
+  let TSFlags{05} = 1;
 }
 
 //===----------------------------------------------------------------------===//
@@ -217,12 +227,18 @@ let OutOperandList = (outs), InOperandList = (ins GPRRegs:$rt, GPRRegs:$base, im
   def ST : MTypeInst<0b00000010, "st $rt, $base, $offset", []>;
   def SH : MTypeInst<0b00000100, "sh $rt, $base, $offset", []>;
   def SB : MTypeInst<0b00000110, "sb $rt, $base, $offset", []>;
+  def ST_PIC : MTypeInst<0b00001010, "st_pic $rt, $base, $offset", []>;
+  def SH_PIC : MTypeInst<0b00001100, "sh_pic $rt, $base, $offset", []>;
+  def SB_PIC : MTypeInst<0b00001110, "sb_pic $rt, $base, $offset", []>;
 }
 
 let OutOperandList = (outs GPRRegs:$rt), InOperandList = (ins GPRRegs:$base, imm14:$offset),mayLoad = 1 in {
   def LD : MTypeInst<0b00000001, "ld $rt, $base, $offset", []>;
   def LH : MTypeInst<0b00000011, "lh $rt, $base, $offset", []>;
   def LB : MTypeInst<0b00000101, "lb $rt, $base, $offset", []>;
+  def LD_PIC : MTypeInst<0b00001001, "ld_pic $rt, $base, $offset", []>;
+  def LH_PIC : MTypeInst<0b00001011, "lh_pic $rt, $base, $offset", []>;
+  def LB_PIC : MTypeInst<0b00001101, "lb_pic $rt, $base, $offset", []>;
 }
 
 def LDD : MTypeInst<0b00000111, "ldd $rt, $base, $offset", []>{
@@ -231,6 +247,17 @@ def LDD : MTypeInst<0b00000111, "ldd $rt, $base, $offset", []>{
   let mayLoad = 1;
 }
 def STD : MTypeInst<0b00001000, "std $rt, $base, $offset", []>{
+  let OutOperandList = (outs);
+  let InOperandList = (ins FPRRegs:$rt, GPRRegs:$base, imm14:$offset);
+  let mayStore = 1;
+}
+
+def LDD_PIC : MTypeInst<0b00001111, "ldd_pic $rt, $base, $offset", []>{
+  let OutOperandList = (outs FPRRegs:$rt);
+  let InOperandList = (ins GPRRegs:$base, imm14:$offset);
+  let mayLoad = 1;
+}
+def STD_PIC : MTypeInst<0b00010000, "std_pic $rt, $base, $offset", []>{
   let OutOperandList = (outs);
   let InOperandList = (ins FPRRegs:$rt, GPRRegs:$base, imm14:$offset);
   let mayStore = 1;
@@ -317,17 +344,18 @@ let isBranch = 1, isTerminator = true in {
     def JGT : JTypeInst<0b10000011, "jgt $addr", []>;
     def JLE : JTypeInst<0b10000100, "jle $addr", []>;
     def JGE : JTypeInst<0b10000101, "jge $addr", []>;
-    def JMP : JTypeInst<0b10000110, "jmp $addr", []>;
+    def JMP : JTypeInst<0b10000110, "jmp $addr", []>{
+      let isBarrier = 1;
+    }
   
   let OutOperandList = (outs), rs = 0 in {
     def JIND : ITypeInst<0b10001010, "jind $rt", []>{
         let InOperandList = (ins GPRRegs:$rt);
         let imm = 0;
+        let isIndirectBranch = 1;
     }
   }
 }
-
-
 
 let isCall = 1 ,OutOperandList = (outs), rs = 0 in {
   def JALR : ITypeInst<0b10000111, "jalr $rt", []>{
@@ -339,9 +367,19 @@ let isCall = 1 ,OutOperandList = (outs), rs = 0 in {
       let InOperandList = (ins imm14:$imm);
       let rt = 0;
   }
+
+  def JALR_PIC : ITypeInst<0b10001011, "jalr $rt", []>{
+      let InOperandList = (ins GPRRegs:$rt);
+      let imm = 0;
+  }
+
+  def JSUB_PIC : ITypeInst<0b10001100, "jusb $imm", []>{
+      let InOperandList = (ins imm14:$imm);
+      let rt = 0;
+  }
 }
 
-let isReturn = 1, isTerminator = true, InOperandList = (ins), addr = 0 in {
+let isReturn = 1, isBarrier = 1, isTerminator = true, InOperandList = (ins), addr = 0 in {
   def RET : JTypeInst<0b10001001, "ret", []>;
 }
 
@@ -364,6 +402,7 @@ def : Pat<(sdiv i32:$src0, i32:$src1), (DIV i32:$src0, i32:$src1)>;
 def : Pat<(udiv i32:$src0, i32:$src1), (DIVu i32:$src0, i32:$src1)>;
 def : Pat<(and i32:$src0, i32:$src1), (AND i32:$src0, i32:$src1)>;
 def : Pat<(or i32:$src0, i32:$src1), (OR i32:$src0, i32:$src1)>;
+def : Pat<(i1 (or i1:$src0, i1:$src1)), (OR i1:$src0, i1:$src1)>;
 def : Pat<(xor i32:$src0, i32:$src1), (XOR i32:$src0, i32:$src1)>;
 def : Pat<(shl i32:$src0, i32:$src1), (SHL i32:$src0, i32:$src1)>;
 def : Pat<(srl i32:$src0, i32:$src1), (SHR i32:$src0, i32:$src1)>;
@@ -393,16 +432,25 @@ def : Pat<(st i16:$data, (LoadStoreAddr i32:$base, i32:$off)), (SH i16:$data, i3
 def : Pat<(st i8:$data, (LoadStoreAddr i32:$base, i32:$off)), (SB i8:$data, i32:$base, i32:$off)>;
 def : Pat<(st i1:$data, (LoadStoreAddr i32:$base, i32:$off)), (SB i1:$data, i32:$base, i32:$off)>;
 def : Pat<(st f64:$data, (LoadStoreAddr i32:$base, i32:$off)), (STD f64:$data, i32:$base, i32:$off)>;
+def : Pat<(st tglobaladdr:$data, (LoadStoreAddr i32:$base, i32:$off)), (ST (i32 (MOVi i32:$data)), i32:$base, i32:$off)>;
+def : Pat<(st (i1 timm:$data), (LoadStoreAddr i32:$base, i32:$off)), (ST (i1 (MOVi i1:$data)), i32:$base, i32:$off)>;
+def : Pat<(st (i32 timm:$data), (LoadStoreAddr i32:$base, i32:$off)), (ST (i32 (MOVi i32:$data)), i32:$base, i32:$off)>;
 
 def : Pat<(Cmp i32:$src0, (i32 imm12uFrag:$src1)), (CMPi i32:$src0, i32:$src1)>;
 
 def : Pat<(Cmpu i32:$src0, (i32 imm12uFrag:$src1)), (CMPiu i32:$src0, i32:$src1)>;
 
-def : Pat<(Cmpu i1:$src0, (i32 0)), (CMPiu i1:$src0, (i32 0))>;
+def : Pat<(Cmpu i1:$src0, (i1 0)), (CMPiu i1:$src0, (i1 0))>;
+
+def : Pat<(Cmpu i1:$src0, (i1 -1)), (CMPiu i1:$src0, (i1 -1))>;
 
 def : Pat<(Cmp i32:$src0, i32:$src1), (CMP i32:$src0, i32:$src1)>;
 
 def : Pat<(Cmp i1:$src0, i1:$src1), (CMP i1:$src0, i1:$src1)>;
+
+def : Pat<(Cmp i1:$src0, (i1 0)), (CMPi i1:$src0, (i1 0))>;
+
+def : Pat<(Cmp i1:$src0, (i1 -1)), (CMPi i1:$src0, (i1 -1))>;
 
 def : Pat<(Cmpu i32:$src0, i32:$src1), (CMPu i32:$src0, i32:$src1)>;
 

@@ -8,7 +8,7 @@
 
 namespace llvm {
 class LuaVMSubtarget;
-
+enum class Cond { EQ, LT, LE, GT, GE, NE };
 class LuaVMInstrInfo : public LuaVMGenInstrInfo {
   const LuaVMSubtarget &Subtarget;
 
@@ -37,6 +37,30 @@ public:
                            MachineBasicBlock::iterator MI, const DebugLoc &DL,
                            MCRegister DestReg, MCRegister SrcReg,
                            bool KillSrc) const;
+  virtual unsigned getInstSizeInBytes(const MachineInstr &MI) const;
+  virtual bool isBranchOffsetInRange(unsigned BranchOpc,
+                                     int64_t BrOffset) const;
+
+  /// \returns The block that branch instruction \p MI jumps to.
+  virtual MachineBasicBlock *getBranchDestBlock(const MachineInstr &MI) const;
+  virtual void insertIndirectBranch(MachineBasicBlock &MBB,
+                                    MachineBasicBlock &NewDestBB,
+                                    MachineBasicBlock &RestoreBB,
+                                    const DebugLoc &DL, int64_t BrOffset = 0,
+                                    RegScavenger *RS = nullptr) const;
+  virtual bool analyzeBranch(MachineBasicBlock &MBB, MachineBasicBlock *&TBB,
+                             MachineBasicBlock *&FBB,
+                             SmallVectorImpl<MachineOperand> &Cond,
+                             bool AllowModify = false) const;
+  virtual bool
+  reverseBranchCondition(SmallVectorImpl<MachineOperand> &Cond) const;
+  virtual unsigned insertBranch(MachineBasicBlock &MBB, MachineBasicBlock *TBB,
+                                MachineBasicBlock *FBB,
+                                ArrayRef<MachineOperand> Cond,
+                                const DebugLoc &DL,
+                                int *BytesAdded = nullptr) const;
+  virtual unsigned removeBranch(MachineBasicBlock &MBB,
+                                int *BytesRemoved = nullptr) const;
 };
 
 } // namespace llvm
