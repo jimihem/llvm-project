@@ -3,6 +3,7 @@
 #include "LuaVMELFStreamer.h"
 #include "LuaVMMCCodeEmiter.h"
 #include "InstPrinter/LuaVMInstPrinter.h"
+#include "LuaVMMCAsmInfo.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCCodeEmitter.h"
@@ -11,7 +12,6 @@
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCStreamer.h"
-#include "llvm/MC/MCAsmInfo.h"
 #include "TargetInfo/LuaVMTargetInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/MC/TargetRegistry.h"
@@ -41,7 +41,7 @@ MCAsmBackend *createLuaVMAsmBackend(const Target &T, const MCSubtargetInfo &STI,
 
 MCAsmInfo* createMCAsmInfo(const MCRegisterInfo& MRI, const Triple& TT,
     const MCTargetOptions& Options) {
-  MCAsmInfo *MAI = new MCAsmInfo();
+  MCAsmInfo *MAI = new LuaVMMCAsmInfo();
   MAI->setExceptionsType(ExceptionHandling::DwarfCFI);
   return MAI;
 }

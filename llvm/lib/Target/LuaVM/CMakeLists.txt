@@ -44,6 +44,7 @@ add_llvm_component_library(LLVMLuaVMInfo
   MCTargetDesc/LuaVMAsmBackend.cpp
   MCTargetDesc/LuaVMELFStreamer.cpp
   MCTargetDesc/LuaVMMCCodeEmiter.cpp
+  MCTargetDesc/LuaVMMCAsmInfo.cpp
   TargetInfo/LuaVMTargetInfo.cpp
   Disassembler/LuaVMDisassembler.cpp
   InstPrinter/LuaVMInstPrinter.cpp

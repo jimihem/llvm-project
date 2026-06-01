@@ -15,7 +15,19 @@ class LuaVMAsmParser : public MCTargetAsmParser {
 public:
   LuaVMAsmParser(MCTargetOptions const &, const MCSubtargetInfo &STI,
                  const MCInstrInfo &MII);
-
+  virtual bool parseRegister(MCRegister &Reg, SMLoc &StartLoc,
+                             SMLoc &EndLoc) override;
+  virtual OperandMatchResultTy
+  tryParseRegister(MCRegister &Reg, SMLoc &StartLoc, SMLoc &EndLoc) override;
+  virtual bool ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
+                                SMLoc NameLoc,
+                                OperandVector &Operands) override;
+  virtual bool MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
+                                       OperandVector &Operands, MCStreamer &Out,
+                                       uint64_t &ErrorInfo,
+                                       bool MatchingInlineAsm) override;
+  virtual unsigned validateTargetOperandClass(MCParsedAsmOperand &Op,
+                                              unsigned Kind);
   // Include the auto-generated matcher.
 #define GET_ASSEMBLER_HEADER
 #include "LuaVMGenAsmMatcher.inc"

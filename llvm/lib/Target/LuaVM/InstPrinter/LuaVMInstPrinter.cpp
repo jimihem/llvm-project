@@ -23,7 +23,7 @@ void LuaVMInstPrinter::printOperand(const MCInst *MI, unsigned OpNo, raw_ostream
     printRegName(O, MCRegister(Op.getReg()));
   } else if (Op.isImm()) {
     O << Op.getImm();
-  } else if (Op.isExpr()) {
+  } else if (Op.isExpr() && Op.getExpr()->getKind() == MCExpr::SymbolRef) {
     // Handle expressions (e.g., labels, offsets).
     // This is a complex topic. For now, just print the expression.
     Op.getExpr()->print(O, &MAI);
