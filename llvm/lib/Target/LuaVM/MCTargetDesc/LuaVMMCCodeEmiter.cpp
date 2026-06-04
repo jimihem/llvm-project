@@ -23,11 +23,11 @@ void LuaVMMCCodeEmitter::encodeInstruction(const MCInst &Inst,
   uint8_t *ptr = (uint8_t *)&Value;
   if (Inst.getOpcode() == LuaVM::MOVi) {
     for (size_t i = 0; i < 8; i++) {
-      CB.push_back(ptr[i]);
+      CB.push_back(ptr[7 - i]);
     }
   } else {
     for (size_t i = 0; i < 4; i++) {
-      CB.push_back(ptr[i]);
+      CB.push_back(ptr[3 - i]);
     }
   }
 }

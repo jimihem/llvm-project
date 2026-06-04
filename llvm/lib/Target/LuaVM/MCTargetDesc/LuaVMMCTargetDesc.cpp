@@ -4,6 +4,7 @@
 #include "LuaVMMCCodeEmiter.h"
 #include "InstPrinter/LuaVMInstPrinter.h"
 #include "LuaVMMCAsmInfo.h"
+#include "Disassembler/LuaVMDisassembler.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCCodeEmitter.h"
@@ -41,7 +42,7 @@ MCAsmBackend *createLuaVMAsmBackend(const Target &T, const MCSubtargetInfo &STI,
 
 MCAsmInfo* createMCAsmInfo(const MCRegisterInfo& MRI, const Triple& TT,
     const MCTargetOptions& Options) {
-  MCAsmInfo *MAI = new LuaVMMCAsmInfo();
+  MCAsmInfo *MAI = new LuaVMMCAsmInfo(false);
   MAI->setExceptionsType(ExceptionHandling::DwarfCFI);
   return MAI;
 }
@@ -72,6 +73,12 @@ MCInstPrinter* createLuaVMInstPrinter(const Triple& T, unsigned SyntaxVariant,
   return new LuaVMInstPrinter(MAI, MII, MRI);
 }
 
+MCDisassembler *createLuaVMDisassembler(const Target &T,
+                                        const MCSubtargetInfo &STI,
+                                        MCContext &Ctx) {
+  return new LuaVMDisassembler(STI, Ctx);
+}
+
 extern "C" void LLVMInitializeLuaVMTargetMC() {
   TargetRegistry::RegisterMCAsmInfo(getTheLuaVMTarget(), createMCAsmInfo);
   TargetRegistry::RegisterMCAsmBackend(getTheLuaVMTarget(),
@@ -85,4 +92,6 @@ extern "C" void LLVMInitializeLuaVMTargetMC() {
                                           createLuaVMMCSubtargetInfo);
   TargetRegistry::RegisterMCInstPrinter(getTheLuaVMTarget(),
                                         createLuaVMInstPrinter);
+  TargetRegistry::RegisterMCDisassembler(getTheLuaVMTarget(),
+                                         createLuaVMDisassembler);
 }

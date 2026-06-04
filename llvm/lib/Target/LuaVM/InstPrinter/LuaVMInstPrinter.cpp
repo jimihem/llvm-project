@@ -9,6 +9,12 @@ using namespace llvm;
 #define LLVM_NO_PROFILE_INSTRUMENT_FUNCTION
 #include "LuaVMGenAsmWriter.inc"
 
+// Helper: sign extend N-bit unsigned value to int64
+static inline int64_t SignExtend64(uint64_t val, unsigned bits) {
+  unsigned shift = 64 - bits;
+  return (int64_t)(val << shift) >> shift;
+}
+
 LuaVMInstPrinter::LuaVMInstPrinter(const MCAsmInfo &MAI, const MCInstrInfo &MII,
                                    const MCRegisterInfo &MRI)
     : MCInstPrinter(MAI, MII, MRI) {}
@@ -41,7 +47,7 @@ void LuaVMInstPrinter::printInst(const MCInst *MI, uint64_t Address,
 void LuaVMInstPrinter::printAddr24Operand(const MCInst *MI, uint32_t OpIdx,
                                           raw_ostream &O) {
   if (MI->getOperand(OpIdx).isImm()) {
-    O << MI->getOperand(OpIdx).getImm();
+    O << SignExtend64(MI->getOperand(OpIdx).getImm() & 0xffffff, 24);
   } else if (MI->getOperand(OpIdx).isExpr() &&
              MI->getOperand(OpIdx).getExpr()->getKind() == MCExpr::SymbolRef) {
     MI->getOperand(OpIdx).getExpr()->print(O, &MAI, false);
@@ -52,6 +58,10 @@ void LuaVMInstPrinter::printAddr24Operand(const MCInst *MI, uint32_t OpIdx,
 
 void LuaVMInstPrinter::printImm14Operand(const MCInst *MI, uint32_t OpIdx,
                                          raw_ostream &O) {
+  if (MI->getOperand(OpIdx).isImm()) {
+    O << SignExtend64(MI->getOperand(OpIdx).getImm() & 0x3fff, 14);
+    return;
+  }
   printAddr24Operand(MI, OpIdx, O);
 }
 

@@ -35,6 +35,9 @@ public:
 
   /// Get information on a fixup kind.
   virtual const MCFixupKindInfo &getFixupKindInfo(MCFixupKind Kind) const;
+  virtual bool shouldForceRelocation(const MCAssembler &Asm,
+                                     const MCFixup &Fixup,
+                                     const MCValue &Target);
 };
 
 } // end namespace llvm

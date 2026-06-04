@@ -6,23 +6,29 @@
 #include "llvm/MC/MCFixupKindInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/ErrorHandling.h"
+#include "llvm/Support/Endian.h"
 
 using namespace llvm;
+using namespace support::endian;
 
 class LuaVMMCELFObjectTargetWriter : public MCELFObjectTargetWriter {
 public:
   LuaVMMCELFObjectTargetWriter()
-      : MCELFObjectTargetWriter(false, ELF::ELFOSABI_NONE, ELF::EM_LUAVM,
+      : MCELFObjectTargetWriter(false, ELF::ELFOSABI_NONE, ELF::EM_LUAVM_V53,
                                 true) {}
 
   unsigned getRelocType(MCContext& Ctx, const MCValue& Target,
       const MCFixup& Fixup, bool IsPCRel) const {
     return 0;
   }
+  virtual bool needsRelocateWithSymbol(const MCSymbol& Sym,
+      unsigned Type) const {
+    return true;
+  }
 };
 
 LuaVMAsmBackend::LuaVMAsmBackend(const MCSubtargetInfo &STI)
-    : MCAsmBackend(support::endianness::little), STI(STI) {}
+    : MCAsmBackend(support::endianness::big), STI(STI) {}
 
 std::unique_ptr<MCObjectTargetWriter>
 LuaVMAsmBackend::createObjectTargetWriter() const {
@@ -38,16 +44,16 @@ void LuaVMAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup, c
   if (IsResolved) {
     if (Fixup.getKind() == FK_PCRel_addr24) {
       uint32_t *ptr = (uint32_t *)(Data.data() + Fixup.getOffset());
-      uint32_t Val = *ptr;
+      uint32_t Val = read32be(ptr);
       Val &= ~0x00ffffff;
       Val |= Value & 0x00ffffff;
-      *ptr = Val;
+      write32be(ptr, Val);
     } else if (Fixup.getKind() == FK_PCRel_OFFSET_imm32) {
       uint64_t *ptr = (uint64_t *)(Data.data() + Fixup.getOffset());
-      uint64_t Val = *ptr;
+      uint64_t Val = read64be(ptr);
       Val &= ~0xffffffff;
       Val |= (Value - 8) & 0xffffffff;
-      *ptr = Val;
+      write32be(ptr, Val);
     } else {
       llvm_unreachable("Not support fixup kind");
     }
@@ -92,14 +98,21 @@ std::optional<MCFixupKind> LuaVMAsmBackend::getFixupKind(StringRef Name) const {
 const MCFixupKindInfo &
 LuaVMAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
   static const MCFixupKindInfo TargetFixUpInfo[] = {
-      {"FK_PCRel_addr24", 0, 24, MCFixupKindInfo::FKF_IsPCRel},
-      {"FK_PCRel_OFFSET_imm32", 0, 32, MCFixupKindInfo::FKF_IsPCRel},
-      {"FK_DATA_imm14", 0, 14, 0},
-      {"FK_DATA_imm32", 0, 32, 0},
+      {"FK_PCRel_addr24", 8, 24, MCFixupKindInfo::FKF_IsPCRel},
+      {"FK_PCRel_OFFSET_imm32", 32, 32, MCFixupKindInfo::FKF_IsPCRel},
+      {"FK_DATA_imm14", 18, 14, 0},
+      {"FK_DATA_imm32", 32, 32, 0},
   };
   if (Kind < FirstTargetFixupKind)
       return MCAsmBackend::getFixupKindInfo(Kind);
 
   Kind = MCFixupKind(Kind - FirstTargetFixupKind);
   return TargetFixUpInfo[Kind];
+}
+
+bool LuaVMAsmBackend::shouldForceRelocation(const MCAssembler &Asm,
+                                          const MCFixup &Fixup,
+    const MCValue& Target) {
+  return Fixup.getKind() == LuaVMMCFixupKind::FK_DATA_imm14 ||
+         Fixup.getKind() == LuaVMMCFixupKind::FK_DATA_imm32;
 }

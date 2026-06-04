@@ -14,6 +14,8 @@ public:
   DecodeStatus getInstruction(MCInst &Instr, uint64_t &Size,
                               ArrayRef<uint8_t> Bytes, uint64_t Address,
                               raw_ostream &VStream) const override;
+  unsigned getFPRReg(uint8_t HWEnc) const;
+  unsigned getRegEnc(uint8_t HWEnc) const;
 };
 
 } // end namespace llvm

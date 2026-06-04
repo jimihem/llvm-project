@@ -2,4 +2,4 @@
 
 using namespace llvm;
 
-LuaVMMCAsmInfo::LuaVMMCAsmInfo(){}
+LuaVMMCAsmInfo::LuaVMMCAsmInfo(bool LB) { IsLittleEndian = LB; }

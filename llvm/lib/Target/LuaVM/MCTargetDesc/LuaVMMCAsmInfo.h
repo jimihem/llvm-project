@@ -5,7 +5,7 @@ namespace llvm{
 
 class LuaVMMCAsmInfo : public MCAsmInfoELF{
     public:
-    LuaVMMCAsmInfo();
+    LuaVMMCAsmInfo(bool LB);
 };
 
 }

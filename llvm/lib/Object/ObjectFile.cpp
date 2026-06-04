@@ -116,6 +116,11 @@ Triple ObjectFile::makeTriple() const {
   // disassembly.
   if (Arch == Triple::arm || Arch == Triple::armeb)
     setARMSubArch(TheTriple);
+  if (Arch == Triple::luavm) {
+    if (getFileFormatName() == "elf32-luavm-v53") {
+      return Triple("lua_v53-pc-luaInterp-itanium_elf");
+    }
+  }
 
   // TheTriple defaults to ELF, and COFF doesn't have an environment:
   // something we can do here is indicate that it is mach-o.
