@@ -3,7 +3,7 @@
 -cc1 -fluamangle -no-round-trip-args  -undef -x lua -std=lua53 -ast-dump -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\luatest\lua-5.3.0-tests\vararg.lua >> vararg-ast.txt
 -cc1 -fluamangle -no-round-trip-args  -undef -x lua -std=lua53 -emit-obj -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\luatest\lua-5.3.0-tests\vararg.lua
 -cc1 -fluamangle -no-round-trip-args  -undef -x lua -std=lua53 -S -triple lua_v53-pc-luaInterp-itanium_elf  C:\llvm\src\luatest\lua-5.3.0-tests\vararg.lua
-
+C:\llvm\src\luatest\lua-5.3.0-tests\vararg.o -o C:\llvm\src\luatest\lua-5.3.0-tests\vararg.out
 -- $Id: testes/vararg.lua $
 -- See Copyright Notice in file lua.h
 ]]

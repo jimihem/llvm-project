@@ -15034,9 +15034,9 @@ Decl *Sema::ActOnStartOfLuaFunctionDef(Scope *S,
     QualType T =
         QualType(getDeclByName("__lua_function_ty")->getFunctionType(), 0);
     std::string FunName = Context.getLuaTempMethodName();
-    DP =
-        FunctionDecl::Create(Context, CurContext, Loc, Loc,
-                             &Context.Idents.get(FunName), T, nullptr, SC_None);
+    DP = FunctionDecl::Create(Context, CurContext, Loc, Loc,
+                              &Context.Idents.get(FunName), T, nullptr,
+                              SC_Static);
 
     QualType ObjectPtrT = Context.getTypeDeclType(
         cast<CXXRecordDecl>(getDeclByName("__lua_object_ptr")));
