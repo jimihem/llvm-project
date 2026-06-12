@@ -19,6 +19,10 @@ public:
 
   unsigned getRelocType(MCContext& Ctx, const MCValue& Target,
       const MCFixup& Fixup, bool IsPCRel) const {
+    if (Fixup.getKind() == FK_DATA_imm14)
+      return REL_TYPE_IMM14;
+    if (Fixup.getKind() == FK_DATA_imm32)
+      return REL_TYPE_IMM32;
     return 0;
   }
   virtual bool needsRelocateWithSymbol(const MCSymbol& Sym,

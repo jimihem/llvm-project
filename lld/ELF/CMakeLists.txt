@@ -84,3 +84,5 @@ add_lld_library(lldELF
   ELFOptionsTableGen
   intrinsics_gen
   )
+
+  target_include_directories(lldELF PRIVATE ${CMAKE_SOURCE_DIR}/../LuaVm/include)
