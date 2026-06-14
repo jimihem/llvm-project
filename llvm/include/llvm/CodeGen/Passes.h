@@ -601,6 +601,8 @@ namespace llvm {
 
   /// Lowers KCFI operand bundles for indirect calls.
   FunctionPass *createKCFIPass();
-} // End llvm namespace
+
+  FunctionPass *createLuaVMPICLoweringPass();
+  } // End llvm namespace
 
 #endif

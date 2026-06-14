@@ -9,6 +9,15 @@
 namespace llvm {
 class LuaVMSubtarget;
 enum class Cond { EQ, LT, LE, GT, GE, NE };
+
+enum TSFlags {
+  TSFLAG_LI = 1 << 0,
+  TSFLAG_R = 1 << 1,
+  TSFLAG_I = 1 << 2,
+  TSFLAG_J = 1 << 3,
+  TSFLAG_F = 1 << 4,
+  TSFLAG_M = 1 << 5,
+};
 class LuaVMInstrInfo : public LuaVMGenInstrInfo {
   const LuaVMSubtarget &Subtarget;
 

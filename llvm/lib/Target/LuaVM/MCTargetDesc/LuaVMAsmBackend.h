@@ -5,7 +5,11 @@
 
 namespace llvm {
 
-enum LuaVMReLType { REL_TYPE_IMM14 = 1, REL_TYPE_IMM32 = 2 };
+enum LuaVMReLType {
+  REL_TYPE_PC_IMM14 = 1,
+  REL_TYPE_IMM14 = 2, 
+  REL_TYPE_IMM32 = 3
+};
 class MCAssembler;
 class MCSubtargetInfo;
 

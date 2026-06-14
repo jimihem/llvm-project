@@ -36,6 +36,7 @@ void LuaVMPassConfig::addMachinePasses() {
   addPass(createVirtRegRewriter());
   addPass(createPrologEpilogInserterPass());
   addPass(&ExpandPostRAPseudosID);
+  addPass(createLuaVMPICLoweringPass());
   addPass(&BranchRelaxationPassID);
 }
 

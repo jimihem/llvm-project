@@ -23,6 +23,7 @@ add_llvm_target(LuaVMCodeGen
   LuaVMSubtarget.cpp
   LuaVMTargetMachine.cpp
   LuaVMAsmPrinter.cpp
+  LuaVMPreEmitPatch.cpp
 
   LINK_COMPONENTS
   Analysis

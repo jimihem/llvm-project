@@ -696,6 +696,8 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result,
     Expr *Init = Actions.BuildLuaBuiltinCallExpr(
         "__lua_build_closure_with_function", {TopFuncRef}, SourceLocation()).get();
     VarDecl * TopClosure = Actions.CreateLuaTempClosureObjPtrVar(SourceLocation(), Init);
+    TopClosure->addAttr(VisibilityAttr::Create(
+        Actions.getASTContext(), VisibilityAttr::Hidden, SourceLocation()));
     Result = Actions.ConvertDeclToDeclGroup(TopClosure);
     return false;
   }

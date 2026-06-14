@@ -41,6 +41,9 @@ let Namespace = "LuaVM" in {
   def TMP1 : Register<"tmp1">{
     let HWEncoding = 19;
   }
+  def PC : Register<"pc">{
+    let HWEncoding = 20;
+  }
 }
   
 // Define register classes
@@ -60,6 +63,8 @@ def FPRRegs : RegisterClass<"LuaVM", [f64], 64, (add (sequence "F%u", 0, 31))>{
 def PDCRegs : RegisterClass<"LuaVM", [i1, i8, i16, i32], 32, (add PDC0, PDC1)>;
 
 def TMPRegs : RegisterClass<"LuaVM", [i1, i8, i16, i32], 32, (add TMP0, TMP1)>;
+
+def PCRegs : RegisterClass<"LuaVM", [i32], 32, (add PC)>;
 
 def SGRegs : RegisterClass<"LuaVM", [i32], 32, (add HI, LO, STR, FP, SP, LINK)>;
 

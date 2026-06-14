@@ -205,8 +205,9 @@ static bool needsPlt(RelExpr expr) {
 static bool needsGot(RelExpr expr) {
   return oneof<R_GOT, R_GOT_OFF, R_MIPS_GOT_LOCAL_PAGE, R_MIPS_GOT_OFF,
                R_MIPS_GOT_OFF32, R_AARCH64_GOT_PAGE_PC, R_GOT_PC, R_GOTPLT,
-               R_AARCH64_GOT_PAGE, R_LOONGARCH_GOT, R_LOONGARCH_GOT_PAGE_PC>(
-      expr);
+               R_AARCH64_GOT_PAGE, R_LOONGARCH_GOT, R_LOONGARCH_GOT_PAGE_PC,
+               R_LUAVM_GOT_CALL_THUNK_IMM14, R_LUAVM_GOT_THUNK_IMM14,
+               R_LUAVM_GOT_THUNK_IMM32>(expr);
 }
 
 // True if this expression is of the form Sym - X, where X is a position in the
@@ -957,8 +958,10 @@ bool RelocationScanner::isStaticLinkTimeConstant(RelExpr e, RelType type,
             R_AARCH64_GOT_PAGE_PC, R_GOT_PC, R_GOTONLY_PC, R_GOTPLTONLY_PC,
             R_PLT_PC, R_PLT_GOTPLT, R_PPC32_PLTREL, R_PPC64_CALL_PLT,
             R_PPC64_RELAX_TOC, R_RISCV_ADD, R_AARCH64_GOT_PAGE,
-            R_LOONGARCH_PLT_PAGE_PC, R_LOONGARCH_GOT, R_LOONGARCH_GOT_PAGE_PC>(
-          e))
+            R_LOONGARCH_PLT_PAGE_PC, R_LOONGARCH_GOT, R_LOONGARCH_GOT_PAGE_PC,
+            R_LUAVM_THUNK_IMM14, R_LUAVM_CALL_THUNK_IMM14,
+            R_LUAVM_GOT_CALL_THUNK_IMM14, R_LUAVM_GOT_THUNK_IMM14,
+            R_LUAVM_GOT_THUNK_IMM32>(e))
     return true;
 
   // These never do, except if the entire file is position dependent or if

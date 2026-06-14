@@ -23,6 +23,8 @@ public:
       return REL_TYPE_IMM14;
     if (Fixup.getKind() == FK_DATA_imm32)
       return REL_TYPE_IMM32;
+    if (Fixup.getKind() == FK_PCRel_imm14)
+      return REL_TYPE_PC_IMM14;
     return 0;
   }
   virtual bool needsRelocateWithSymbol(const MCSymbol& Sym,
@@ -92,6 +94,8 @@ std::optional<MCFixupKind> LuaVMAsmBackend::getFixupKind(StringRef Name) const {
       return MCFixupKind(LuaVMMCFixupKind::FK_PCRel_OFFSET_imm32);
   } else if (Name == "FK_DATA_imm14") {
       return MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm14);
+  } else if (Name == "FK_PCRel_imm14") {
+    return MCFixupKind(LuaVMMCFixupKind::FK_PCRel_imm14);
   } else if (Name == "FK_DATA_imm32") {
       return MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm32);
   }
@@ -105,6 +109,7 @@ LuaVMAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
       {"FK_PCRel_addr24", 8, 24, MCFixupKindInfo::FKF_IsPCRel},
       {"FK_PCRel_OFFSET_imm32", 32, 32, MCFixupKindInfo::FKF_IsPCRel},
       {"FK_DATA_imm14", 18, 14, 0},
+      {"FK_PCRel_imm14", 18, 14, MCFixupKindInfo::FKF_IsPCRel},
       {"FK_DATA_imm32", 32, 32, 0},
   };
   if (Kind < FirstTargetFixupKind)

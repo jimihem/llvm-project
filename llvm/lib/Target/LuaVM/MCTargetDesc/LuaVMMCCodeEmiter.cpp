@@ -82,11 +82,25 @@ LuaVMMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &Op,
 }
 
 uint64_t LuaVMMCCodeEmitter::getImm14OpValue(const MCInst &MI, unsigned OpIdx,
-                         SmallVectorImpl<MCFixup> &Fixups,
+                                             SmallVectorImpl<MCFixup> &Fixups,
                                              const MCSubtargetInfo &STI) const {
   if (MI.getOperand(OpIdx).isExpr()) {
-    MCFixup F = MCFixup::create(0, MI.getOperand(OpIdx).getExpr(),
-                                MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm14));
+    const MCExpr *Expr = MI.getOperand(OpIdx).getExpr();
+    assert(isa<MCSymbolRefExpr>(Expr));
+    const MCSymbolRefExpr *SymRef = dyn_cast<MCSymbolRefExpr>(Expr);
+    assert(SymRef->getKind() == MCSymbolRefExpr::VK_CP ||
+           SymRef->getKind() == MCSymbolRefExpr::VK_JT ||
+           SymRef->getKind() == MCSymbolRefExpr::VK_GV ||
+           SymRef->getKind() == MCSymbolRefExpr::VK_FUN);
+    bool IsPC = false;
+    if (MI.getOpcode() == LuaVM::JSUB)
+      IsPC = true;
+    else
+      IsPC = MI.getOperand(MI.getNumOperands() - 2).getReg() == LuaVM::PC;
+    MCFixup F =
+        MCFixup::create(0, SymRef,
+                        MCFixupKind(IsPC ? LuaVMMCFixupKind::FK_PCRel_imm14
+                                         : LuaVMMCFixupKind::FK_DATA_imm14));
     Fixups.push_back(F);
     return 0;
   }
