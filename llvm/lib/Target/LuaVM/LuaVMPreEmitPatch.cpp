@@ -46,6 +46,7 @@ private:
   /// Check if operand is symbol immediate requiring PIC conversion:
   /// Global(NOT external + non-hidden) / ConstantPool / JumpTable
   bool isSymbolImm(const MachineOperand &MO) const;
+  bool isExportSymbol(const MachineOperand &MO) const;
 
   Register getPCReg() const { return LuaVM::PC; }
   Register getTmpReg(unsigned Id) { return Id ? LuaVM::TMP1 : LuaVM::TMP0; }
@@ -107,13 +108,16 @@ bool LuaVMPICLowering::runOnMachineFunction(MachineFunction &MF) {
 // Check whether operand needs PIC conversion
 //===----------------------------------------------------------------------===//
 bool LuaVMPICLowering::isSymbolImm(const MachineOperand &MO) const {
+  return MO.isCPI() || MO.isJTI() || MO.isGlobal();
+}
+
+bool LuaVMPICLowering::isExportSymbol(const MachineOperand &MO) const {
   if (MO.isGlobal()) {
     const GlobalValue *GV = MO.getGlobal();
-    // Invert condition: exclude external + non-hidden global
-    return !(GV->getLinkage() == GlobalValue::ExternalLinkage &&
-             !GV->hasHiddenVisibility());
+    return GV->getLinkage() == GlobalValue::ExternalLinkage &&
+           !GV->hasHiddenVisibility();
   }
-  return MO.isCPI() || MO.isJTI();
+  return false;
 }
 
 //===----------------------------------------------------------------------===//
@@ -126,10 +130,10 @@ bool LuaVMPICLowering::handleIType(MachineBasicBlock &MBB, MachineInstr *MI) {
   // Skip non-symbol immediate
   if (!isSymbolImm(ImmOp))
     return false;
-
+  bool IsExpSym = isExportSymbol(ImmOp);
   const LuaVMInstrInfo *TII =
       MBB.getParent()->getSubtarget<LuaVMSubtarget>().getInstrInfo();
-  Register Tmp = getTmpReg(1);
+  Register Tmp = getTmpReg(IsExpSym ? 0 : 1);
   Register PC = getPCReg();
   unsigned OldOpc = MI->getOpcode();
   unsigned NewOpc;
@@ -182,10 +186,9 @@ bool LuaVMPICLowering::handleIType(MachineBasicBlock &MBB, MachineInstr *MI) {
     llvm_unreachable("Unsupported IType opcode for PIC lowering");
   }
 
-  // Insert: ADDi TMP1, PC, @SYM before original instruction
-  BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADDi), Tmp)
-      .addReg(PC)
-      .add(ImmOp);
+  BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::MOVi), Tmp).add(ImmOp);
+  if (!IsExpSym)
+    BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADD), Tmp).addReg(Tmp).addReg(PC);
 
   // Rewrite original IType instruction to RType form
   MI->setDesc(TII->get(NewOpc));
@@ -206,17 +209,18 @@ bool LuaVMPICLowering::handleMType(MachineBasicBlock &MBB, MachineInstr *MI) {
   // Skip non-symbol immediate
   if (!isSymbolImm(OffsetOp))
     return false;
-
+  bool IsExpSym = isExportSymbol(OffsetOp);
   const LuaVMInstrInfo *TII =
       MBB.getParent()->getSubtarget<LuaVMSubtarget>().getInstrInfo();
-  Register Tmp = getTmpReg(1);
+  Register Tmp = getTmpReg(IsExpSym ? 0 : 1);
   Register PC = getPCReg();
   Register BaseReg = MI->getOperand(OffsetIdx - 1).getReg();
 
-  // Insert: ADDi TMP1, PC, @GV
-  BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADDi), Tmp)
-      .addReg(PC)
-      .add(OffsetOp);
+  BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::MOVi), Tmp).add(OffsetOp);
+
+  if (!IsExpSym)
+    BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADD), Tmp).addReg(Tmp).addReg(PC);
+  
   if (BaseReg != LuaVM::PDC0) {
     // Insert: ADD TMP1, Base, TMP1 before original instruction
     BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADD), Tmp)
@@ -241,16 +245,22 @@ bool LuaVMPICLowering::handleMOVi(MachineBasicBlock &MBB, MachineInstr *MI) {
   // Skip non-symbol immediate
   if (!isSymbolImm(ImmOp))
     return false;
-
+  bool IsExpSym = isExportSymbol(ImmOp);
   const LuaVMInstrInfo *TII =
       MBB.getParent()->getSubtarget<LuaVMSubtarget>().getInstrInfo();
+  Register Tmp = getTmpReg(IsExpSym ? 0 : 1);
   Register PC = getPCReg();
+  Register DstReg = MI->getOperand(0).getReg();
 
-  // Rewrite MOVi Rt, @SYM to ADDi Rt, PC, @SYM
-  MI->setDesc(TII->get(LuaVM::ADDi));
-  MI->addOperand(MI->getOperand(1));
-  MI->getOperand(1).ChangeToRegister(PC, false);
+  BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::MOVi), Tmp).add(ImmOp);
+
+  if (!IsExpSym) {
+    BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADD), DstReg).addReg(Tmp).addReg(PC);
+  } else {
+    BuildMI(MBB, MI, MI->getDebugLoc(), TII->get(LuaVM::ADDi), DstReg).addReg(Tmp).addImm(0);
+  }
 
   LLVM_DEBUG(dbgs() << "[PIC] MOVi converted: " << *MI << "\n");
+  MI->eraseFromParent();
   return true;
 }

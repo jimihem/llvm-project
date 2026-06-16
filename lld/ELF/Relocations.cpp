@@ -1939,7 +1939,7 @@ ThunkSection *ThunkCreator::getISDThunkSec(OutputSection *os,
     ThunkSection *ts = tp.first;
     uint64_t tsBase = os->addr + ts->outSecOff - pcBias;
     uint64_t tsLimit = tsBase + ts->getSize();
-    if (target->inBranchRange(rel.type, src,
+    if (target->inBranchRange(config->emachine == EM_LUAVM_V53 ? 5 :rel.type, src,
                               (src > tsLimit) ? tsBase : tsLimit))
       return ts;
   }
@@ -1950,10 +1950,10 @@ ThunkSection *ThunkCreator::getISDThunkSec(OutputSection *os,
   // possible. Error if InputSection is so large we cannot place ThunkSection
   // anywhere in Range.
   uint64_t thunkSecOff = isec->outSecOff;
-  if (!target->inBranchRange(rel.type, src,
+  if (!target->inBranchRange(config->emachine == EM_LUAVM_V53 ? 5 :rel.type, src,
                              os->addr + thunkSecOff + rel.addend)) {
     thunkSecOff = isec->outSecOff + isec->getSize();
-    if (!target->inBranchRange(rel.type, src,
+    if (!target->inBranchRange(config->emachine == EM_LUAVM_V53 ? 5 :rel.type, src,
                                os->addr + thunkSecOff + rel.addend))
       fatal("InputSection too large for range extension thunk " +
             isec->getObjMsg(src - (os->addr + isec->outSecOff)));
@@ -2115,7 +2115,7 @@ std::pair<Thunk *, bool> ThunkCreator::getThunk(InputSection *isec,
   for (Thunk *t : *thunkVec)
     if (isThunkSectionCompatible(isec, t->getThunkTargetSym()->section) &&
         t->isCompatibleWith(*isec, rel) &&
-        target->inBranchRange(rel.type, src,
+        target->inBranchRange(config->emachine == EM_LUAVM_V53 ? 5 :rel.type, src,
                               t->getThunkTargetSym()->getVA(-pcBias)))
       return std::make_pair(t, false);
 
@@ -2194,7 +2194,8 @@ bool ThunkCreator::createThunks(uint32_t pass,
             if (!target->needsThunk(rel.expr, rel.type, isec->file, src,
                                     *rel.sym, rel.addend))
               continue;
-
+            if (config->emachine == EM_LUAVM_V53)
+              assert(pass == 0);
             Thunk *t;
             bool isNew;
             std::tie(t, isNew) = getThunk(isec, rel, src);
@@ -2213,6 +2214,8 @@ bool ThunkCreator::createThunks(uint32_t pass,
             // Redirect relocation to Thunk, we never go via the PLT to a Thunk
             rel.sym = t->getThunkTargetSym();
             rel.expr = fromPlt(rel.expr);
+            if (config->emachine == EM_LUAVM_V53)
+              rel.type = 5;//REL_TYPE_PC_IMM24
 
             // On AArch64 and PPC, a jump/call relocation may be encoded as
             // STT_SECTION + non-zero addend, clear the addend after

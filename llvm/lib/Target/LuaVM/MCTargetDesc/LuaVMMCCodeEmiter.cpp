@@ -29,6 +29,11 @@ void LuaVMMCCodeEmitter::encodeInstruction(const MCInst &Inst,
     for (size_t i = 0; i < 4; i++) {
       CB.push_back(ptr[3 - i]);
     }
+    if (Inst.getOpcode() == LuaVM::JSUB) {
+      for (size_t i = 0; i < 4; i++) {
+        CB.push_back(0);
+      }
+    }
   }
 }
 
@@ -70,8 +75,10 @@ LuaVMMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &Op,
     if (SymKind == MCSymbolRefExpr::VK_BLOCK ||
         SymKind == MCSymbolRefExpr::VK_LABEL) {
       Kind = MCFixupKind(LuaVMMCFixupKind::FK_PCRel_OFFSET_imm32);
-    } else {
+    } else if(MI.getOperand(0).getReg() == LuaVM::TMP0){
       Kind = MCFixupKind(LuaVMMCFixupKind::FK_DATA_imm32);
+    } else if (MI.getOperand(0).getReg() == LuaVM::TMP1) {
+      Kind = MCFixupKind(LuaVMMCFixupKind::FK_PCRel_OFFSET_imm32);
     }
     MCFixup F = MCFixup::create(0, Op.getExpr(), Kind);
     Fixups.push_back(F);
@@ -85,6 +92,7 @@ uint64_t LuaVMMCCodeEmitter::getImm14OpValue(const MCInst &MI, unsigned OpIdx,
                                              SmallVectorImpl<MCFixup> &Fixups,
                                              const MCSubtargetInfo &STI) const {
   if (MI.getOperand(OpIdx).isExpr()) {
+    assert(MI.getOpcode() == LuaVM::JSUB);
     const MCExpr *Expr = MI.getOperand(OpIdx).getExpr();
     assert(isa<MCSymbolRefExpr>(Expr));
     const MCSymbolRefExpr *SymRef = dyn_cast<MCSymbolRefExpr>(Expr);

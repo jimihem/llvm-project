@@ -1453,6 +1453,8 @@ static Thunk *addThunkPPC64(RelType type, Symbol &s, int64_t a) {
   return make<PPC64PDLongBranchThunk>(s, a);
 }
 
+Thunk *addThunkLuaVM(const InputSection &isec, Relocation &rel);
+
 Thunk *elf::addThunk(const InputSection &isec, Relocation &rel) {
   Symbol &s = *rel.sym;
   int64_t a = rel.addend;
@@ -1470,7 +1472,9 @@ Thunk *elf::addThunk(const InputSection &isec, Relocation &rel) {
     return addThunkPPC32(isec, rel, s);
   case EM_PPC64:
     return addThunkPPC64(rel.type, s, a);
+  case EM_LUAVM_V53:
+    return addThunkLuaVM(isec, rel);
   default:
-    llvm_unreachable("add Thunk only supported for ARM, AVR, Mips and PowerPC");
+    llvm_unreachable("add Thunk only supported for ARM, AVR, Mips' LuaVM and PowerPC");
   }
 }

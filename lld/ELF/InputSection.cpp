@@ -635,6 +635,11 @@ uint64_t InputSectionBase::getRelocTargetVA(const InputFile *file, RelType type,
   case R_RELAX_TLS_LD_TO_LE_ABS:
   case R_RELAX_GOT_PC_NOPIC:
   case R_RISCV_ADD:
+  case R_LUAVM_THUNK_IMM14:
+  case R_LUAVM_CALL_THUNK_IMM14:
+  case R_LUAVM_GOT_CALL_THUNK_IMM14:
+  case R_LUAVM_GOT_THUNK_IMM14:
+  case R_LUAVM_GOT_THUNK_IMM32:
     return sym.getVA(a);
   case R_ADDEND:
     return a;

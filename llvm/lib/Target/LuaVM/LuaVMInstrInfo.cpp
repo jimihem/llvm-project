@@ -88,7 +88,7 @@ void LuaVMInstrInfo::copyPhysReg(MachineBasicBlock &MBB,
 }
 
 unsigned LuaVMInstrInfo::getInstSizeInBytes(const MachineInstr &MI) const {
-  if (MI.getOpcode() == LuaVM::MOVi)
+  if (MI.getOpcode() == LuaVM::MOVi || MI.getOpcode() == LuaVM::JSUB)
     return 8;
   if (MI.isPseudo())
     return 0;
@@ -114,8 +114,9 @@ void LuaVMInstrInfo::insertIndirectBranch(MachineBasicBlock &MBB,
                                           MachineBasicBlock &RestoreBB,
                                           const DebugLoc &DL, int64_t BrOffset,
                                           RegScavenger *RS) const {
-  BuildMI(&MBB, DL, get(LuaVM::MOVi), LuaVM::R0).addMBB(&NewDestBB);
-  BuildMI(&MBB, DL, get(LuaVM::JIND)).addReg(LuaVM::R0);
+  BuildMI(&MBB, DL, get(LuaVM::MOVi), LuaVM::TMP1).addMBB(&NewDestBB);
+  BuildMI(&MBB, DL, get(LuaVM::ADD), LuaVM::TMP1).addReg(LuaVM::PC).addReg(LuaVM::TMP1);
+  BuildMI(&MBB, DL, get(LuaVM::JIND)).addReg(LuaVM::TMP1);
 }
 
 bool LuaVMInstrInfo::analyzeBranch(MachineBasicBlock &MBB,

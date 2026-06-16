@@ -8,7 +8,8 @@ namespace llvm {
 enum LuaVMReLType {
   REL_TYPE_PC_IMM14 = 1,
   REL_TYPE_IMM14 = 2, 
-  REL_TYPE_IMM32 = 3
+  REL_TYPE_IMM32 = 3,
+  REL_TYPE_PC_IMM32 = 4
 };
 class MCAssembler;
 class MCSubtargetInfo;
@@ -43,6 +44,11 @@ public:
   virtual bool shouldForceRelocation(const MCAssembler &Asm,
                                      const MCFixup &Fixup,
                                      const MCValue &Target);
+  virtual bool evaluateTargetFixup(const MCAssembler &Asm,
+                                   const MCAsmLayout &Layout,
+                                   const MCFixup &Fixup, const MCFragment *DF,
+                                   const MCValue &Target, uint64_t &Value,
+                                   bool &WasForced);
 };
 
 } // end namespace llvm

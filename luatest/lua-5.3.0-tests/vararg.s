@@ -11,19 +11,23 @@ __cxx_global_var_init:                  # @__cxx_global_var_init
 	st r2, fp, 16                           # encoding: [0x02,0x68,0x80,0x10]
 	st r3, fp, 12                           # encoding: [0x02,0x68,0xc0,0x0c]
 	st r4, fp, 8                            # encoding: [0x02,0x69,0x00,0x08]
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_0@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_0@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_0@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_0@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 24                           # encoding: [0x02,0x68,0x40,0x18]
-	addi r4, pc, __lua.var.__Lua_Temp_Closure_11@global # encoding: [0x20,0xa1,0b00AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.var.__Lua_Temp_Closure_11@global, kind: FK_PCRel_imm14
+	movi tmp1, __lua.var.__Lua_Temp_Closure_11@global # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.var.__Lua_Temp_Closure_11@global, kind: FK_PCRel_OFFSET_imm32
+	add r4, tmp1, pc                        # encoding: [0x41,0x9d,0x08,0x00]
 	addi r2, fp, 24                         # encoding: [0x20,0x68,0x80,0x18]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure_with_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure_with_function@function, kind: FK_PCRel_imm14
-	movi r1, __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x35,0x08,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_DATA_imm32
-	addi r3, pc, __dso_handle@global        # encoding: [0x20,0xa0,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __dso_handle@global, kind: FK_PCRel_imm14
+	addi r1, tmp0, 0                        # encoding: [0x20,0x90,0x40,0x00]
+	movi tmp1, __dso_handle@global          # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __dso_handle@global, kind: FK_PCRel_OFFSET_imm32
+	add r3, tmp1, pc                        # encoding: [0x41,0x9d,0x06,0x00]
 	addi r2, r4, 0                          # encoding: [0x20,0x20,0x80,0x00]
 	jusb __cxa_atexit@function              # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __cxa_atexit@function, kind: FK_PCRel_imm14
@@ -111,22 +115,24 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r6, fp, 140                        # encoding: [0x20,0x69,0x80,0x8c]
-	addi tmp1, pc, .LCPI1_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 148                        # encoding: [0x20,0x69,0xc0,0x94]
-	addi r2, pc, .L.str@global              # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str@global                # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 14                             # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x0e]
 	st r3, fp, 6704                         # encoding: [0x02,0x68,0xda,0x30]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 858                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x5a]
+	movi r4, 848                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x50]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -139,8 +145,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 172                        # encoding: [0x20,0x69,0x80,0xac]
-	addi r2, pc, .L.str.1@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.1@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.1@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.1@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6544                         # encoding: [0x02,0x68,0x99,0x90]
 	movi r3, 5                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x05]
 	st r3, fp, 6548                         # encoding: [0x02,0x68,0xd9,0x94]
@@ -148,9 +155,10 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 164                        # encoding: [0x20,0x69,0xc0,0xa4]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 852                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x54]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 842                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x4a]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r8, r2, 0                          # encoding: [0x20,0x12,0x00,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -170,8 +178,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 180                        # encoding: [0x20,0x69,0x40,0xb4]
-	addi r2, pc, .L.str.2@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.2@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.2@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.2@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r7, 3                              # encoding: [0x35,0x38,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -182,10 +191,11 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r1, __lua.var._G@global            # encoding: [0x35,0x08,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._G@global          # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._G@global, kind: FK_DATA_imm32
+	addi r1, tmp0, 0                        # encoding: [0x20,0x90,0x40,0x00]
 	st r1, fp, 6628                         # encoding: [0x02,0x68,0x59,0xe4]
-	movi r4, 886                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x76]
+	movi r4, 874                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x6a]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -199,18 +209,20 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_1@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_1@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_1@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_1@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 204                          # encoding: [0x02,0x68,0x40,0xcc]
 	addi r2, fp, 204                        # encoding: [0x20,0x68,0x80,0xcc]
-	movi r5, 905                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0x89]
+	movi r5, 891                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0x7b]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r6, fp, 208                        # encoding: [0x20,0x69,0x80,0xd0]
-	addi r9, pc, .L.str.3@global            # encoding: [0x20,0xa2,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.3@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_OFFSET_imm32
+	add r9, tmp1, pc                        # encoding: [0x41,0x9d,0x12,0x00]
 	movi r10, 1                             # encoding: [0x35,0x50,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -232,18 +244,20 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_2@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_2@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_2@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_2@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 224                          # encoding: [0x02,0x68,0x40,0xe0]
 	addi r2, fp, 224                        # encoding: [0x20,0x68,0x80,0xe0]
-	movi r5, 1039                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x0f]
+	movi r5, 1019                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xfb]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r6, fp, 228                        # encoding: [0x20,0x69,0x80,0xe4]
-	addi r2, pc, .L.str.4@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.4@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.4@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.4@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6680                         # encoding: [0x02,0x68,0x9a,0x18]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -262,18 +276,20 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_3@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_3@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_3@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_3@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 244                          # encoding: [0x02,0x68,0x40,0xf4]
 	addi r2, fp, 244                        # encoding: [0x20,0x68,0x80,0xf4]
-	movi r5, 1217                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0xc1]
+	movi r5, 1189                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0xa5]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r6, fp, 248                        # encoding: [0x20,0x69,0x80,0xf8]
-	addi r2, pc, .L.str.5@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.5@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.5@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.5@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6600                         # encoding: [0x02,0x68,0x99,0xc8]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	st r3, fp, 6748                         # encoding: [0x02,0x68,0xda,0x5c]
@@ -299,11 +315,12 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_4@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_4@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_4@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_4@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 272                          # encoding: [0x02,0x68,0x41,0x10]
 	addi r2, fp, 272                        # encoding: [0x20,0x68,0x81,0x10]
-	movi r3, 1287                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x05,0x07]
+	movi r3, 1257                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0xe9]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
@@ -328,7 +345,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 316                        # encoding: [0x20,0x6a,0x41,0x3c]
-	movi r4, 1351                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x47]
+	movi r4, 1319                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x27]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -350,7 +367,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 300                        # encoding: [0x20,0x69,0x81,0x2c]
-	movi r5, 1355                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0x4b]
+	movi r5, 1323                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0x2b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -358,8 +375,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r7, fp, 348                        # encoding: [0x20,0x69,0xc1,0x5c]
-	addi tmp1, pc, .LCPI1_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -405,15 +423,16 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 372                        # encoding: [0x20,0x69,0x41,0x74]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6736                         # encoding: [0x02,0x68,0x9a,0x50]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	ld r3, fp, 6748                         # encoding: [0x01,0x68,0xda,0x5c]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 364                        # encoding: [0x20,0x69,0x81,0x6c]
-	movi r4, 1344                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x40]
+	movi r4, 1312                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x20]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r7, fp, 6788                         # encoding: [0x01,0x69,0xda,0x84]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -455,7 +474,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1372                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x5c]
+	movi r4, 1339                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x3b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -471,14 +490,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 428                        # encoding: [0x20,0x68,0xc1,0xac]
-	addi tmp1, pc, .LCPI1_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f3, tmp1, 0                         # encoding: [0x07,0x98,0xc0,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1374                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x5e]
+	movi r4, 1341                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x3d]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -494,14 +514,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 444                        # encoding: [0x20,0x68,0xc1,0xbc]
-	addi tmp1, pc, .LCPI1_3@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_3@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1376                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x60]
+	movi r4, 1343                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x3f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -516,7 +537,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1371                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x5b]
+	movi r4, 1338                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x3a]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -534,7 +555,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1380                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x64]
+	movi r4, 1347                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x43]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -554,7 +575,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1383                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x67]
+	movi r4, 1350                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x46]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -565,8 +586,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 492                        # encoding: [0x20,0x68,0x81,0xec]
-	addi tmp1, pc, .LCPI1_4@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_4@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_4@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_4@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f4, tmp1, 0                         # encoding: [0x07,0x99,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	movd f0, f4                             # encoding: [0x68,0x20,0x00,0x00]
@@ -577,7 +599,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1386                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x6a]
+	movi r4, 1353                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x49]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -599,7 +621,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 540                        # encoding: [0x20,0x6a,0x42,0x1c]
-	movi r4, 1369                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x59]
+	movi r4, 1336                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x38]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -617,7 +639,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 524                       # encoding: [0x20,0x6b,0x02,0x0c]
-	movi r5, 1389                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0x6d]
+	movi r5, 1356                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0x4c]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -673,7 +695,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 580                        # encoding: [0x20,0x69,0x82,0x44]
-	movi r4, 1362                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x52]
+	movi r4, 1329                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x31]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r8, fp, 6788                         # encoding: [0x01,0x6a,0x1a,0x84]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -711,15 +733,16 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 628                        # encoding: [0x20,0x69,0xc2,0x74]
-	addi r2, pc, .L.str.7@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.7@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.7@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.7@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6928                         # encoding: [0x02,0x68,0x9b,0x10]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r11, fp, 6684                        # encoding: [0x01,0x6a,0xda,0x1c]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 1406                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x7e]
+	movi r4, 1372                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x5c]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -740,7 +763,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r4, 1413                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x85]
+	movi r4, 1379                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x63]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -756,14 +779,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 660                        # encoding: [0x20,0x68,0xc2,0x94]
-	addi tmp1, pc, .LCPI1_5@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_5@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_5@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_5@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f5, tmp1, 0                         # encoding: [0x07,0x99,0x40,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1418                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x8a]
+	movi r4, 1384                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x68]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -786,7 +810,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 676                        # encoding: [0x20,0x69,0xc2,0xa4]
-	movi r4, 1422                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x8e]
+	movi r4, 1388                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x6c]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -815,7 +839,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r4, 1425                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x91]
+	movi r4, 1391                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x6f]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -830,7 +854,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1405                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x7d]
+	movi r4, 1371                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x5b]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -849,7 +873,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 1431                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x97]
+	movi r4, 1397                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x75]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -870,7 +894,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r4, 1438                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x9e]
+	movi r4, 1404                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x7c]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -890,7 +914,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1443                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xa3]
+	movi r4, 1409                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x81]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -901,8 +925,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 764                        # encoding: [0x20,0x69,0x82,0xfc]
-	addi tmp1, pc, .LCPI1_6@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_6@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_6@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_6@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f5, tmp1, 0                         # encoding: [0x07,0x99,0x40,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
@@ -916,7 +941,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 772                        # encoding: [0x20,0x69,0xc3,0x04]
-	movi r4, 1447                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xa7]
+	movi r4, 1413                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x85]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r11, fp, 6788                        # encoding: [0x01,0x6a,0xda,0x84]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -938,8 +963,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 788                        # encoding: [0x20,0x68,0x83,0x14]
-	addi tmp1, pc, .LCPI1_7@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_7@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_7@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_7@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -948,7 +974,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r4, 1450                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xaa]
+	movi r4, 1416                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x88]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -970,7 +996,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 836                        # encoding: [0x20,0x6a,0x43,0x44]
-	movi r4, 1403                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x7b]
+	movi r4, 1369                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x59]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -988,7 +1014,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 820                       # encoding: [0x20,0x6b,0x03,0x34]
-	movi r5, 1455                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xaf]
+	movi r5, 1421                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0x8d]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -1044,7 +1070,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 876                        # encoding: [0x20,0x69,0x83,0x6c]
-	movi r4, 1396                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x74]
+	movi r4, 1362                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x52]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r7, fp, 6788                         # encoding: [0x01,0x69,0xda,0x84]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -1082,7 +1108,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1475                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xc3]
+	movi r4, 1439                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x9f]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1102,7 +1128,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1477                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xc5]
+	movi r4, 1441                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xa1]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1124,7 +1150,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 972                        # encoding: [0x20,0x6a,0x43,0xcc]
-	movi r4, 1471                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xbf]
+	movi r4, 1435                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x9b]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -1142,7 +1168,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 956                       # encoding: [0x20,0x6b,0x03,0xbc]
-	movi r5, 1479                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xc7]
+	movi r5, 1443                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xa3]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -1150,8 +1176,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r7, fp, 996                        # encoding: [0x20,0x69,0xc3,0xe4]
-	addi tmp1, pc, .LCPI1_8@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_8@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_8@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_8@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f5, tmp1, 0                         # encoding: [0x07,0x99,0x40,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
@@ -1203,7 +1230,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1012                       # encoding: [0x20,0x69,0x83,0xf4]
-	movi r4, 1464                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xb8]
+	movi r4, 1428                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x94]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r12, fp, 6788                        # encoding: [0x01,0x6b,0x1a,0x84]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -1243,7 +1270,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1052                       # encoding: [0x20,0x6a,0x44,0x1c]
-	movi r4, 1504                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xe0]
+	movi r4, 1467                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xbb]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -1277,7 +1304,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1510                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xe6]
+	movi r4, 1473                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xc1]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1297,7 +1324,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1512                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xe8]
+	movi r4, 1475                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xc3]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1312,7 +1339,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1509                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xe5]
+	movi r4, 1472                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xc0]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -1321,7 +1348,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1116                       # encoding: [0x20,0x69,0xc4,0x5c]
-	movi r4, 1499                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xdb]
+	movi r4, 1462                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xb6]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r2, fp, 6612                         # encoding: [0x01,0x68,0x99,0xd4]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -1346,7 +1373,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1140                       # encoding: [0x20,0x6a,0x04,0x74]
-	movi r4, 1492                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xd4]
+	movi r4, 1455                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xaf]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -1358,7 +1385,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_call@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_call@function, kind: FK_PCRel_imm14
-	movi r4, 1490                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xd2]
+	movi r4, 1453                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xad]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
@@ -1374,8 +1401,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 1156                       # encoding: [0x20,0x69,0x44,0x84]
-	addi r8, pc, .L.str.8@global            # encoding: [0x20,0xa2,0b00AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.8@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.8@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.8@global, kind: FK_PCRel_OFFSET_imm32
+	add r8, tmp1, pc                        # encoding: [0x41,0x9d,0x10,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	st r8, fp, 6836                         # encoding: [0x02,0x6a,0x1a,0xb4]
@@ -1398,8 +1426,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 1172                       # encoding: [0x20,0x69,0x44,0x94]
-	addi r10, pc, .L.str.9@global           # encoding: [0x20,0xa2,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.9@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.9@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.9@global, kind: FK_PCRel_OFFSET_imm32
+	add r10, tmp1, pc                       # encoding: [0x41,0x9d,0x14,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	st r10, fp, 6812                        # encoding: [0x02,0x6a,0x9a,0x9c]
@@ -1437,7 +1466,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1220                       # encoding: [0x20,0x6a,0x04,0xc4]
-	movi r4, 1525                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xf5]
+	movi r4, 1487                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xcf]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7244                         # encoding: [0x02,0x6a,0x1c,0x4c]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -1451,7 +1480,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1212                       # encoding: [0x20,0x6a,0x44,0xbc]
-	movi r5, 1527                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xf7]
+	movi r5, 1489                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xd1]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -1466,7 +1495,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1252                       # encoding: [0x20,0x69,0xc4,0xe4]
-	movi r4, 1537                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x01]
+	movi r4, 1499                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xdb]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -1478,7 +1507,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 1244                      # encoding: [0x20,0x6a,0x84,0xdc]
-	movi r5, 1539                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x03]
+	movi r5, 1501                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xdd]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -1488,7 +1517,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r11, fp, 1204                      # encoding: [0x20,0x6a,0xc4,0xb4]
 	movi r4, 16                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x10]
 	st r4, fp, 6720                         # encoding: [0x02,0x69,0x1a,0x40]
-	movi r5, 1533                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xfd]
+	movi r5, 1495                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x05,0xd7]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -1537,7 +1566,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1284                       # encoding: [0x20,0x69,0x85,0x04]
-	movi r4, 1518                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xee]
+	movi r4, 1480                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xc8]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r10, fp, 6788                        # encoding: [0x01,0x6a,0x9a,0x84]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -1573,7 +1602,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1316                       # encoding: [0x20,0x6a,0x05,0x24]
-	movi r4, 1555                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x13]
+	movi r4, 1516                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xec]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -1607,7 +1636,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1561                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x19]
+	movi r4, 1522                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xf2]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1627,7 +1656,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1563                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x1b]
+	movi r4, 1524                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xf4]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1638,8 +1667,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1372                       # encoding: [0x20,0x69,0xc5,0x5c]
-	addi r2, pc, .L.str.10@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.10@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6700                         # encoding: [0x02,0x68,0x9a,0x2c]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r11, fp, 6724                        # encoding: [0x01,0x6a,0xda,0x44]
@@ -1651,7 +1681,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1566                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x1e]
+	movi r4, 1527                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xf7]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -1667,7 +1697,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1560                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x18]
+	movi r4, 1521                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xf1]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -1683,7 +1713,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1412                       # encoding: [0x20,0x69,0xc5,0x84]
-	movi r4, 1550                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x0e]
+	movi r4, 1511                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xe7]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r2, fp, 6612                         # encoding: [0x01,0x68,0x99,0xd4]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -1695,7 +1725,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1404                       # encoding: [0x20,0x6a,0x05,0x7c]
-	movi r4, 1548                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x0c]
+	movi r4, 1509                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xe5]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -1736,7 +1766,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1460                       # encoding: [0x20,0x6a,0x05,0xb4]
-	movi r4, 1579                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x2b]
+	movi r4, 1539                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x03]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7248                         # encoding: [0x02,0x6a,0x1c,0x50]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -1749,7 +1779,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1452                       # encoding: [0x20,0x6a,0x45,0xac]
-	movi r5, 1581                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x2d]
+	movi r5, 1541                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x05]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -1764,7 +1794,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1492                       # encoding: [0x20,0x69,0xc5,0xd4]
-	movi r4, 1591                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x37]
+	movi r4, 1551                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x0f]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -1776,7 +1806,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 1484                      # encoding: [0x20,0x6a,0x85,0xcc]
-	movi r5, 1593                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x39]
+	movi r5, 1553                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x11]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -1784,7 +1814,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 1444                      # encoding: [0x20,0x6a,0xc5,0xa4]
-	movi r5, 1587                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x33]
+	movi r5, 1547                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x0b]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -1835,7 +1865,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1524                       # encoding: [0x20,0x69,0x85,0xf4]
-	movi r4, 1572                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x24]
+	movi r4, 1532                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0xfc]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r11, fp, 6788                        # encoding: [0x01,0x6a,0xda,0x84]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -1871,7 +1901,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1556                       # encoding: [0x20,0x6a,0x06,0x14]
-	movi r4, 1609                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x49]
+	movi r4, 1568                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x20]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -1905,7 +1935,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1615                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x4f]
+	movi r4, 1574                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x26]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1925,7 +1955,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1617                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x51]
+	movi r4, 1576                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x28]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -1947,7 +1977,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1620                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x54]
+	movi r4, 1579                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x2b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -1963,7 +1993,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1614                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x4e]
+	movi r4, 1573                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x25]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -1979,7 +2009,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1652                       # encoding: [0x20,0x69,0xc6,0x74]
-	movi r4, 1604                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x44]
+	movi r4, 1563                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x1b]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r2, fp, 6612                         # encoding: [0x01,0x68,0x99,0xd4]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -1991,7 +2021,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1644                       # encoding: [0x20,0x6a,0x06,0x6c]
-	movi r4, 1602                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x42]
+	movi r4, 1561                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x19]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -2030,7 +2060,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1692                       # encoding: [0x20,0x6a,0x06,0x9c]
-	movi r4, 1637                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x65]
+	movi r4, 1595                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x3b]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -2038,7 +2068,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1684                       # encoding: [0x20,0x6a,0x46,0x94]
 	movi r3, 9                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x09]
-	movi r4, 1633                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x61]
+	movi r4, 1591                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x37]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	jusb __lua.fun.__lua_unop@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -2067,7 +2097,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1716                       # encoding: [0x20,0x69,0xc6,0xb4]
-	movi r4, 1626                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x5a]
+	movi r4, 1584                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x30]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -2104,7 +2134,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1652                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x74]
+	movi r4, 1609                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x49]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -2124,7 +2154,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1654                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x76]
+	movi r4, 1611                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x4b]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -2144,7 +2174,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1656                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x78]
+	movi r4, 1613                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x4d]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -2166,7 +2196,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1828                       # encoding: [0x20,0x6a,0x47,0x24]
-	movi r4, 1648                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x70]
+	movi r4, 1605                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x45]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -2184,7 +2214,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 1812                      # encoding: [0x20,0x6b,0x07,0x14]
-	movi r5, 1659                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x7b]
+	movi r5, 1616                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0x50]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -2241,7 +2271,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1868                       # encoding: [0x20,0x69,0x87,0x4c]
-	movi r4, 1641                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x69]
+	movi r4, 1598                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x3e]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r8, fp, 6788                         # encoding: [0x01,0x6a,0x1a,0x84]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -2279,8 +2309,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1924                       # encoding: [0x20,0x6a,0x47,0x84]
-	addi r2, pc, .L.str.11@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.11@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.11@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.11@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6840                         # encoding: [0x02,0x68,0x9a,0xb8]
 	movi r3, 4                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x04]
 	st r3, fp, 6844                         # encoding: [0x02,0x68,0xda,0xbc]
@@ -2288,7 +2319,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r11, fp, 1916                      # encoding: [0x20,0x6a,0xc7,0x7c]
-	movi r4, 1692                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x9c]
+	movi r4, 1648                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x70]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -2317,7 +2348,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1699                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xa3]
+	movi r4, 1655                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x77]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r5, fp, 6628                         # encoding: [0x01,0x69,0x59,0xe4]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -2335,7 +2366,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r4, 1702                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xa6]
+	movi r4, 1658                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x7a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -2356,7 +2387,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1707                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xab]
+	movi r4, 1663                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x7f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -2372,7 +2403,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1698                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xa2]
+	movi r4, 1654                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x76]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -2381,7 +2412,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1988                       # encoding: [0x20,0x69,0x87,0xc4]
-	movi r4, 1687                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x97]
+	movi r4, 1643                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x6b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r2, fp, 6612                         # encoding: [0x01,0x68,0x99,0xd4]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -2402,7 +2433,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 2012                       # encoding: [0x20,0x6a,0x47,0xdc]
-	movi r4, 1680                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x90]
+	movi r4, 1636                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x64]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -2462,7 +2493,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1731                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xc3]
+	movi r4, 1686                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x96]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -2483,7 +2514,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r10, fp, 2084                      # encoding: [0x20,0x6a,0x88,0x24]
-	movi r4, 1726                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xbe]
+	movi r4, 1681                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x91]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -2599,14 +2630,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2196                       # encoding: [0x20,0x69,0x88,0x94]
 	st r6, fp, 7068                         # encoding: [0x02,0x69,0x9b,0x9c]
-	movi r4, 1744                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xd0]
+	movi r4, 1698                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xa2]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r9, fp, 6804                         # encoding: [0x01,0x6a,0x5a,0x94]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r10, fp, 2188                      # encoding: [0x20,0x6a,0x88,0x8c]
-	movi r5, 1748                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xd4]
+	movi r5, 1702                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xa6]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 7216                        # encoding: [0x02,0x6a,0x9c,0x30]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -2623,13 +2654,13 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 2220                      # encoding: [0x20,0x6a,0xc8,0xac]
 	st r11, fp, 7208                        # encoding: [0x02,0x6a,0xdc,0x28]
-	movi r4, 1758                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xde]
+	movi r4, 1712                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xb0]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r12, fp, 2212                      # encoding: [0x20,0x6b,0x08,0xa4]
-	movi r5, 1762                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xe2]
+	movi r5, 1716                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xb4]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	st r12, fp, 7272                        # encoding: [0x02,0x6b,0x1c,0x68]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -2639,7 +2670,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 2180                      # encoding: [0x20,0x6a,0xc8,0x84]
-	movi r5, 1753                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xd9]
+	movi r5, 1707                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xab]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -2654,7 +2685,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2244                       # encoding: [0x20,0x69,0x88,0xc4]
-	movi r4, 1772                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xec]
+	movi r4, 1726                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xbe]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -2666,7 +2697,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 2236                      # encoding: [0x20,0x6b,0x08,0xbc]
-	movi r5, 1775                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xef]
+	movi r5, 1729                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xc1]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -2674,7 +2705,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r7, fp, 2172                       # encoding: [0x20,0x69,0xc8,0x7c]
-	movi r5, 1767                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xe7]
+	movi r5, 1721                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xb9]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -2734,7 +2765,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2276                       # encoding: [0x20,0x69,0x88,0xe4]
-	movi r4, 1736                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xc8]
+	movi r4, 1690                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0x9a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r12, fp, 6788                        # encoding: [0x01,0x6b,0x1a,0x84]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -2767,7 +2798,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1798                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x06]
+	movi r4, 1751                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xd7]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r11, fp, 6612                        # encoding: [0x01,0x6a,0xd9,0xd4]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -2792,7 +2823,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r10, fp, 2332                      # encoding: [0x20,0x6a,0x89,0x1c]
-	movi r4, 1805                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x0d]
+	movi r4, 1758                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xde]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -2826,7 +2857,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1811                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x13]
+	movi r4, 1764                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xe4]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -2846,7 +2877,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1813                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x15]
+	movi r4, 1766                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xe6]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -2861,7 +2892,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1810                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x12]
+	movi r4, 1763                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xe3]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -2874,7 +2905,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1804                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x0c]
+	movi r4, 1757                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xdd]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -2883,7 +2914,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2404                       # encoding: [0x20,0x69,0x89,0x64]
-	movi r4, 1793                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x01]
+	movi r4, 1746                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xd2]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -2904,7 +2935,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 2428                       # encoding: [0x20,0x69,0xc9,0x7c]
-	movi r4, 1786                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xfa]
+	movi r4, 1739                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xcb]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -2922,7 +2953,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 2412                       # encoding: [0x20,0x6a,0x49,0x6c]
-	movi r4, 1784                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xf8]
+	movi r4, 1737                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xc9]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -2966,7 +2997,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2492                       # encoding: [0x20,0x69,0x89,0xbc]
-	movi r4, 1828                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x24]
+	movi r4, 1780                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xf4]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 7004                         # encoding: [0x02,0x69,0x9b,0x5c]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -2980,7 +3011,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 2484                       # encoding: [0x20,0x6a,0x49,0xb4]
-	movi r5, 1831                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x27]
+	movi r5, 1783                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xf7]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 7192                         # encoding: [0x02,0x6a,0x5c,0x18]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -2995,7 +3026,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2524                       # encoding: [0x20,0x6a,0x09,0xdc]
-	movi r4, 1841                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x31]
+	movi r4, 1793                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x01]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7172                         # encoding: [0x02,0x6a,0x1c,0x04]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -3009,7 +3040,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 2516                      # encoding: [0x20,0x6a,0x89,0xd4]
-	movi r5, 1845                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x35]
+	movi r5, 1797                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x05]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 7280                        # encoding: [0x02,0x6a,0x9c,0x70]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -3018,7 +3049,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 2476                      # encoding: [0x20,0x6a,0xc9,0xac]
-	movi r5, 1836                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x2c]
+	movi r5, 1788                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x06,0xfc]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -3032,7 +3063,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2556                       # encoding: [0x20,0x69,0x89,0xfc]
-	movi r4, 1856                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x40]
+	movi r4, 1808                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x10]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -3044,7 +3075,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 2548                       # encoding: [0x20,0x69,0xc9,0xf4]
-	movi r5, 1860                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x44]
+	movi r5, 1812                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x14]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -3052,7 +3083,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2468                       # encoding: [0x20,0x6a,0x09,0xa4]
-	movi r5, 1851                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x3b]
+	movi r5, 1803                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x0b]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -3119,7 +3150,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2588                       # encoding: [0x20,0x69,0x8a,0x1c]
-	movi r4, 1820                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x1c]
+	movi r4, 1772                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x06,0xec]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r9, fp, 6788                         # encoding: [0x01,0x6a,0x5a,0x84]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -3155,7 +3186,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2620                       # encoding: [0x20,0x6a,0x0a,0x3c]
-	movi r4, 1876                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x54]
+	movi r4, 1827                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x23]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -3185,14 +3216,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2652                       # encoding: [0x20,0x6a,0x0a,0x5c]
-	addi r2, pc, .L.str.12@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.12@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.12@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.12@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6776                         # encoding: [0x02,0x68,0x9a,0x78]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	ld r3, fp, 6724                         # encoding: [0x01,0x68,0xda,0x44]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 1884                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x5c]
+	movi r4, 1835                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x2b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -3209,7 +3241,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1883                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x5b]
+	movi r4, 1834                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x2a]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3218,7 +3250,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 2676                       # encoding: [0x20,0x69,0x8a,0x74]
-	movi r4, 1871                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x4f]
+	movi r4, 1822                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x1e]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r2, fp, 6612                         # encoding: [0x01,0x68,0x99,0xd4]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -3230,7 +3262,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 2668                       # encoding: [0x20,0x69,0xca,0x6c]
-	movi r4, 1869                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x4d]
+	movi r4, 1820                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x1c]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -3265,7 +3297,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r9, fp, 2708                       # encoding: [0x20,0x6a,0x4a,0x94]
-	movi r5, 1900                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x6c]
+	movi r5, 1850                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x3a]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -3294,7 +3326,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 2732                       # encoding: [0x20,0x69,0xca,0xac]
-	movi r4, 1891                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x63]
+	movi r4, 1841                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x31]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r2, fp, 6788                         # encoding: [0x01,0x68,0x9a,0x84]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -3331,7 +3363,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1922                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x82]
+	movi r4, 1870                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x4e]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -3347,13 +3379,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 2788                       # encoding: [0x20,0x68,0xca,0xe4]
-	addi tmp1, pc, .LCPI1_9@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_9@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_9@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_9@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1925                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x85]
+	movi r4, 1873                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x51]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -3363,7 +3396,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 1921                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0x81]
+	movi r3, 1869                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0x4d]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3372,11 +3405,12 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_5@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_5@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_5@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_5@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 2804                         # encoding: [0x02,0x68,0x4a,0xf4]
 	addi r2, fp, 2804                       # encoding: [0x20,0x68,0x8a,0xf4]
-	movi r5, 1943                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x97]
+	movi r5, 1890                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x62]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3411,7 +3445,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2002                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xd2]
+	movi r4, 1948                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x9c]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3429,7 +3463,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2006                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xd6]
+	movi r4, 1952                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xa0]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -3449,7 +3483,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f4                             # encoding: [0x68,0x20,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2008                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xd8]
+	movi r4, 1954                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xa2]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -3468,7 +3502,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2020                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xe4]
+	movi r4, 1966                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xae]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3486,7 +3520,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2024                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xe8]
+	movi r4, 1970                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xb2]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -3512,7 +3546,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2944                       # encoding: [0x20,0x6a,0x0b,0x80]
 	st r8, fp, 6960                         # encoding: [0x02,0x6a,0x1b,0x30]
-	movi r4, 2003                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xd3]
+	movi r4, 1949                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x9d]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -3532,7 +3566,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2928                       # encoding: [0x20,0x6a,0x0b,0x70]
-	movi r5, 2011                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xdb]
+	movi r5, 1957                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xa5]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7088                         # encoding: [0x02,0x6a,0x1b,0xb0]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -3561,7 +3595,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3000                       # encoding: [0x20,0x69,0x8b,0xb8]
 	st r6, fp, 7288                         # encoding: [0x02,0x69,0x9c,0x78]
-	movi r4, 2021                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xe5]
+	movi r4, 1967                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xaf]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -3579,7 +3613,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 2984                       # encoding: [0x20,0x6a,0x0b,0xa8]
-	movi r5, 2027                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xeb]
+	movi r5, 1973                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xb5]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -3587,8 +3621,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3024                       # encoding: [0x20,0x69,0xcb,0xd0]
-	addi tmp1, pc, .LCPI1_10@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_10@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_10@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_10@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3601,7 +3636,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r10, fp, 2912                      # encoding: [0x20,0x6a,0x8b,0x60]
-	movi r5, 2016                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xe0]
+	movi r5, 1962                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xaa]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	ld r6, fp, 7320                         # encoding: [0x01,0x69,0x9c,0x98]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -3670,7 +3705,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3040                       # encoding: [0x20,0x69,0x8b,0xe0]
-	movi r4, 1995                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xcb]
+	movi r4, 1941                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x95]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r8, fp, 6788                         # encoding: [0x01,0x6a,0x1a,0x84]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -3705,7 +3740,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	ld r3, fp, 6724                         # encoding: [0x01,0x68,0xda,0x44]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 2041                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xf9]
+	movi r4, 1986                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xc2]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -3724,7 +3759,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3088                       # encoding: [0x20,0x69,0xcc,0x10]
-	movi r4, 2035                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xf3]
+	movi r4, 1980                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xbc]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -3744,20 +3779,22 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3104                       # encoding: [0x20,0x69,0x4c,0x20]
-	addi r2, pc, .L.str.13@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.13@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	ld r3, fp, 6684                         # encoding: [0x01,0x68,0xda,0x1c]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r3, fp, 3112                       # encoding: [0x20,0x68,0xcc,0x28]
-	addi tmp1, pc, .LCPI1_11@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_11@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_11@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_11@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2053                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x05]
+	movi r4, 1996                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xcc]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3785,7 +3822,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r3, 2072                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x18]
+	movi r3, 2014                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0xde]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3793,7 +3830,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 2075                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x1b]
+	movi r3, 2017                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0xe1]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3803,16 +3840,18 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 .LBB1_1:                                # %while.cond
                                         # =>This Inner Loop Header: Depth=1
 	addi r6, fp, 3168                       # encoding: [0x20,0x69,0x8c,0x60]
-	addi r2, pc, .L.str.13@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.13@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 3                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3160                       # encoding: [0x20,0x69,0xcc,0x58]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2090                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x2a]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 2031                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xef]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3820,7 +3859,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r8, fp, 3152                       # encoding: [0x20,0x6a,0x0c,0x50]
 	addi r2, fp, 3120                       # encoding: [0x20,0x68,0x8c,0x30]
 	movi r4, 12                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x0c]
-	movi r5, 2087                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x27]
+	movi r5, 2028                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xec]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3847,8 +3886,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 .LBB1_2:                                # %while.body
                                         #   in Loop: Header=BB1_1 Depth=1
 	addi r7, fp, 3184                       # encoding: [0x20,0x69,0xcc,0x70]
-	addi tmp1, pc, .LCPI1_16@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_16@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_16@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_16@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3856,14 +3896,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r8, fp, 3176                       # encoding: [0x20,0x6a,0x0c,0x68]
 	addi r2, fp, 3120                       # encoding: [0x20,0x68,0x8c,0x30]
 	movi r6, 5                              # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x00,0x05]
-	movi r5, 2105                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x39]
+	movi r5, 2046                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xfe]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	addi r4, r6, 0                          # encoding: [0x20,0x31,0x00,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r1, fp, 3128                       # encoding: [0x20,0x68,0x4c,0x38]
-	movi r4, 2102                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x36]
+	movi r4, 2043                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xfb]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -3874,20 +3914,21 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3200                       # encoding: [0x20,0x69,0xcc,0x80]
-	addi tmp1, pc, .LCPI1_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 3192                       # encoding: [0x20,0x6a,0x0c,0x78]
-	movi r5, 2114                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x42]
+	movi r5, 2055                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x07]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	addi r4, r6, 0                          # encoding: [0x20,0x31,0x00,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
-	movi r3, 2112                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x40]
+	movi r3, 2053                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x05]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -3905,26 +3946,29 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_6@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_6@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_6@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_6@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 3216                         # encoding: [0x02,0x68,0x4c,0x90]
 	addi r2, fp, 3216                       # encoding: [0x20,0x68,0x8c,0x90]
-	movi r7, 2134                           # encoding: [0x35,0x38,0x00,0x00,0x00,0x00,0x08,0x56]
+	movi r7, 2073                           # encoding: [0x35,0x38,0x00,0x00,0x00,0x00,0x08,0x19]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r9, fp, 3220                       # encoding: [0x20,0x6a,0x4c,0x94]
-	addi r8, pc, .L.str.3@global            # encoding: [0x20,0xa2,0b00AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.3@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_OFFSET_imm32
+	add r8, tmp1, pc                        # encoding: [0x41,0x9d,0x10,0x00]
 	movi r5, 1                              # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r6, __lua.var._ENV@global          # encoding: [0x35,0x30,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
+	addi r6, tmp0, 0                        # encoding: [0x20,0x91,0x80,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
@@ -3938,18 +3982,20 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_7@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_7@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_7@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_7@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 3236                         # encoding: [0x02,0x68,0x4c,0xa4]
 	addi r2, fp, 3236                       # encoding: [0x20,0x68,0x8c,0xa4]
-	movi r9, 2288                           # encoding: [0x35,0x48,0x00,0x00,0x00,0x00,0x08,0xf0]
+	movi r9, 2221                           # encoding: [0x35,0x48,0x00,0x00,0x00,0x00,0x08,0xad]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r10, fp, 3240                      # encoding: [0x20,0x6a,0x8c,0xa8]
-	addi r7, pc, .L.str.14@global           # encoding: [0x20,0xa1,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.14@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.14@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.14@global, kind: FK_PCRel_OFFSET_imm32
+	add r7, tmp1, pc                        # encoding: [0x41,0x9d,0x0e,0x00]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -3969,8 +4015,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r9, fp, 3256                       # encoding: [0x20,0x6a,0x4c,0xb8]
-	addi tmp1, pc, .LCPI1_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
@@ -3983,7 +4030,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 3264                       # encoding: [0x20,0x6a,0x0c,0xc0]
-	movi r4, 2355                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x33]
+	movi r4, 2284                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xec]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -4004,15 +4051,16 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 3280                       # encoding: [0x20,0x68,0x8c,0xd0]
-	addi tmp1, pc, .LCPI1_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 3128                       # encoding: [0x20,0x6a,0x0c,0x38]
-	movi r4, 2358                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x36]
+	movi r4, 2287                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xef]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4022,7 +4070,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r1, fp, 3288                       # encoding: [0x20,0x68,0x4c,0xd8]
 	addi r9, fp, 256                        # encoding: [0x20,0x6a,0x41,0x00]
-	movi r4, 2350                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x2e]
+	movi r4, 2279                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xe7]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	jusb __lua.fun.__lua_call@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4045,7 +4093,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3312                       # encoding: [0x20,0x69,0x4c,0xf0]
-	movi r4, 2367                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x3f]
+	movi r4, 2295                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xf7]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -4070,7 +4118,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2370                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x42]
+	movi r4, 2298                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xfa]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4079,7 +4127,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r1, fp, 3336                       # encoding: [0x20,0x68,0x4d,0x08]
-	movi r4, 2362                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x3a]
+	movi r4, 2290                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xf2]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	jusb __lua.fun.__lua_call@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4090,7 +4138,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 2378                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x4a]
+	movi r3, 2304                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_assign_local_var@function, kind: FK_PCRel_imm14
@@ -4100,7 +4148,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r1, fp, 3120                       # encoding: [0x20,0x68,0x4c,0x30]
-	movi r3, 2386                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x52]
+	movi r3, 2311                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x07]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_assign_local_var@function, kind: FK_PCRel_imm14
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
@@ -4111,16 +4159,18 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 .LBB1_4:                                # %while.cond348
                                         # =>This Inner Loop Header: Depth=1
 	addi r6, fp, 3376                       # encoding: [0x20,0x69,0x8d,0x30]
-	addi r2, pc, .L.str.13@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.13@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 3                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3368                       # encoding: [0x20,0x69,0xcd,0x28]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2402                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x62]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 2326                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x16]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4128,7 +4178,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r8, fp, 3360                       # encoding: [0x20,0x6a,0x0d,0x20]
 	addi r2, fp, 3120                       # encoding: [0x20,0x68,0x8c,0x30]
 	movi r4, 12                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x0c]
-	movi r5, 2399                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x5f]
+	movi r5, 2323                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x13]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4156,25 +4206,26 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   in Loop: Header=BB1_4 Depth=1
 	addi r1, fp, 3128                       # encoding: [0x20,0x68,0x4c,0x38]
 	addi r2, fp, 3120                       # encoding: [0x20,0x68,0x8c,0x30]
-	movi r4, 2414                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x6e]
+	movi r4, 2338                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x22]
 	addi r3, r2, 0                          # encoding: [0x20,0x10,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3392                       # encoding: [0x20,0x69,0x8d,0x40]
-	addi tmp1, pc, .LCPI1_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3384                       # encoding: [0x20,0x69,0xcd,0x38]
 	movi r4, 5                              # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x05]
-	movi r5, 2422                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x76]
+	movi r5, 2346                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x2a]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
-	movi r3, 2420                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x74]
+	movi r3, 2344                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x28]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4197,40 +4248,44 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3416                       # encoding: [0x20,0x69,0x8d,0x58]
-	addi tmp1, pc, .LCPI1_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 3440                       # encoding: [0x20,0x69,0xcd,0x70]
-	addi r2, pc, .L.str.15@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.15@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.15@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.15@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 4                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x04]
 	st r3, fp, 6616                         # encoding: [0x02,0x68,0xd9,0xd8]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 3432                       # encoding: [0x20,0x6a,0x0d,0x68]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
 	st r2, fp, 6796                         # encoding: [0x02,0x68,0x9a,0x8c]
-	movi r4, 2442                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x8a]
+	movi r4, 2365                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x3d]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r9, fp, 3448                       # encoding: [0x20,0x6a,0x4d,0x78]
-	addi r2, pc, .L.str.16@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.16@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.16@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.16@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r5, 3                              # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r10, fp, 3424                      # encoding: [0x20,0x6a,0x8d,0x60]
-	movi r4, 2446                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x8e]
+	movi r4, 2369                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x41]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -4257,8 +4312,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 3456                       # encoding: [0x20,0x68,0x8d,0x80]
-	addi tmp1, pc, .LCPI1_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
@@ -4266,7 +4322,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 3128                       # encoding: [0x20,0x68,0xcc,0x38]
 	st r3, fp, 6712                         # encoding: [0x02,0x68,0xda,0x38]
-	movi r4, 2452                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x94]
+	movi r4, 2375                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x47]
 	st r11, fp, 6520                        # encoding: [0x02,0x6a,0xd9,0x78]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4282,7 +4338,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r6, fp, 3488                       # encoding: [0x20,0x69,0x8d,0xa0]
 	addi r2, fp, 256                        # encoding: [0x20,0x68,0x81,0x00]
 	st r2, fp, 6516                         # encoding: [0x02,0x68,0x99,0x74]
-	movi r4, 2437                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x85]
+	movi r4, 2360                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x38]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 7336                         # encoding: [0x02,0x69,0x9c,0xa8]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -4294,7 +4350,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 3480                       # encoding: [0x20,0x6a,0x4d,0x98]
-	movi r11, 2455                          # encoding: [0x35,0x58,0x00,0x00,0x00,0x00,0x09,0x97]
+	movi r11, 2378                          # encoding: [0x35,0x58,0x00,0x00,0x00,0x00,0x09,0x4a]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -4302,14 +4358,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r10, fp, 3512                      # encoding: [0x20,0x6a,0x8d,0xb8]
-	addi r2, pc, .L.str.13@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.13@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r12, fp, 3504                      # encoding: [0x20,0x6b,0x0d,0xb0]
-	movi r4, 2458                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x9a]
+	movi r4, 2381                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x4d]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	ld r2, fp, 6796                         # encoding: [0x01,0x68,0x9a,0x8c]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -4353,8 +4410,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3536                       # encoding: [0x20,0x69,0x4d,0xd0]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6664                         # encoding: [0x02,0x68,0x9a,0x08]
 	movi r11, 6                             # encoding: [0x35,0x58,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
@@ -4363,7 +4421,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3528                       # encoding: [0x20,0x69,0x8d,0xc8]
-	movi r4, 2430                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x7e]
+	movi r4, 2353                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x31]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r10, fp, 6796                        # encoding: [0x01,0x6a,0x9a,0x8c]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -4393,14 +4451,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3560                       # encoding: [0x20,0x69,0x8d,0xe8]
-	addi r2, pc, .L.str.12@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.12@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.12@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.12@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r12, 1                             # encoding: [0x35,0x60,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 2472                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xa8]
+	movi r4, 2393                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x59]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 6528                         # encoding: [0x02,0x69,0xd9,0x80]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -4414,8 +4473,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3584                       # encoding: [0x20,0x69,0x4e,0x00]
-	addi r2, pc, .L.str.1@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.1@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.1@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.1@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6540                         # encoding: [0x02,0x68,0x99,0x8c]
 	movi r3, 5                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x05]
 	st r3, fp, 6588                         # encoding: [0x02,0x68,0xd9,0xbc]
@@ -4423,7 +4483,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3576                       # encoding: [0x20,0x69,0x8d,0xf8]
-	movi r4, 2466                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xa2]
+	movi r4, 2387                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x53]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -4445,19 +4505,21 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, fp, 3592                       # encoding: [0x20,0x68,0x4e,0x08]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r2, pc, __lua.fun.__Lua_Temp_Method_8@function # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_8@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_8@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_8@function, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 3600                         # encoding: [0x02,0x68,0x8e,0x10]
 	addi r2, fp, 3600                       # encoding: [0x20,0x68,0x8e,0x10]
-	movi r4, 2523                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xdb]
+	movi r4, 2439                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x87]
 	addi r6, r1, 0                          # encoding: [0x20,0x09,0x80,0x00]
 	st r6, fp, 6532                         # encoding: [0x02,0x69,0x99,0x84]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3604                       # encoding: [0x20,0x69,0x4e,0x14]
-	addi r2, pc, .L.str.17@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.17@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.17@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.17@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 7                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x07]
 	st r3, fp, 6584                         # encoding: [0x02,0x68,0xd9,0xb8]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
@@ -4474,19 +4536,21 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, fp, 3612                       # encoding: [0x20,0x68,0x4e,0x1c]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r2, pc, __lua.fun.__Lua_Temp_Method_9@function # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_9@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_9@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_9@function, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 3620                         # encoding: [0x02,0x68,0x8e,0x24]
 	addi r2, fp, 3620                       # encoding: [0x20,0x68,0x8e,0x24]
-	movi r4, 2561                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x01]
+	movi r4, 2475                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xab]
 	addi r6, r1, 0                          # encoding: [0x20,0x09,0x80,0x00]
 	st r6, fp, 6536                         # encoding: [0x02,0x69,0x99,0x88]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3624                       # encoding: [0x20,0x69,0x4e,0x28]
-	addi r7, pc, .L.str.3@global            # encoding: [0x20,0xa1,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.3@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_OFFSET_imm32
+	add r7, tmp1, pc                        # encoding: [0x41,0x9d,0x0e,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	st r7, fp, 6652                         # encoding: [0x02,0x69,0xd9,0xfc]
@@ -4516,14 +4580,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 3656                       # encoding: [0x20,0x68,0xce,0x48]
-	addi tmp1, pc, .LCPI1_9@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_9@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_9@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_9@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f6, tmp1, 0                         # encoding: [0x07,0x99,0x80,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f6                             # encoding: [0x68,0x30,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2822                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x06]
+	movi r4, 2723                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xa3]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -4539,14 +4604,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 3672                       # encoding: [0x20,0x68,0xce,0x58]
-	addi tmp1, pc, .LCPI1_6@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_6@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_6@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_6@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f4, tmp1, 0                         # encoding: [0x07,0x99,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f4                             # encoding: [0x68,0x20,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2825                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x09]
+	movi r4, 2726                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xa6]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -4557,22 +4623,24 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 3680                       # encoding: [0x20,0x68,0x8e,0x60]
-	addi tmp1, pc, .LCPI1_3@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_3@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f3, tmp1, 0                         # encoding: [0x07,0x98,0xc0,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 3688                       # encoding: [0x20,0x68,0xce,0x68]
-	addi tmp1, pc, .LCPI1_4@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_4@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_4@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_4@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f5, tmp1, 0                         # encoding: [0x07,0x99,0x40,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2827                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x0b]
+	movi r4, 2728                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xa8]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -4592,7 +4660,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2829                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x0d]
+	movi r4, 2730                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xaa]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -4612,7 +4680,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2831                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x0f]
+	movi r4, 2732                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xac]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -4623,8 +4691,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 3728                       # encoding: [0x20,0x68,0x8e,0x90]
-	addi tmp1, pc, .LCPI1_7@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_7@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_7@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_7@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4634,7 +4703,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2833                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x11]
+	movi r4, 2734                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xae]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6552                         # encoding: [0x02,0x6a,0x59,0x98]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -4652,7 +4721,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3752                       # encoding: [0x20,0x69,0x8e,0xa8]
-	movi r4, 2820                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x04]
+	movi r4, 2721                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xa1]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -4690,7 +4759,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3784                       # encoding: [0x20,0x69,0x8e,0xc8]
-	movi r4, 2813                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xfd]
+	movi r4, 2714                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x9a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -4702,7 +4771,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_call@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_call@function, kind: FK_PCRel_imm14
-	movi r4, 2811                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xfb]
+	movi r4, 2712                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x98]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
@@ -4756,8 +4825,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3824                       # encoding: [0x20,0x69,0x4e,0xf0]
-	addi r2, pc, .L.str.18@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.18@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.18@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.18@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6824                         # encoding: [0x02,0x68,0x9a,0xa8]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -4778,8 +4848,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 3840                       # encoding: [0x20,0x69,0x4f,0x00]
-	addi r2, pc, .L.str.19@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.19@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.19@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.19@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6832                         # encoding: [0x02,0x68,0x9a,0xb0]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -4815,7 +4886,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3904                       # encoding: [0x20,0x69,0x8f,0x40]
-	movi r5, 2846                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x1e]
+	movi r5, 2746                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xba]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 6904                         # encoding: [0x02,0x69,0x9a,0xf8]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -4829,7 +4900,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 3920                      # encoding: [0x20,0x6a,0x8f,0x50]
-	movi r5, 2855                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x27]
+	movi r5, 2755                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xc3]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 6920                        # encoding: [0x02,0x6a,0x9b,0x08]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -4838,7 +4909,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r8, fp, 3896                       # encoding: [0x20,0x6a,0x0f,0x38]
 	movi r4, 16                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x10]
-	movi r5, 2850                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x22]
+	movi r5, 2750                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xbe]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 6992                         # encoding: [0x02,0x6a,0x1b,0x50]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -4853,7 +4924,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 3936                      # encoding: [0x20,0x6a,0x8f,0x60]
-	movi r5, 2864                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x30]
+	movi r5, 2764                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xcc]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 7032                        # encoding: [0x02,0x6a,0x9b,0x78]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -4862,7 +4933,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 3888                      # encoding: [0x20,0x6a,0xcf,0x30]
-	movi r5, 2859                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x2b]
+	movi r5, 2759                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xc7]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	st r11, fp, 7184                        # encoding: [0x02,0x6a,0xdc,0x10]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -4880,7 +4951,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 3960                       # encoding: [0x20,0x6a,0x0f,0x78]
-	movi r4, 2872                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x38]
+	movi r4, 2772                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xd4]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7168                         # encoding: [0x02,0x6a,0x1c,0x00]
 	ld r6, fp, 6796                         # encoding: [0x01,0x69,0x9a,0x8c]
@@ -4895,7 +4966,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 3952                      # encoding: [0x20,0x6a,0x8f,0x70]
-	movi r5, 2873                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x39]
+	movi r5, 2773                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xd5]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 7276                        # encoding: [0x02,0x6a,0x9c,0x6c]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -4905,7 +4976,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r1, fp, 3880                       # encoding: [0x20,0x68,0x4f,0x28]
 	st r1, fp, 7364                         # encoding: [0x02,0x68,0x5c,0xc4]
-	movi r5, 2868                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x34]
+	movi r5, 2768                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xd0]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	addi r4, r7, 0                          # encoding: [0x20,0x39,0x00,0x00]
@@ -4919,7 +4990,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 3992                       # encoding: [0x20,0x6a,0x4f,0x98]
-	movi r4, 2881                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x41]
+	movi r4, 2781                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xdd]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -4931,7 +5002,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 3984                      # encoding: [0x20,0x6b,0x0f,0x90]
-	movi r5, 2882                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x42]
+	movi r5, 2782                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xde]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -4939,7 +5010,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r6, fp, 3872                       # encoding: [0x20,0x69,0x8f,0x20]
-	movi r5, 2877                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x3d]
+	movi r5, 2777                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xd9]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r8, fp, 7364                         # encoding: [0x01,0x6a,0x1c,0xc4]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -5017,7 +5088,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4024                       # encoding: [0x20,0x69,0x8f,0xb8]
-	movi r4, 2838                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x16]
+	movi r4, 2738                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xb2]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r12, fp, 6796                        # encoding: [0x01,0x6b,0x1a,0x8c]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -5051,7 +5122,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2904                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x58]
+	movi r4, 2802                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xf2]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 6572                         # encoding: [0x02,0x6a,0x19,0xac]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -5075,7 +5146,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4080                       # encoding: [0x20,0x69,0x8f,0xf0]
-	movi r4, 2902                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x56]
+	movi r4, 2800                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xf0]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -5087,7 +5158,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_call@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_call@function, kind: FK_PCRel_imm14
-	movi r4, 2900                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x54]
+	movi r4, 2798                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xee]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
@@ -5195,7 +5266,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4200                       # encoding: [0x20,0x69,0x90,0x68]
-	movi r5, 2916                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x64]
+	movi r5, 2813                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xfd]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 6912                         # encoding: [0x02,0x69,0x9b,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -5208,7 +5279,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r9, fp, 4216                       # encoding: [0x20,0x6a,0x50,0x78]
-	movi r5, 2927                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x6f]
+	movi r5, 2824                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x08]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6924                         # encoding: [0x02,0x6a,0x5b,0x0c]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -5216,7 +5287,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r12, fp, 4192                      # encoding: [0x20,0x6b,0x10,0x60]
-	movi r5, 2922                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x6a]
+	movi r5, 2819                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x03]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	st r12, fp, 7000                        # encoding: [0x02,0x6b,0x1b,0x58]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -5231,7 +5302,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r9, fp, 4232                       # encoding: [0x20,0x6a,0x50,0x88]
-	movi r5, 2938                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x7a]
+	movi r5, 2835                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x13]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 7040                         # encoding: [0x02,0x6a,0x5b,0x80]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -5239,7 +5310,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r8, fp, 4184                       # encoding: [0x20,0x6a,0x10,0x58]
-	movi r5, 2933                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x75]
+	movi r5, 2830                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x0e]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7196                         # encoding: [0x02,0x6a,0x1c,0x1c]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -5255,7 +5326,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 4256                       # encoding: [0x20,0x6a,0x50,0xa0]
-	movi r4, 2948                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x84]
+	movi r4, 2845                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x1d]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 7180                         # encoding: [0x02,0x6a,0x5c,0x0c]
 	ld r12, fp, 6796                        # encoding: [0x01,0x6b,0x1a,0x8c]
@@ -5269,7 +5340,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r11, fp, 4248                      # encoding: [0x20,0x6a,0xd0,0x98]
-	movi r5, 2949                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x85]
+	movi r5, 2846                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x1e]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	st r11, fp, 7292                        # encoding: [0x02,0x6a,0xdc,0x7c]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -5278,7 +5349,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r1, fp, 4176                       # encoding: [0x20,0x68,0x50,0x50]
 	st r1, fp, 7368                         # encoding: [0x02,0x68,0x5c,0xc8]
-	movi r5, 2944                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x80]
+	movi r5, 2841                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x19]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
 	addi r4, r6, 0                          # encoding: [0x20,0x31,0x00,0x00]
@@ -5292,7 +5363,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 4288                       # encoding: [0x20,0x6a,0x50,0xc0]
-	movi r4, 2959                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x8f]
+	movi r4, 2856                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x28]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -5303,7 +5374,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r12, fp, 4280                      # encoding: [0x20,0x6b,0x10,0xb8]
-	movi r5, 2960                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x90]
+	movi r5, 2857                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x29]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -5311,7 +5382,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4168                       # encoding: [0x20,0x69,0x90,0x48]
-	movi r5, 2955                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x8b]
+	movi r5, 2852                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x24]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r7, fp, 7368                         # encoding: [0x01,0x69,0xdc,0xc8]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -5389,7 +5460,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4320                       # encoding: [0x20,0x69,0x90,0xe0]
-	movi r4, 2908                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x5c]
+	movi r4, 2805                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xf5]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r11, fp, 6796                        # encoding: [0x01,0x6a,0xda,0x8c]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -5419,13 +5490,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4352                       # encoding: [0x20,0x69,0x91,0x00]
-	addi r2, pc, .L.str.20@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.20@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.20@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.20@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r3, fp, 6764                         # encoding: [0x01,0x68,0xda,0x6c]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 3008                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xc0]
+	movi r4, 2901                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x55]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6596                         # encoding: [0x02,0x6a,0x59,0xc4]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -5446,15 +5518,16 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4392                       # encoding: [0x20,0x69,0x91,0x28]
-	addi r2, pc, .L.str.21@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.21@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.21@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.21@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6784                         # encoding: [0x02,0x68,0x9a,0x80]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r3, fp, 6616                         # encoding: [0x01,0x68,0xd9,0xd8]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 4384                       # encoding: [0x20,0x69,0xd1,0x20]
-	movi r4, 3004                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xbc]
+	movi r4, 2897                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x51]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -5472,7 +5545,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 4368                      # encoding: [0x20,0x6a,0x91,0x10]
-	movi r4, 3002                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xba]
+	movi r4, 2895                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x4f]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -5515,7 +5588,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3034                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xda]
+	movi r4, 2926                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x6e]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -5535,7 +5608,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3036                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xdc]
+	movi r4, 2928                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x70]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6604                         # encoding: [0x02,0x6a,0x59,0xcc]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -5547,8 +5620,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 4448                       # encoding: [0x20,0x69,0x51,0x60]
-	addi r2, pc, .L.str.22@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.22@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.22@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.22@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 7240                         # encoding: [0x02,0x68,0x9c,0x48]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	ld r3, fp, 6648                         # encoding: [0x01,0x68,0xd9,0xf8]
@@ -5561,7 +5635,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 4472                       # encoding: [0x20,0x69,0xd1,0x78]
-	movi r4, 3032                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xd8]
+	movi r4, 2924                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x6c]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -5579,7 +5653,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 4456                      # encoding: [0x20,0x6a,0x91,0x68]
-	movi r4, 3030                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xd6]
+	movi r4, 2922                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x6a]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -5626,7 +5700,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4544                       # encoding: [0x20,0x69,0x91,0xc0]
-	movi r4, 3047                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xe7]
+	movi r4, 2938                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x7a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 6864                         # encoding: [0x02,0x69,0x9a,0xd0]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -5640,7 +5714,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 4536                       # encoding: [0x20,0x6a,0x11,0xb8]
-	movi r4, 3048                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xe8]
+	movi r4, 2939                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x7b]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 6888                         # encoding: [0x02,0x6a,0x1a,0xe8]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -5653,7 +5727,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 4528                       # encoding: [0x20,0x6a,0x51,0xb0]
-	movi r5, 3052                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0xec]
+	movi r5, 2943                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x7f]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 7072                         # encoding: [0x02,0x6a,0x5b,0xa0]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -5669,7 +5743,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 4592                       # encoding: [0x20,0x6a,0x11,0xf0]
-	movi r4, 3061                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xf5]
+	movi r4, 2952                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x88]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7012                         # encoding: [0x02,0x6a,0x1b,0x64]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -5684,7 +5758,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 4584                      # encoding: [0x20,0x6a,0xd1,0xe8]
-	movi r4, 3062                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xf6]
+	movi r4, 2953                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x89]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	st r11, fp, 7080                        # encoding: [0x02,0x6a,0xdb,0xa8]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -5697,7 +5771,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 4576                      # encoding: [0x20,0x6a,0x91,0xe0]
-	movi r5, 3066                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0xfa]
+	movi r5, 2957                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x8d]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 7160                        # encoding: [0x02,0x6a,0x9b,0xf8]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -5706,7 +5780,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 4520                      # encoding: [0x20,0x6a,0xd1,0xa8]
-	movi r5, 3057                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0xf1]
+	movi r5, 2948                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x84]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -5722,7 +5796,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4640                       # encoding: [0x20,0x69,0x92,0x20]
-	movi r4, 3075                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x03]
+	movi r4, 2966                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x96]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 7356                         # encoding: [0x02,0x69,0x9c,0xbc]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -5735,7 +5809,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 4632                      # encoding: [0x20,0x6b,0x12,0x18]
-	movi r4, 3076                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x04]
+	movi r4, 2967                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x97]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -5746,7 +5820,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r7, fp, 4624                       # encoding: [0x20,0x69,0xd2,0x10]
-	movi r5, 3080                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0x08]
+	movi r5, 2971                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x9b]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -5754,7 +5828,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r8, fp, 4512                       # encoding: [0x20,0x6a,0x11,0xa0]
-	movi r5, 3071                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0xff]
+	movi r5, 2962                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0b,0x92]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -5837,7 +5911,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4680                       # encoding: [0x20,0x69,0x92,0x48]
-	movi r4, 3040                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xe0]
+	movi r4, 2931                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0x73]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r11, fp, 6796                        # encoding: [0x01,0x6a,0xda,0x8c]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -5867,13 +5941,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4712                       # encoding: [0x20,0x69,0x92,0x68]
-	addi r2, pc, .L.str.23@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.23@global, kind: FK_PCRel_imm14
-	movi r3, 144                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x90]
+	movi tmp1, .L.str.23@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.23@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
+	movi r3, 139                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x8b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 3101                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x1d]
+	movi r4, 2989                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xad]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6624                         # encoding: [0x02,0x6a,0x59,0xe0]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -5900,7 +5975,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 4744                       # encoding: [0x20,0x69,0xd2,0x88]
-	movi r4, 3097                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x19]
+	movi r4, 2985                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xa9]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -5918,7 +5993,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 4728                      # encoding: [0x20,0x6a,0x92,0x78]
-	movi r4, 3095                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x17]
+	movi r4, 2983                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0b,0xa7]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -5961,13 +6036,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4792                       # encoding: [0x20,0x69,0x92,0xb8]
-	addi r2, pc, .L.str.8@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.8@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.8@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.8@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 3260                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xbc]
+	movi r4, 3141                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x45]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -5985,14 +6061,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4808                       # encoding: [0x20,0x69,0x92,0xc8]
-	addi r2, pc, .L.str.9@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.9@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.9@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.9@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
 	addi r11, r12, 0                        # encoding: [0x20,0x62,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 3265                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xc1]
+	movi r4, 3146                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x4a]
 	addi r12, r9, 0                         # encoding: [0x20,0x4b,0x00,0x00]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -6014,7 +6091,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
-	movi r4, 3270                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xc6]
+	movi r4, 3151                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x4f]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6034,7 +6111,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f5                             # encoding: [0x68,0x28,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3275                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xcb]
+	movi r4, 3156                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x54]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6054,7 +6131,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 4856                       # encoding: [0x20,0x69,0xd2,0xf8]
-	movi r4, 3279                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xcf]
+	movi r4, 3160                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x58]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r10, fp, 6796                        # encoding: [0x01,0x6a,0x9a,0x8c]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -6084,7 +6161,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4880                       # encoding: [0x20,0x69,0x93,0x10]
-	movi r4, 3258                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xba]
+	movi r4, 3139                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x43]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -6120,7 +6197,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4904                       # encoding: [0x20,0x69,0x93,0x28]
-	movi r4, 3251                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xb3]
+	movi r4, 3132                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x3c]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r7, fp, 6796                         # encoding: [0x01,0x69,0xda,0x8c]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -6151,7 +6228,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4936                       # encoding: [0x20,0x69,0x93,0x48]
-	movi r4, 3296                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xe0]
+	movi r4, 3176                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x68]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r9, r7, 0                          # encoding: [0x20,0x3a,0x40,0x00]
@@ -6194,7 +6271,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 4968                       # encoding: [0x20,0x69,0x93,0x68]
-	movi r4, 3289                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xd9]
+	movi r4, 3169                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x61]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -6232,7 +6309,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3316                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xf4]
+	movi r4, 3194                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x7a]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6261,7 +6338,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f6                             # encoding: [0x68,0x30,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3332                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x04]
+	movi r4, 3210                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x8a]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6277,13 +6354,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 5056                       # encoding: [0x20,0x68,0xd3,0xc0]
-	addi tmp1, pc, .LCPI1_11@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_11@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_11@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_11@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3335                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x07]
+	movi r4, 3213                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x8d]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6299,14 +6377,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 5072                       # encoding: [0x20,0x68,0xd3,0xd0]
-	addi tmp1, pc, .LCPI1_12@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_12@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_12@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_12@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f7, tmp1, 0                         # encoding: [0x07,0x99,0xc0,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f7                             # encoding: [0x68,0x38,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3338                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x0a]
+	movi r4, 3216                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x90]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6322,14 +6401,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 5088                       # encoding: [0x20,0x68,0xd3,0xe0]
-	addi tmp1, pc, .LCPI1_13@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_13@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_13@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_13@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f6, tmp1, 0                         # encoding: [0x07,0x99,0x80,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f6                             # encoding: [0x68,0x30,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3341                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x0d]
+	movi r4, 3219                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x93]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	st r5, fp, 6656                         # encoding: [0x02,0x69,0x5a,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -6345,7 +6425,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3331                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x03]
+	movi r4, 3209                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x89]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -6354,14 +6434,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r10, fp, 5128                      # encoding: [0x20,0x6a,0x94,0x08]
-	addi r2, pc, .L.str.24@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.24@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.24@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.24@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	ld r3, fp, 6588                         # encoding: [0x01,0x68,0xd9,0xbc]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r5, fp, 5120                       # encoding: [0x20,0x69,0x54,0x00]
-	movi r4, 3319                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xf7]
+	movi r4, 3197                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x7d]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r11, r9, 0                         # encoding: [0x20,0x4a,0xc0,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -6369,15 +6450,16 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5136                       # encoding: [0x20,0x69,0xd4,0x10]
-	addi r2, pc, .L.str.25@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.25@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.25@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.25@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r6, r8, 0                          # encoding: [0x20,0x41,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5112                       # encoding: [0x20,0x6a,0x13,0xf8]
-	movi r4, 3324                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xfc]
+	movi r4, 3202                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x82]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -6411,15 +6493,16 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 5160                       # encoding: [0x20,0x69,0x54,0x28]
-	addi r2, pc, .L.str.26@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.26@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.26@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.26@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 6744                         # encoding: [0x02,0x68,0x9a,0x58]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5152                       # encoding: [0x20,0x69,0x94,0x20]
-	movi r4, 3309                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xed]
+	movi r4, 3187                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x73]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -6446,7 +6529,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 3306                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0c,0xea]
+	movi r3, 3184                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0c,0x70]
 	ld r11, fp, 6712                        # encoding: [0x01,0x6a,0xda,0x38]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -6462,7 +6545,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5208                       # encoding: [0x20,0x6a,0x14,0x58]
-	movi r4, 3355                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x1b]
+	movi r4, 3232                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xa0]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7008                         # encoding: [0x02,0x6a,0x1b,0x60]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -6477,7 +6560,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 5200                       # encoding: [0x20,0x6a,0x54,0x50]
-	movi r5, 3358                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x1e]
+	movi r5, 3235                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0xa3]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 7200                         # encoding: [0x02,0x6a,0x5c,0x20]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -6491,7 +6574,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5232                       # encoding: [0x20,0x6a,0x14,0x70]
-	movi r4, 3368                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x28]
+	movi r4, 3245                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xad]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7176                         # encoding: [0x02,0x6a,0x1c,0x08]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -6504,7 +6587,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 5224                      # encoding: [0x20,0x6b,0x14,0x68]
-	movi r5, 3372                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x2c]
+	movi r5, 3249                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0xb1]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	st r12, fp, 7284                        # encoding: [0x02,0x6b,0x1c,0x74]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -6512,7 +6595,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5192                       # encoding: [0x20,0x69,0xd4,0x48]
-	movi r5, 3363                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x23]
+	movi r5, 3240                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0xa8]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -6526,7 +6609,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 5264                       # encoding: [0x20,0x6a,0x54,0x90]
-	movi r4, 3383                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x37]
+	movi r4, 3260                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xbc]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -6538,7 +6621,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 5256                      # encoding: [0x20,0x6b,0x14,0x88]
-	movi r5, 3387                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x3b]
+	movi r5, 3264                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0xc0]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -6546,7 +6629,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r10, fp, 5184                      # encoding: [0x20,0x6a,0x94,0x40]
-	movi r5, 3378                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x32]
+	movi r5, 3255                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0xb7]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -6609,7 +6692,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5296                       # encoding: [0x20,0x69,0x94,0xb0]
-	movi r4, 3348                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x14]
+	movi r4, 3225                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0x99]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r10, fp, 6796                        # encoding: [0x01,0x6a,0x9a,0x8c]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -6648,7 +6731,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3407                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x4f]
+	movi r4, 3283                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xd3]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6688                         # encoding: [0x02,0x6a,0x5a,0x20]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -6666,7 +6749,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5352                       # encoding: [0x20,0x69,0x94,0xe8]
-	movi r4, 3400                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x48]
+	movi r4, 3276                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xcc]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -6692,7 +6775,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 3397                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0d,0x45]
+	movi r3, 3273                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0c,0xc9]
 	ld r6, fp, 6712                         # encoding: [0x01,0x69,0x9a,0x38]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -6711,7 +6794,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3424                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x60]
+	movi r4, 3299                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xe3]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	st r5, fp, 6696                         # encoding: [0x02,0x69,0x5a,0x28]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -6727,14 +6810,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5432                       # encoding: [0x20,0x69,0x95,0x38]
 	st r6, fp, 7316                         # encoding: [0x02,0x69,0x9c,0x94]
-	addi r2, pc, .L.str.11@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.11@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.11@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.11@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r3, fp, 6616                         # encoding: [0x01,0x68,0xd9,0xd8]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5424                       # encoding: [0x20,0x6a,0x15,0x30]
-	movi r4, 3419                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x5b]
+	movi r4, 3294                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xde]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -6752,7 +6836,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 5408                      # encoding: [0x20,0x6a,0xd5,0x20]
-	movi r5, 3427                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x63]
+	movi r5, 3302                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0c,0xe6]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -6809,7 +6893,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5464                       # encoding: [0x20,0x69,0x95,0x58]
-	movi r4, 3412                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x54]
+	movi r4, 3287                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xd7]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r11, fp, 6796                        # encoding: [0x01,0x6a,0xda,0x8c]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -6848,7 +6932,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5504                       # encoding: [0x20,0x69,0xd5,0x80]
-	movi r4, 3448                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x78]
+	movi r4, 3322                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xfa]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	ld r3, fp, 6584                         # encoding: [0x01,0x68,0xd9,0xb8]
@@ -6878,7 +6962,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3452                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x7c]
+	movi r4, 3326                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xfe]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6898,7 +6982,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f4                             # encoding: [0x68,0x20,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3455                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x7f]
+	movi r4, 3329                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x01]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -6914,14 +6998,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 5560                       # encoding: [0x20,0x68,0xd5,0xb8]
-	addi tmp1, pc, .LCPI1_14@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_14@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_14@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_14@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f6, tmp1, 0                         # encoding: [0x07,0x99,0x80,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f6                             # encoding: [0x68,0x30,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3458                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x82]
+	movi r4, 3332                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x04]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6716                         # encoding: [0x02,0x6a,0x5a,0x3c]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -6939,7 +7024,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5576                       # encoding: [0x20,0x69,0x95,0xc8]
-	movi r4, 3441                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x71]
+	movi r4, 3315                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0c,0xf3]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -6966,7 +7051,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 3438                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0d,0x6e]
+	movi r3, 3312                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0c,0xf0]
 	ld r6, fp, 6712                         # encoding: [0x01,0x69,0x9a,0x38]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -6988,7 +7073,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5624                       # encoding: [0x20,0x69,0xd5,0xf8]
-	movi r4, 3471                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x8f]
+	movi r4, 3344                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x10]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 7256                         # encoding: [0x02,0x69,0xdc,0x58]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -7001,7 +7086,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 5616                      # encoding: [0x20,0x6a,0x95,0xf0]
-	movi r5, 3475                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x93]
+	movi r5, 3348                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x14]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	ld r8, fp, 6768                         # encoding: [0x01,0x6a,0x1a,0x70]
@@ -7014,7 +7099,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r12, fp, 5656                      # encoding: [0x20,0x6b,0x16,0x18]
-	movi r4, 3485                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x9d]
+	movi r4, 3358                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x1e]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -7025,7 +7110,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5648                       # encoding: [0x20,0x69,0xd6,0x10]
-	movi r5, 3489                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xa1]
+	movi r5, 3362                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x22]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -7033,7 +7118,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5608                       # encoding: [0x20,0x6a,0x15,0xe8]
-	movi r5, 3480                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x98]
+	movi r5, 3353                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x19]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -7085,7 +7170,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5688                       # encoding: [0x20,0x69,0x96,0x38]
-	movi r4, 3463                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x87]
+	movi r4, 3336                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x08]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r11, fp, 6796                        # encoding: [0x01,0x6a,0xda,0x8c]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -7125,7 +7210,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5728                       # encoding: [0x20,0x69,0xd6,0x60]
-	movi r4, 3510                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xb6]
+	movi r4, 3382                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x36]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	ld r3, fp, 6584                         # encoding: [0x01,0x68,0xd9,0xb8]
@@ -7155,7 +7240,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3514                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xba]
+	movi r4, 3386                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x3a]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -7175,7 +7260,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f4                             # encoding: [0x68,0x20,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3517                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xbd]
+	movi r4, 3389                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x3d]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -7195,7 +7280,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f6                             # encoding: [0x68,0x30,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3520                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xc0]
+	movi r4, 3392                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x40]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 6752                         # encoding: [0x02,0x6a,0x5a,0x60]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -7213,7 +7298,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5800                       # encoding: [0x20,0x69,0x96,0xa8]
-	movi r4, 3503                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xaf]
+	movi r4, 3375                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x2f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -7239,7 +7324,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 3500                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0d,0xac]
+	movi r3, 3372                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0d,0x2c]
 	ld r10, fp, 6712                        # encoding: [0x01,0x6a,0x9a,0x38]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -7261,7 +7346,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5856                       # encoding: [0x20,0x69,0x96,0xe0]
-	movi r4, 3533                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xcd]
+	movi r4, 3404                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x4c]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 7016                         # encoding: [0x02,0x69,0x9b,0x68]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -7274,7 +7359,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 5848                       # encoding: [0x20,0x6a,0x56,0xd8]
-	movi r5, 3537                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xd1]
+	movi r5, 3408                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x50]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 7204                         # encoding: [0x02,0x6a,0x5c,0x24]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -7289,7 +7374,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5888                       # encoding: [0x20,0x6a,0x17,0x00]
-	movi r4, 3547                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xdb]
+	movi r4, 3418                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x5a]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7188                         # encoding: [0x02,0x6a,0x1c,0x14]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -7302,7 +7387,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5880                       # encoding: [0x20,0x69,0xd6,0xf8]
-	movi r5, 3551                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xdf]
+	movi r5, 3422                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x5e]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 7296                         # encoding: [0x02,0x69,0xdc,0x80]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -7310,7 +7395,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r8, fp, 5840                       # encoding: [0x20,0x6a,0x16,0xd0]
-	movi r5, 3542                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xd6]
+	movi r5, 3413                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x55]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -7324,7 +7409,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 5920                      # encoding: [0x20,0x6a,0xd7,0x20]
-	movi r4, 3561                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xe9]
+	movi r4, 3432                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x68]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -7335,7 +7420,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r10, fp, 5912                      # encoding: [0x20,0x6a,0x97,0x18]
-	movi r5, 3565                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xed]
+	movi r5, 3436                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x6c]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -7343,7 +7428,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5832                       # encoding: [0x20,0x69,0x96,0xc8]
-	movi r5, 3556                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xe4]
+	movi r5, 3427                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0x63]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -7409,7 +7494,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 5952                       # encoding: [0x20,0x69,0x97,0x40]
-	movi r4, 3525                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xc5]
+	movi r4, 3396                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x44]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r12, fp, 6796                        # encoding: [0x01,0x6b,0x1a,0x8c]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -7446,7 +7531,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 5984                       # encoding: [0x20,0x69,0xd7,0x60]
-	movi r4, 3580                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xfc]
+	movi r4, 3450                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x7a]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -7473,14 +7558,15 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 6008                       # encoding: [0x20,0x68,0xd7,0x78]
-	addi tmp1, pc, .LCPI1_15@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI1_15@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI1_15@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI1_15@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f3, tmp1, 0                         # encoding: [0x07,0x98,0xc0,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3588                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x04]
+	movi r4, 3458                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x82]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 6772                         # encoding: [0x02,0x6a,0x1a,0x74]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -7492,8 +7578,9 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 6032                       # encoding: [0x20,0x69,0x97,0x90]
-	addi r5, pc, .L.str.27@global           # encoding: [0x20,0xa1,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.27@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.27@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.27@global, kind: FK_PCRel_OFFSET_imm32
+	add r5, tmp1, pc                        # encoding: [0x41,0x9d,0x0a,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	ld r9, fp, 6588                         # encoding: [0x01,0x6a,0x59,0xbc]
@@ -7501,7 +7588,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 6024                       # encoding: [0x20,0x69,0xd7,0x88]
-	movi r4, 3574                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xf6]
+	movi r4, 3444                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x74]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -7536,7 +7623,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 6056                       # encoding: [0x20,0x6a,0x17,0xa8]
-	movi r4, 3602                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x12]
+	movi r4, 3471                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x8f]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -7567,7 +7654,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 6080                       # encoding: [0x20,0x6a,0x17,0xc0]
-	movi r4, 3610                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x1a]
+	movi r4, 3479                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x97]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	ld r3, fp, 6584                         # encoding: [0x01,0x68,0xd9,0xb8]
@@ -7595,7 +7682,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r5, fp, 6104                       # encoding: [0x20,0x69,0x57,0xd8]
-	movi r4, 3596                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x0c]
+	movi r4, 3465                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0x89]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -7623,11 +7710,12 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_10@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_10@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_10@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_10@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 6136                         # encoding: [0x02,0x68,0x57,0xf8]
 	addi r2, fp, 6136                       # encoding: [0x20,0x68,0x97,0xf8]
-	movi r3, 3646                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0e,0x3e]
+	movi r3, 3512                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0d,0xb8]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_closure_function@function, kind: FK_PCRel_imm14
@@ -7658,7 +7746,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3758                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xae]
+	movi r4, 3618                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x22]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -7678,7 +7766,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3761                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xb1]
+	movi r4, 3621                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x25]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 6820                         # encoding: [0x02,0x69,0xda,0xa4]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -7694,7 +7782,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3757                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xad]
+	movi r4, 3617                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x21]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	st r5, fp, 6852                         # encoding: [0x02,0x69,0x5a,0xc4]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -7721,7 +7809,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3782                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xc6]
+	movi r4, 3642                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x3a]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -7741,7 +7829,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3785                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xc9]
+	movi r4, 3645                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x3d]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 6848                         # encoding: [0x02,0x6a,0x1a,0xc0]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -7757,7 +7845,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3781                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xc5]
+	movi r4, 3641                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x39]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 6932                         # encoding: [0x02,0x69,0xdb,0x14]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -7772,7 +7860,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 6300                       # encoding: [0x20,0x6a,0x18,0x9c]
-	movi r4, 3753                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xa9]
+	movi r4, 3613                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x1d]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 6944                         # encoding: [0x02,0x6a,0x1b,0x20]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -7798,7 +7886,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 6284                       # encoding: [0x20,0x6a,0x18,0x8c]
-	movi r4, 3764                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xb4]
+	movi r4, 3624                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x28]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 7092                         # encoding: [0x02,0x6a,0x1b,0xb4]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -7812,14 +7900,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r1, fp, 6276                       # encoding: [0x20,0x68,0x58,0x84]
 	st r1, fp, 7328                         # encoding: [0x02,0x68,0x5c,0xa0]
-	movi r5, 3768                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0xb8]
+	movi r5, 3628                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0x2c]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	ld r9, fp, 6768                         # encoding: [0x01,0x6a,0x5a,0x70]
 	addi r4, r9, 0                          # encoding: [0x20,0x49,0x00,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r5, fp, 6356                       # encoding: [0x20,0x69,0x58,0xd4]
-	movi r4, 3777                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xc1]
+	movi r4, 3637                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x35]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	st r5, fp, 7260                         # encoding: [0x02,0x69,0x5c,0x5c]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -7843,7 +7931,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 6340                       # encoding: [0x20,0x69,0x98,0xc4]
-	movi r4, 3788                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xcc]
+	movi r4, 3648                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x40]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -7855,7 +7943,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 6332                      # encoding: [0x20,0x6a,0xd8,0xbc]
-	movi r5, 3792                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0xd0]
+	movi r5, 3652                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0x44]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -7863,7 +7951,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r9, fp, 6268                       # encoding: [0x20,0x6a,0x58,0x7c]
-	movi r5, 3773                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0xbd]
+	movi r5, 3633                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0x31]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	ld r8, fp, 7328                         # encoding: [0x01,0x6a,0x1c,0xa0]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -7932,7 +8020,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 6396                       # encoding: [0x20,0x69,0x98,0xfc]
-	movi r4, 3746                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xa2]
+	movi r4, 3606                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x16]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r9, fp, 6796                         # encoding: [0x01,0x6a,0x5a,0x8c]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -7977,11 +8065,12 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_closure@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_closure@function, kind: FK_PCRel_imm14
-	addi r1, pc, __lua.fun.__Lua_Temp_Method_11@function # encoding: [0x20,0xa0,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_11@function, kind: FK_PCRel_imm14
+	movi tmp1, __lua.fun.__Lua_Temp_Method_11@function # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: __lua.fun.__Lua_Temp_Method_11@function, kind: FK_PCRel_OFFSET_imm32
+	add r1, tmp1, pc                        # encoding: [0x41,0x9d,0x02,0x00]
 	st r1, fp, 6420                         # encoding: [0x02,0x68,0x59,0x14]
 	addi r2, fp, 6420                       # encoding: [0x20,0x68,0x99,0x14]
-	movi r4, 3835                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xfb]
+	movi r4, 3690                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x6a]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
 	jusb __lua.fun.__lua_set_closure_function@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -8009,7 +8098,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 6440                       # encoding: [0x20,0x69,0xd9,0x28]
-	movi r4, 4178                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x52]
+	movi r4, 4023                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xb7]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -8044,13 +8133,14 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 6480                       # encoding: [0x20,0x6a,0x19,0x50]
-	addi r2, pc, .L.str.28@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.28@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.28@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.28@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 2                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x02]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 4193                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x61]
+	movi r4, 4035                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xc3]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -8069,7 +8159,7 @@ __lua.fun.__Lua_Temp_Method_0:          # @__lua.fun.__Lua_Temp_Method_0
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 6496                       # encoding: [0x20,0x6a,0x19,0x60]
-	movi r4, 4187                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x5b]
+	movi r4, 4029                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xbd]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -8459,15 +8549,16 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r7, fp, 108                        # encoding: [0x20,0x69,0xc0,0x6c]
-	addi tmp1, pc, .LCPI2_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI2_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI2_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI2_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 100                        # encoding: [0x20,0x6a,0x00,0x64]
-	movi r4, 906                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x8a]
+	movi r4, 892                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x7c]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -8485,14 +8576,15 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r6, fp, 124                        # encoding: [0x20,0x69,0x80,0x7c]
-	addi tmp1, pc, .LCPI2_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI2_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI2_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI2_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 116                        # encoding: [0x20,0x69,0xc0,0x74]
-	movi r4, 909                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x8d]
+	movi r4, 895                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x7f]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -8526,15 +8618,16 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 164                        # encoding: [0x20,0x69,0xc0,0xa4]
-	addi r2, pc, .L.str.29@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.29@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.29@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.29@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r8, 1                              # encoding: [0x35,0x40,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	st r8, fp, 456                          # encoding: [0x02,0x6a,0x01,0xc8]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 941                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xad]
+	movi r4, 926                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x9e]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -8546,30 +8639,33 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 946                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x03,0xb2]
+	movi r3, 931                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x03,0xa3]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
 	addi r11, fp, 172                       # encoding: [0x20,0x6a,0xc0,0xac]
-	addi r2, pc, .L.str.10@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.10@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	st r2, fp, 460                          # encoding: [0x02,0x68,0x81,0xcc]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 204                        # encoding: [0x20,0x69,0x80,0xcc]
-	addi r2, pc, .L.str.26@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.26@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.26@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.26@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 196                        # encoding: [0x20,0x69,0xc0,0xc4]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 934                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xa6]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 919                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x97]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -8591,7 +8687,7 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
-	movi r4, 932                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xa4]
+	movi r4, 917                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0x95]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -8615,12 +8711,12 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 952                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x03,0xb8]
+	movi r3, 937                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x03,0xa9]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
-	movi r3, 929                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x03,0xa1]
+	movi r3, 914                            # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x03,0x92]
 	ld r10, fp, 452                         # encoding: [0x01,0x6a,0x81,0xc4]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -8643,7 +8739,7 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r6, 964                            # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x03,0xc4]
+	movi r6, 948                            # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x03,0xb4]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	addi r2, r4, 0                          # encoding: [0x20,0x20,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -8659,7 +8755,7 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 252                        # encoding: [0x20,0x6a,0x00,0xfc]
-	movi r4, 971                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xcb]
+	movi r4, 955                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xbb]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -8693,8 +8789,9 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 .LBB2_1:                                # %for.cond
                                         # =>This Inner Loop Header: Depth=1
 	addi r1, fp, 300                        # encoding: [0x20,0x68,0x41,0x2c]
-	addi tmp1, pc, .LCPI2_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI2_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI2_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI2_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r3, r1, 0                          # encoding: [0x20,0x08,0xc0,0x00]
 	st r3, fp, 464                          # encoding: [0x02,0x68,0xc1,0xd0]
@@ -8703,7 +8800,7 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	addi r6, fp, 292                        # encoding: [0x20,0x69,0x81,0x24]
 	addi r7, fp, 236                        # encoding: [0x20,0x69,0xc0,0xec]
 	movi r12, 13                            # encoding: [0x35,0x60,0x00,0x00,0x00,0x00,0x00,0x0d]
-	movi r5, 960                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xc0]
+	movi r5, 944                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xb0]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 468                          # encoding: [0x02,0x69,0x81,0xd4]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -8805,8 +8902,9 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r6, fp, 356                        # encoding: [0x20,0x69,0x81,0x64]
-	addi tmp1, pc, .LCPI2_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI2_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI2_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI2_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -8814,19 +8912,19 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	addi r8, fp, 372                        # encoding: [0x20,0x6a,0x01,0x74]
 	addi r2, fp, 84                         # encoding: [0x20,0x68,0x80,0x54]
 	addi r3, fp, 220                        # encoding: [0x20,0x68,0xc0,0xdc]
-	movi r4, 985                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xd9]
+	movi r4, 969                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xc9]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r9, fp, 380                        # encoding: [0x20,0x6a,0x41,0x7c]
 	addi r2, fp, 132                        # encoding: [0x20,0x68,0x80,0x84]
-	movi r4, 993                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xe1]
+	movi r4, 977                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xd1]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r10, fp, 364                       # encoding: [0x20,0x6a,0x81,0x6c]
 	movi r4, 14                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x0e]
-	movi r5, 988                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xdc]
+	movi r5, 972                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xcc]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
@@ -8851,16 +8949,18 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 404                        # encoding: [0x20,0x69,0x41,0x94]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 396                        # encoding: [0x20,0x69,0x81,0x8c]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 977                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xd1]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 961                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xc1]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -8889,7 +8989,7 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	addi r2, fp, 220                        # encoding: [0x20,0x68,0x80,0xdc]
 	addi r3, fp, 236                        # encoding: [0x20,0x68,0xc0,0xec]
 	movi r4, 5                              # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x05]
-	movi r5, 960                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xc0]
+	movi r5, 944                            # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x03,0xb0]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
@@ -8911,22 +9011,24 @@ __lua.fun.__Lua_Temp_Method_1:          # @__lua.fun.__Lua_Temp_Method_1
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r5, fp, 424                        # encoding: [0x20,0x69,0x41,0xa8]
-	addi tmp1, pc, .LCPI2_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI2_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI2_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI2_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 440                        # encoding: [0x20,0x69,0x81,0xb8]
-	addi r2, pc, .L.str.10@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.10@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 1                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 432                        # encoding: [0x20,0x69,0xc1,0xb0]
 	addi r2, fp, 132                        # encoding: [0x20,0x68,0x80,0x84]
-	movi r4, 1015                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xf7]
+	movi r4, 998                            # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xe6]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9048,15 +9150,16 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r5, fp, 108                        # encoding: [0x20,0x69,0x40,0x6c]
-	addi tmp1, pc, .LCPI3_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI3_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI3_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI3_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 100                        # encoding: [0x20,0x69,0x80,0x64]
-	movi r4, 1040                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x10]
+	movi r4, 1020                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x03,0xfc]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9082,16 +9185,18 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 148                       # encoding: [0x20,0x6a,0x80,0x94]
-	addi r2, pc, .L.str.2@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.2@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.2@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.2@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 3                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r11, fp, 140                       # encoding: [0x20,0x6a,0xc0,0x8c]
-	movi r9, __lua.var._ENV@global          # encoding: [0x35,0x48,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 1055                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x1f]
+	addi r9, tmp0, 0                        # encoding: [0x20,0x92,0x40,0x00]
+	movi r4, 1034                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x0a]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -9104,7 +9209,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	addi r8, fp, 132                        # encoding: [0x20,0x6a,0x00,0x84]
 	movi r4, 14                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x0e]
 	st r4, fp, 404                          # encoding: [0x02,0x69,0x01,0x94]
-	movi r5, 1059                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x23]
+	movi r5, 1038                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x0e]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -9132,14 +9237,15 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 180                        # encoding: [0x20,0x69,0x40,0xb4]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 172                        # encoding: [0x20,0x69,0xc0,0xac]
-	movi r4, 1048                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x18]
+	movi r4, 1027                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x03]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -9166,19 +9272,20 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 1081                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0x39]
+	movi r3, 1059                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0x23]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	ld r2, fp, 392                          # encoding: [0x01,0x68,0x81,0x88]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
-	movi r3, 1080                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0x38]
+	movi r3, 1058                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0x22]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r4, 0                          # encoding: [0x20,0x20,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_assign_local_var@function, kind: FK_PCRel_imm14
 	addi r7, fp, 204                        # encoding: [0x20,0x69,0xc0,0xcc]
-	addi r5, pc, .L.str.10@global           # encoding: [0x20,0xa1,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.10@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_OFFSET_imm32
+	add r5, tmp1, pc                        # encoding: [0x41,0x9d,0x0a,0x00]
 	movi r6, 1                              # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -9186,14 +9293,14 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 212                        # encoding: [0x20,0x6a,0x00,0xd4]
-	movi r4, 1093                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x45]
+	movi r4, 1071                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x2f]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	ld r9, fp, 404                          # encoding: [0x01,0x6a,0x41,0x94]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_unop@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_unop@function, kind: FK_PCRel_imm14
-	movi r4, 1091                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x43]
+	movi r4, 1069                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x2d]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -9217,7 +9324,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 252                        # encoding: [0x20,0x69,0x80,0xfc]
-	movi r4, 1113                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x59]
+	movi r4, 1090                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x42]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 384                          # encoding: [0x02,0x69,0x81,0x80]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -9226,15 +9333,16 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r3, fp, 268                        # encoding: [0x20,0x68,0xc1,0x0c]
 	st r3, fp, 388                          # encoding: [0x02,0x68,0xc1,0x84]
-	addi tmp1, pc, .LCPI3_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI3_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI3_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI3_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 244                        # encoding: [0x20,0x6a,0x00,0xf4]
-	movi r5, 1115                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x5b]
+	movi r5, 1092                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x44]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 412                          # encoding: [0x02,0x6a,0x01,0x9c]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -9248,7 +9356,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 284                        # encoding: [0x20,0x69,0x81,0x1c]
-	movi r4, 1124                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x64]
+	movi r4, 1101                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x4d]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 408                          # encoding: [0x02,0x69,0x81,0x98]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
@@ -9261,7 +9369,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 276                       # encoding: [0x20,0x6a,0x81,0x14]
-	movi r5, 1128                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x68]
+	movi r5, 1105                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x51]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 420                         # encoding: [0x02,0x6a,0x81,0xa4]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
@@ -9271,7 +9379,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 236                       # encoding: [0x20,0x6a,0xc0,0xec]
 	movi r9, 16                             # encoding: [0x35,0x48,0x00,0x00,0x00,0x00,0x00,0x10]
-	movi r5, 1119                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x5f]
+	movi r5, 1096                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x48]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -9284,7 +9392,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 316                        # encoding: [0x20,0x6a,0x01,0x3c]
-	movi r4, 1138                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x72]
+	movi r4, 1115                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x5b]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r12, 0                         # encoding: [0x20,0x60,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -9296,7 +9404,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 308                       # encoding: [0x20,0x6a,0x81,0x34]
-	movi r5, 1142                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x76]
+	movi r5, 1119                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x5f]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -9304,7 +9412,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r7, fp, 228                        # encoding: [0x20,0x69,0xc0,0xe4]
-	movi r5, 1133                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x6d]
+	movi r5, 1110                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x04,0x56]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -9359,7 +9467,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	ld r1, fp, 380                          # encoding: [0x01,0x68,0x41,0x7c]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r2, 1154                           # encoding: [0x35,0x10,0x00,0x00,0x00,0x00,0x04,0x82]
+	movi r2, 1130                           # encoding: [0x35,0x10,0x00,0x00,0x00,0x00,0x04,0x6a]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_to_bool@function   # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_to_bool@function, kind: FK_PCRel_imm14
@@ -9370,14 +9478,15 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
                                         #   fixup A - offset: 0, value: .LBB3_1@block, kind: FK_PCRel_addr24
 .LBB3_1:                                # %if.then
 	addi r2, fp, 340                        # encoding: [0x20,0x68,0x81,0x54]
-	addi tmp1, pc, .LCPI3_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI3_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI3_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI3_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r1, fp, 220                        # encoding: [0x20,0x68,0x40,0xdc]
-	movi r3, 1167                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0x8f]
+	movi r3, 1143                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0x77]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_assign_local_var@function, kind: FK_PCRel_imm14
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
@@ -9393,14 +9502,15 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r2, fp, 352                        # encoding: [0x20,0x68,0x81,0x60]
-	addi tmp1, pc, .LCPI3_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI3_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI3_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI3_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 220                        # encoding: [0x20,0x68,0xc0,0xdc]
-	movi r4, 1186                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xa2]
+	movi r4, 1161                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x89]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -9408,8 +9518,9 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 360                        # encoding: [0x20,0x68,0x81,0x68]
-	addi tmp1, pc, .LCPI3_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI3_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI3_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI3_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9418,7 +9529,7 @@ __lua.fun.__Lua_Temp_Method_2:          # @__lua.fun.__Lua_Temp_Method_2
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1191                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xa7]
+	movi r4, 1166                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0x8e]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -9517,14 +9628,15 @@ __lua.fun.__Lua_Temp_Method_3:          # @__lua.fun.__Lua_Temp_Method_3
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r7, fp, 92                         # encoding: [0x20,0x69,0xc0,0x5c]
-	addi tmp1, pc, .LCPI4_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI4_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI4_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI4_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r5, fp, 84                         # encoding: [0x20,0x69,0x40,0x54]
-	movi r4, 1218                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xc2]
+	movi r4, 1190                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xa6]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9559,14 +9671,15 @@ __lua.fun.__Lua_Temp_Method_3:          # @__lua.fun.__Lua_Temp_Method_3
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r5, fp, 128                        # encoding: [0x20,0x69,0x40,0x80]
-	addi r2, pc, .L.str.29@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.29@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.29@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.29@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r10, 1                             # encoding: [0x35,0x50,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
-	movi r4, 1242                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xda]
+	movi r4, 1214                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xbe]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -9578,29 +9691,32 @@ __lua.fun.__Lua_Temp_Method_3:          # @__lua.fun.__Lua_Temp_Method_3
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 1247                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0xdf]
+	movi r3, 1219                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0xc3]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
 	addi r9, fp, 136                        # encoding: [0x20,0x6a,0x40,0x88]
-	addi r2, pc, .L.str.10@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.10@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r10, fp, 168                       # encoding: [0x20,0x6a,0x80,0xa8]
-	addi r2, pc, .L.str.26@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.26@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.26@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.26@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r11, fp, 160                       # encoding: [0x20,0x6a,0xc0,0xa0]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 1235                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xd3]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 1207                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xb7]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9621,7 +9737,7 @@ __lua.fun.__Lua_Temp_Method_3:          # @__lua.fun.__Lua_Temp_Method_3
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
-	movi r4, 1233                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xd1]
+	movi r4, 1205                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xb5]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -9646,7 +9762,7 @@ __lua.fun.__Lua_Temp_Method_3:          # @__lua.fun.__Lua_Temp_Method_3
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 1253                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0xe5]
+	movi r3, 1225                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x04,0xc9]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r2, fp, 196                          # encoding: [0x01,0x68,0x80,0xc4]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9655,7 +9771,7 @@ __lua.fun.__Lua_Temp_Method_3:          # @__lua.fun.__Lua_Temp_Method_3
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1230                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xce]
+	movi r4, 1202                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xb2]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9754,15 +9870,16 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r7, fp, 116                        # encoding: [0x20,0x69,0xc0,0x74]
-	addi tmp1, pc, .LCPI5_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI5_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI5_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI5_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 108                        # encoding: [0x20,0x6a,0x00,0x6c]
-	movi r4, 1288                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x08]
+	movi r4, 1258                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xea]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9780,15 +9897,16 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r7, fp, 132                        # encoding: [0x20,0x69,0xc0,0x84]
-	addi tmp1, pc, .LCPI5_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI5_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI5_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI5_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 124                        # encoding: [0x20,0x6a,0x00,0x7c]
-	movi r4, 1291                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x0b]
+	movi r4, 1261                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xed]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9822,7 +9940,7 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1319                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x27]
+	movi r4, 1289                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x09]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -9840,7 +9958,7 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 1325                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x2d]
+	movi r4, 1295                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x0f]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -9851,21 +9969,23 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r10, fp, 184                       # encoding: [0x20,0x6a,0x80,0xb8]
-	addi tmp1, pc, .LCPI5_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI5_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI5_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI5_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 200                       # encoding: [0x20,0x6a,0xc0,0xc8]
-	addi r2, pc, .L.str.10@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.10@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.10@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 1                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r12, fp, 192                       # encoding: [0x20,0x6b,0x00,0xc0]
-	movi r4, 1332                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x34]
+	movi r4, 1302                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x16]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -9886,29 +10006,32 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r9, fp, 232                        # encoding: [0x20,0x6a,0x40,0xe8]
-	addi r2, pc, .L.str.24@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.24@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.24@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.24@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 5                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x05]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r10, fp, 224                       # encoding: [0x20,0x6a,0x80,0xe0]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 1306                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x1a]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 1276                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xfc]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r11, fp, 240                       # encoding: [0x20,0x6a,0xc0,0xf0]
-	addi r2, pc, .L.str.25@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.25@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.25@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.25@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r12, fp, 216                       # encoding: [0x20,0x6b,0x00,0xd8]
-	movi r4, 1311                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x1f]
+	movi r4, 1281                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x01]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -9941,7 +10064,7 @@ __lua.fun.__Lua_Temp_Method_4:          # @__lua.fun.__Lua_Temp_Method_4
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 248                        # encoding: [0x20,0x69,0x40,0xf8]
-	movi r4, 1304                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x05,0x18]
+	movi r4, 1274                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x04,0xfa]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	ld r6, fp, 256                          # encoding: [0x01,0x69,0x81,0x00]
@@ -10048,15 +10171,16 @@ __lua.fun.__Lua_Temp_Method_5:          # @__lua.fun.__Lua_Temp_Method_5
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r8, fp, 108                        # encoding: [0x20,0x6a,0x00,0x6c]
-	addi tmp1, pc, .LCPI6_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI6_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI6_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI6_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 100                        # encoding: [0x20,0x6a,0x40,0x64]
-	movi r4, 1943                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x97]
+	movi r4, 1890                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x62]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10074,14 +10198,15 @@ __lua.fun.__Lua_Temp_Method_5:          # @__lua.fun.__Lua_Temp_Method_5
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r8, fp, 124                        # encoding: [0x20,0x6a,0x00,0x7c]
-	addi tmp1, pc, .LCPI6_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI6_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI6_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI6_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 116                        # encoding: [0x20,0x6a,0x40,0x74]
-	movi r4, 1944                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x98]
+	movi r4, 1891                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x63]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10105,12 +10230,12 @@ __lua.fun.__Lua_Temp_Method_5:          # @__lua.fun.__Lua_Temp_Method_5
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 1962                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0xaa]
+	movi r3, 1909                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0x75]
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
-	movi r3, 1961                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0xa9]
+	movi r3, 1908                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x07,0x74]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r4, 0                          # encoding: [0x20,0x20,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10131,14 +10256,14 @@ __lua.fun.__Lua_Temp_Method_5:          # @__lua.fun.__Lua_Temp_Method_5
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 176                       # encoding: [0x20,0x6a,0xc0,0xb0]
-	movi r4, 1980                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xbc]
+	movi r4, 1927                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x87]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r7, fp, 168                        # encoding: [0x20,0x69,0xc0,0xa8]
-	movi r4, 1979                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xbb]
+	movi r4, 1926                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x86]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -10146,14 +10271,14 @@ __lua.fun.__Lua_Temp_Method_5:          # @__lua.fun.__Lua_Temp_Method_5
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r12, fp, 192                       # encoding: [0x20,0x6b,0x00,0xc0]
 	movi r3, 14                             # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x0e]
-	movi r4, 1985                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0xc1]
+	movi r4, 1932                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x07,0x8c]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	jusb __lua.fun.__lua_unop@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_unop@function, kind: FK_PCRel_imm14
 	addi r10, fp, 160                       # encoding: [0x20,0x6a,0x80,0xa0]
 	movi r4, 5                              # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x05]
-	movi r5, 1984                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0xc0]
+	movi r5, 1931                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x07,0x8b]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -10303,15 +10428,16 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 96                           # encoding: [0x01,0x68,0x80,0x60]
 	addi r5, fp, 148                        # encoding: [0x20,0x69,0x40,0x94]
-	addi tmp1, pc, .LCPI7_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 140                        # encoding: [0x20,0x69,0x80,0x8c]
-	movi r4, 2135                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x57]
+	movi r4, 2074                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x1a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10330,14 +10456,15 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 96                           # encoding: [0x01,0x68,0x80,0x60]
 	addi r5, fp, 164                        # encoding: [0x20,0x69,0x40,0xa4]
-	addi tmp1, pc, .LCPI7_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 156                        # encoding: [0x20,0x69,0x80,0x9c]
-	movi r4, 2138                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x5a]
+	movi r4, 2077                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x1d]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10355,15 +10482,16 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 96                           # encoding: [0x01,0x68,0x80,0x60]
 	addi r5, fp, 180                        # encoding: [0x20,0x69,0x40,0xb4]
-	addi tmp1, pc, .LCPI7_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 172                        # encoding: [0x20,0x69,0x80,0xac]
-	movi r4, 2141                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x5d]
+	movi r4, 2080                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x20]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10381,15 +10509,16 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 96                           # encoding: [0x01,0x68,0x80,0x60]
 	addi r5, fp, 196                        # encoding: [0x20,0x69,0x40,0xc4]
-	addi tmp1, pc, .LCPI7_3@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_3@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f3, tmp1, 0                         # encoding: [0x07,0x98,0xc0,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f3                             # encoding: [0x68,0x18,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 188                        # encoding: [0x20,0x69,0x80,0xbc]
-	movi r4, 2144                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x60]
+	movi r4, 2083                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x23]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10407,14 +10536,15 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 96                           # encoding: [0x01,0x68,0x80,0x60]
 	addi r5, fp, 212                        # encoding: [0x20,0x69,0x40,0xd4]
-	addi tmp1, pc, .LCPI7_4@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_4@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_4@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_4@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 204                        # encoding: [0x20,0x69,0x80,0xcc]
-	movi r4, 2147                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x63]
+	movi r4, 2086                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x26]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10440,12 +10570,12 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 2169                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x79]
+	movi r3, 2107                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x3b]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
-	movi r3, 2168                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x78]
+	movi r3, 2106                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x08,0x3a]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10461,15 +10591,16 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 284                        # encoding: [0x20,0x68,0xc1,0x1c]
 	st r3, fp, 512                          # encoding: [0x02,0x68,0xc2,0x00]
-	addi tmp1, pc, .LCPI7_5@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_5@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_5@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_5@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 276                        # encoding: [0x20,0x6a,0x41,0x14]
 	movi r6, 14                             # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x00,0x0e]
-	movi r5, 2186                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x8a]
+	movi r5, 2123                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x4b]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 524                          # encoding: [0x02,0x6a,0x42,0x0c]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -10484,7 +10615,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 300                       # encoding: [0x20,0x6a,0x81,0x2c]
-	movi r4, 2201                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x99]
+	movi r4, 2138                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x5a]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 520                         # encoding: [0x02,0x6a,0x82,0x08]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
@@ -10494,14 +10625,15 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r3, fp, 316                        # encoding: [0x20,0x68,0xc1,0x3c]
 	st r3, fp, 528                          # encoding: [0x02,0x68,0xc2,0x10]
-	addi tmp1, pc, .LCPI7_6@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_6@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_6@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_6@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 292                        # encoding: [0x20,0x6a,0x01,0x24]
-	movi r5, 2205                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x9d]
+	movi r5, 2142                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x5e]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	st r8, fp, 532                          # encoding: [0x02,0x6a,0x02,0x14]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
@@ -10511,7 +10643,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	addi r10, fp, 268                       # encoding: [0x20,0x6a,0x81,0x0c]
 	movi r4, 16                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x10]
 	st r4, fp, 564                          # encoding: [0x02,0x69,0x02,0x34]
-	movi r5, 2193                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x91]
+	movi r5, 2130                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x52]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	st r10, fp, 572                         # encoding: [0x02,0x6a,0x82,0x3c]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -10519,8 +10651,9 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r5, fp, 356                        # encoding: [0x20,0x69,0x41,0x64]
-	addi r8, pc, .L.str.13@global           # encoding: [0x20,0xa2,0b00AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.13@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.13@global, kind: FK_PCRel_OFFSET_imm32
+	add r8, tmp1, pc                        # encoding: [0x41,0x9d,0x10,0x00]
 	movi r12, 3                             # encoding: [0x35,0x60,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	st r5, fp, 540                          # encoding: [0x02,0x69,0x42,0x1c]
@@ -10529,9 +10662,10 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r11, fp, 348                       # encoding: [0x20,0x6a,0xc1,0x5c]
-	movi r9, __lua.var._ENV@global          # encoding: [0x35,0x48,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2231                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xb7]
+	addi r9, tmp0, 0                        # encoding: [0x20,0x92,0x40,0x00]
+	movi r4, 2167                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x77]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	st r11, fp, 544                         # encoding: [0x02,0x6a,0xc2,0x20]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -10547,14 +10681,14 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	addi r6, fp, 340                        # encoding: [0x20,0x69,0x81,0x54]
 	movi r4, 6                              # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x06]
 	st r4, fp, 536                          # encoding: [0x02,0x69,0x02,0x18]
-	movi r5, 2234                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xba]
+	movi r5, 2170                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x7a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	st r6, fp, 556                          # encoding: [0x02,0x69,0x82,0x2c]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 332                       # encoding: [0x20,0x6a,0xc1,0x4c]
-	movi r4, 2230                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xb6]
+	movi r4, 2166                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x76]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	st r11, fp, 580                         # encoding: [0x02,0x6a,0xc2,0x44]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -10569,7 +10703,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 380                        # encoding: [0x20,0x69,0xc1,0x7c]
-	movi r4, 2241                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xc1]
+	movi r4, 2177                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x81]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 576                          # encoding: [0x02,0x69,0xc2,0x40]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
@@ -10580,22 +10714,23 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r3, fp, 396                        # encoding: [0x20,0x68,0xc1,0x8c]
 	st r3, fp, 584                          # encoding: [0x02,0x68,0xc2,0x48]
-	addi tmp1, pc, .LCPI7_7@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI7_7@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI7_7@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI7_7@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 372                        # encoding: [0x20,0x6a,0x41,0x74]
 	movi r4, 5                              # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x05]
-	movi r5, 2244                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xc4]
+	movi r5, 2180                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x84]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	st r9, fp, 588                          # encoding: [0x02,0x6a,0x42,0x4c]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r7, fp, 324                        # encoding: [0x20,0x69,0xc1,0x44]
-	movi r5, 2238                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xbe]
+	movi r5, 2174                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x7e]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	st r7, fp, 592                          # encoding: [0x02,0x69,0xc2,0x50]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
@@ -10604,7 +10739,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r9, fp, 260                        # encoding: [0x20,0x6a,0x41,0x04]
-	movi r5, 2212                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xa4]
+	movi r5, 2149                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x65]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -10619,7 +10754,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 428                        # encoding: [0x20,0x6a,0x01,0xac]
-	movi r4, 2262                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xd6]
+	movi r4, 2198                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x96]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -10631,7 +10766,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 420                       # encoding: [0x20,0x6a,0x81,0xa4]
-	movi r5, 2265                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xd9]
+	movi r5, 2201                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x99]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -10639,7 +10774,7 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r7, fp, 412                        # encoding: [0x20,0x69,0xc1,0x9c]
-	movi r4, 2261                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xd5]
+	movi r4, 2197                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x95]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	ld r2, fp, 552                          # encoding: [0x01,0x68,0x82,0x28]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
@@ -10647,13 +10782,13 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
 	addi r11, fp, 404                       # encoding: [0x20,0x6a,0xc1,0x94]
 	movi r3, 9                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x09]
-	movi r4, 2253                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xcd]
+	movi r4, 2189                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x8d]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_unop@function      # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_unop@function, kind: FK_PCRel_imm14
 	addi r6, fp, 252                        # encoding: [0x20,0x69,0x80,0xfc]
-	movi r5, 2249                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xc9]
+	movi r5, 2185                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0x89]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -10745,14 +10880,15 @@ __lua.fun.__Lua_Temp_Method_6:          # @__lua.fun.__Lua_Temp_Method_6
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 468                        # encoding: [0x20,0x69,0x41,0xd4]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	ld r3, fp, 536                          # encoding: [0x01,0x68,0xc2,0x18]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 460                        # encoding: [0x20,0x69,0x81,0xcc]
-	movi r4, 2177                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x81]
+	movi r4, 2114                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0x42]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r2, fp, 560                          # encoding: [0x01,0x68,0x82,0x30]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -10876,15 +11012,16 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r5, fp, 116                        # encoding: [0x20,0x69,0x40,0x74]
-	addi tmp1, pc, .LCPI8_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI8_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI8_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI8_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 108                        # encoding: [0x20,0x69,0x80,0x6c]
-	movi r4, 2289                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xf1]
+	movi r4, 2222                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xae]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10903,14 +11040,15 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r5, fp, 132                        # encoding: [0x20,0x69,0x40,0x84]
-	addi tmp1, pc, .LCPI8_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI8_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI8_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI8_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 124                        # encoding: [0x20,0x69,0x80,0x7c]
-	movi r4, 2291                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xf3]
+	movi r4, 2224                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xb0]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10929,14 +11067,15 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 80                           # encoding: [0x01,0x68,0x80,0x50]
 	addi r5, fp, 148                        # encoding: [0x20,0x69,0x40,0x94]
-	addi tmp1, pc, .LCPI8_2@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI8_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI8_2@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI8_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 140                        # encoding: [0x20,0x69,0x80,0x8c]
-	movi r4, 2293                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xf5]
+	movi r4, 2226                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xb2]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -10963,15 +11102,16 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 196                        # encoding: [0x20,0x68,0xc0,0xc4]
 	st r3, fp, 276                          # encoding: [0x02,0x68,0xc1,0x14]
-	addi tmp1, pc, .LCPI8_3@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI8_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI8_3@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI8_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r11, fp, 188                       # encoding: [0x20,0x6a,0xc0,0xbc]
 	movi r10, 14                            # encoding: [0x35,0x50,0x00,0x00,0x00,0x00,0x00,0x0e]
-	movi r5, 2308                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x04]
+	movi r5, 2240                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xc0]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	st r11, fp, 288                         # encoding: [0x02,0x6a,0xc1,0x20]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
@@ -10979,14 +11119,15 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r6, fp, 212                        # encoding: [0x20,0x69,0x80,0xd4]
-	addi tmp1, pc, .LCPI8_4@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI8_4@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI8_4@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI8_4@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 204                        # encoding: [0x20,0x69,0xc0,0xcc]
-	movi r5, 2321                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x11]
+	movi r5, 2253                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xcd]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -10995,7 +11136,7 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r9, fp, 180                        # encoding: [0x20,0x6a,0x40,0xb4]
 	movi r12, 16                            # encoding: [0x35,0x60,0x00,0x00,0x00,0x00,0x00,0x10]
-	movi r5, 2315                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x0b]
+	movi r5, 2247                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xc7]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -11003,14 +11144,15 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r11, fp, 228                       # encoding: [0x20,0x6a,0xc0,0xe4]
-	addi tmp1, pc, .LCPI8_5@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI8_5@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI8_5@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI8_5@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 220                        # encoding: [0x20,0x6a,0x00,0xdc]
-	movi r5, 2334                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x1e]
+	movi r5, 2266                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xda]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	ld r2, fp, 264                          # encoding: [0x01,0x68,0x81,0x08]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -11018,7 +11160,7 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
 	addi r10, fp, 172                       # encoding: [0x20,0x6a,0x80,0xac]
-	movi r5, 2328                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0x18]
+	movi r5, 2260                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x08,0xd4]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -11060,16 +11202,18 @@ __lua.fun.__Lua_Temp_Method_7:          # @__lua.fun.__Lua_Temp_Method_7
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 252                        # encoding: [0x20,0x69,0x40,0xfc]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 6                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x06]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 244                        # encoding: [0x20,0x69,0x80,0xf4]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2299                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xfb]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 2231                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x08,0xb7]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11161,14 +11305,15 @@ __lua.fun.__Lua_Temp_Method_8:          # @__lua.fun.__Lua_Temp_Method_8
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 60                           # encoding: [0x01,0x68,0x80,0x3c]
 	addi r8, fp, 88                         # encoding: [0x20,0x6a,0x00,0x58]
-	addi tmp1, pc, .LCPI9_0@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI9_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI9_0@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI9_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 80                         # encoding: [0x20,0x6a,0x40,0x50]
-	movi r4, 2524                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xdc]
+	movi r4, 2440                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x88]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11186,14 +11331,15 @@ __lua.fun.__Lua_Temp_Method_8:          # @__lua.fun.__Lua_Temp_Method_8
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 60                           # encoding: [0x01,0x68,0x80,0x3c]
 	addi r7, fp, 104                        # encoding: [0x20,0x69,0xc0,0x68]
-	addi tmp1, pc, .LCPI9_1@constant_pool   # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI9_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI9_1@constant_pool       # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI9_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 96                         # encoding: [0x20,0x6a,0x00,0x60]
-	movi r4, 2527                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xdf]
+	movi r4, 2443                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0x8b]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11214,7 +11360,7 @@ __lua.fun.__Lua_Temp_Method_8:          # @__lua.fun.__Lua_Temp_Method_8
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 2539                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0xeb]
+	movi r3, 2455                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x09,0x97]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11311,14 +11457,15 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r6, fp, 124                        # encoding: [0x20,0x69,0x80,0x7c]
-	addi tmp1, pc, .LCPI10_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 116                        # encoding: [0x20,0x6a,0x40,0x74]
-	movi r4, 2562                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x02]
+	movi r4, 2476                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xac]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11336,14 +11483,15 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r6, fp, 140                        # encoding: [0x20,0x69,0x80,0x8c]
-	addi tmp1, pc, .LCPI10_1@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_1@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 132                        # encoding: [0x20,0x6a,0x40,0x84]
-	movi r4, 2565                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x05]
+	movi r4, 2479                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xaf]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11361,14 +11509,15 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r6, fp, 156                        # encoding: [0x20,0x69,0x80,0x9c]
-	addi tmp1, pc, .LCPI10_2@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_2@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r8, fp, 148                        # encoding: [0x20,0x6a,0x00,0x94]
-	movi r4, 2568                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x08]
+	movi r4, 2482                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xb2]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11389,16 +11538,18 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r8, fp, 188                        # encoding: [0x20,0x6a,0x00,0xbc]
-	addi r2, pc, .L.str.2@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.2@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.2@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.2@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 3                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r10, fp, 180                       # encoding: [0x20,0x6a,0x80,0xb4]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2594                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x22]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 2506                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xca]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11409,7 +11560,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r11, fp, 172                       # encoding: [0x20,0x6a,0xc0,0xac]
 	movi r4, 14                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x0e]
-	movi r5, 2598                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0x26]
+	movi r5, 2510                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0xce]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -11433,14 +11584,15 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r3, fp, 212                        # encoding: [0x20,0x68,0xc0,0xd4]
-	addi tmp1, pc, .LCPI10_3@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_3@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r3, 0                          # encoding: [0x20,0x18,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 204                        # encoding: [0x20,0x69,0x80,0xcc]
-	movi r5, 2614                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0x36]
+	movi r5, 2525                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x09,0xdd]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11479,15 +11631,16 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r5, fp, 108                        # encoding: [0x20,0x69,0x40,0x6c]
-	movi r4, 2645                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x55]
+	movi r4, 2555                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x09,0xfb]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_assign_local_var@function, kind: FK_PCRel_imm14
 	addi r6, fp, 260                        # encoding: [0x20,0x69,0x81,0x04]
-	addi tmp1, pc, .LCPI10_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
@@ -11533,8 +11686,9 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 292                        # encoding: [0x20,0x69,0x81,0x24]
-	addi tmp1, pc, .LCPI10_1@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_1@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
@@ -11568,7 +11722,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 100                        # encoding: [0x20,0x68,0xc0,0x64]
-	movi r4, 2661                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x65]
+	movi r4, 2570                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x0a]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -11580,7 +11734,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2664                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x68]
+	movi r4, 2573                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x0d]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11589,13 +11743,14 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 320                        # encoding: [0x20,0x68,0x81,0x40]
-	addi tmp1, pc, .LCPI10_2@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_2@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2667                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x6b]
+	movi r4, 2576                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x10]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11604,13 +11759,14 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 328                        # encoding: [0x20,0x68,0x81,0x48]
-	addi tmp1, pc, .LCPI10_4@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_4@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_4@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_4@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2670                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x6e]
+	movi r4, 2579                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x13]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11630,15 +11786,16 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 2697                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0a,0x89]
+	movi r3, 2606                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0a,0x2e]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
 	st r12, fp, 584                         # encoding: [0x02,0x6b,0x02,0x48]
 	addi r12, fp, 376                       # encoding: [0x20,0x6b,0x01,0x78]
-	addi r5, pc, .L.str.17@global           # encoding: [0x20,0xa1,0b01AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.17@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.17@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.17@global, kind: FK_PCRel_OFFSET_imm32
+	add r5, tmp1, pc                        # encoding: [0x41,0x9d,0x0a,0x00]
 	movi r10, 7                             # encoding: [0x35,0x50,0x00,0x00,0x00,0x00,0x00,0x07]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
@@ -11646,9 +11803,10 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r6, fp, 368                        # encoding: [0x20,0x69,0x81,0x70]
-	movi r11, __lua.var._ENV@global         # encoding: [0x35,0x58,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2689                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x81]
+	addi r11, tmp0, 0                       # encoding: [0x20,0x92,0xc0,0x00]
+	movi r4, 2598                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x26]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r12, 0                         # encoding: [0x20,0x60,0xc0,0x00]
@@ -11682,7 +11840,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r12, fp, 392                       # encoding: [0x20,0x6b,0x01,0x88]
-	movi r4, 2681                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x79]
+	movi r4, 2590                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x1e]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -11717,7 +11875,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r5, fp, 416                        # encoding: [0x20,0x69,0x41,0xa0]
-	movi r4, 2673                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x71]
+	movi r4, 2582                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x16]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r11, 0                         # encoding: [0x20,0x58,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -11786,8 +11944,9 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
                                         #   fixup A - offset: 0, value: .LBB10_7@block, kind: FK_PCRel_addr24
 .LBB10_4:                               # %if.else
 	addi r6, fp, 444                        # encoding: [0x20,0x69,0x81,0xbc]
-	addi tmp1, pc, .LCPI10_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11797,12 +11956,12 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	st r2, fp, 588                          # encoding: [0x02,0x68,0x82,0x4c]
 	movi r4, 6                              # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x06]
 	st r4, fp, 600                          # encoding: [0x02,0x69,0x02,0x58]
-	movi r5, 2728                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xa8]
+	movi r5, 2635                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0x4b]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
-	movi r4, 2725                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xa5]
+	movi r4, 2632                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x48]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r4, 0                          # encoding: [0x20,0x20,0xc0,0x00]
@@ -11858,7 +12017,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 492                        # encoding: [0x20,0x69,0xc1,0xec]
-	movi r5, 2753                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0xc1]
+	movi r5, 2659                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0a,0x63]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -11891,16 +12050,18 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r6, fp, 524                        # encoding: [0x20,0x69,0x82,0x0c]
-	addi r2, pc, .L.str.6@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.6@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.6@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	ld r3, fp, 600                          # encoding: [0x01,0x68,0xc2,0x58]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 516                        # encoding: [0x20,0x69,0xc2,0x04]
-	movi r5, __lua.var._ENV@global          # encoding: [0x35,0x28,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 2744                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xb8]
+	addi r5, tmp0, 0                        # encoding: [0x20,0x91,0x40,0x00]
+	movi r4, 2650                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x5a]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -11932,7 +12093,7 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2775                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xd7]
+	movi r4, 2680                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x78]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	ld r3, fp, 588                          # encoding: [0x01,0x68,0xc2,0x4c]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11941,13 +12102,14 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 552                        # encoding: [0x20,0x68,0x82,0x28]
-	addi tmp1, pc, .LCPI10_1@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI10_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI10_1@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI10_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 2778                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xda]
+	movi r4, 2683                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x7b]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	ld r3, fp, 592                          # encoding: [0x01,0x68,0xc2,0x50]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -11955,21 +12117,22 @@ __lua.fun.__Lua_Temp_Method_9:          # @__lua.fun.__Lua_Temp_Method_9
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
-	movi r3, 2781                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0a,0xdd]
+	movi r3, 2686                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0a,0x7e]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	ld r2, fp, 596                          # encoding: [0x01,0x68,0x82,0x54]
 	jusb __lua.fun.__lua_add_last_exp@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_add_last_exp@function, kind: FK_PCRel_imm14
 	addi r6, fp, 576                        # encoding: [0x20,0x69,0x82,0x40]
-	addi r2, pc, .L.str.3@global            # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.3@global              # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.3@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r7, 1                              # encoding: [0x35,0x38,0x00,0x00,0x00,0x00,0x00,0x01]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r8, fp, 568                        # encoding: [0x20,0x6a,0x02,0x38]
-	movi r4, 2773                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0xd5]
+	movi r4, 2678                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0a,0x76]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r5, 0                          # encoding: [0x20,0x28,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -12098,15 +12261,16 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 88                           # encoding: [0x01,0x68,0x80,0x58]
 	addi r5, fp, 108                        # encoding: [0x20,0x69,0x40,0x6c]
-	addi tmp1, pc, .LCPI11_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 100                        # encoding: [0x20,0x69,0x80,0x64]
-	movi r4, 3647                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x3f]
+	movi r4, 3513                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xb9]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12130,7 +12294,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	addi r1, r4, 0                          # encoding: [0x20,0x20,0x40,0x00]
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
-	movi r3, 3667                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0e,0x53]
+	movi r3, 3532                           # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x0d,0xcc]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	addi r2, r4, 0                          # encoding: [0x20,0x20,0x80,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12164,7 +12328,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3697                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x71]
+	movi r4, 3561                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xe9]
 	addi r1, r12, 0                         # encoding: [0x20,0x60,0x40,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12177,16 +12341,18 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r6, fp, 212                        # encoding: [0x20,0x69,0x80,0xd4]
-	addi r2, pc, .L.str.30@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.30@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.30@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.30@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r3, 5                              # encoding: [0x35,0x18,0x00,0x00,0x00,0x00,0x00,0x05]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r5, fp, 204                        # encoding: [0x20,0x69,0x40,0xcc]
-	movi r2, __lua.var._ENV@global          # encoding: [0x35,0x10,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 3691                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x6b]
+	addi r2, tmp0, 0                        # encoding: [0x20,0x90,0x80,0x00]
+	movi r4, 3555                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xe3]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12234,8 +12400,9 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 244                        # encoding: [0x20,0x69,0x40,0xf4]
-	addi tmp1, pc, .LCPI11_1@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_1@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f2, tmp1, 0                         # encoding: [0x07,0x98,0x80,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	movd f0, f2                             # encoding: [0x68,0x10,0x00,0x00]
@@ -12259,8 +12426,9 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 260                        # encoding: [0x20,0x69,0x41,0x04]
-	addi tmp1, pc, .LCPI11_2@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_2@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12291,7 +12459,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
-	movi r4, 3700                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x74]
+	movi r4, 3564                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xec]
 	addi r1, r11, 0                         # encoding: [0x20,0x58,0x40,0x00]
 	addi r3, r10, 0                         # encoding: [0x20,0x50,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12316,7 +12484,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r5, fp, 300                        # encoding: [0x20,0x69,0x41,0x2c]
-	movi r4, 3677                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x5d]
+	movi r4, 3541                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xd5]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r11, 0                         # encoding: [0x20,0x58,0xc0,0x00]
@@ -12331,20 +12499,21 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r5, fp, 316                        # encoding: [0x20,0x69,0x41,0x3c]
-	addi tmp1, pc, .LCPI11_3@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_3@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 308                        # encoding: [0x20,0x69,0xc1,0x34]
-	movi r4, 3681                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x61]
+	movi r4, 3545                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xd9]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
-	movi r6, 3688                           # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x0e,0x68]
+	movi r6, 3552                           # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x0d,0xe0]
 	ld r1, fp, 440                          # encoding: [0x01,0x68,0x41,0xb8]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -12362,7 +12531,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r7, fp, 324                        # encoding: [0x20,0x69,0xc1,0x44]
-	movi r4, 3684                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x64]
+	movi r4, 3548                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xdc]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r9, 0                          # encoding: [0x20,0x48,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
@@ -12390,7 +12559,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	addi r6, fp, 340                        # encoding: [0x20,0x69,0x81,0x54]
 	addi r2, fp, 156                        # encoding: [0x20,0x68,0x80,0x9c]
 	movi r4, 18                             # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x00,0x12]
-	movi r5, 3677                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0e,0x5d]
+	movi r5, 3541                           # encoding: [0x35,0x28,0x00,0x00,0x00,0x00,0x0d,0xd5]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_binop@function     # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_binop@function, kind: FK_PCRel_imm14
@@ -12415,21 +12584,22 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	addi r1, fp, 116                        # encoding: [0x20,0x68,0x40,0x74]
 	addi r7, fp, 156                        # encoding: [0x20,0x69,0xc0,0x9c]
 	addi r5, fp, 164                        # encoding: [0x20,0x69,0x40,0xa4]
-	movi r4, 3708                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x7c]
+	movi r4, 3572                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xf4]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
 	addi r8, fp, 148                        # encoding: [0x20,0x6a,0x00,0x94]
-	movi r9, 3677                           # encoding: [0x35,0x48,0x00,0x00,0x00,0x00,0x0e,0x5d]
+	movi r9, 3541                           # encoding: [0x35,0x48,0x00,0x00,0x00,0x00,0x0d,0xd5]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r2, r7, 0                          # encoding: [0x20,0x38,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_assign_local_var@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_assign_local_var@function, kind: FK_PCRel_imm14
 	addi r2, fp, 356                        # encoding: [0x20,0x68,0x81,0x64]
-	addi tmp1, pc, .LCPI11_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f1, tmp1, 0                         # encoding: [0x07,0x98,0x40,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	movd f0, f1                             # encoding: [0x68,0x08,0x00,0x00]
@@ -12437,7 +12607,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 268                        # encoding: [0x20,0x69,0x81,0x0c]
 	addi r3, fp, 140                        # encoding: [0x20,0x68,0xc0,0x8c]
-	movi r4, 3700                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x74]
+	movi r4, 3564                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xec]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -12445,8 +12615,9 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r2, fp, 364                        # encoding: [0x20,0x68,0x81,0x6c]
-	addi tmp1, pc, .LCPI11_1@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_1@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12478,20 +12649,21 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r9, fp, 396                        # encoding: [0x20,0x6a,0x41,0x8c]
-	addi tmp1, pc, .LCPI11_3@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_3@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r10, fp, 388                       # encoding: [0x20,0x6a,0x81,0x84]
-	movi r4, 3681                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x61]
+	movi r4, 3545                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xd9]
 	addi r1, r10, 0                         # encoding: [0x20,0x50,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r9, 0                          # encoding: [0x20,0x48,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_get_member@function, kind: FK_PCRel_imm14
-	movi r6, 3688                           # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x0e,0x68]
+	movi r6, 3552                           # encoding: [0x35,0x30,0x00,0x00,0x00,0x00,0x0d,0xe0]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r10, 0                         # encoding: [0x20,0x50,0x80,0x00]
 	addi r3, r6, 0                          # encoding: [0x20,0x30,0xc0,0x00]
@@ -12509,7 +12681,7 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r9, fp, 404                        # encoding: [0x20,0x6a,0x41,0x94]
-	movi r4, 3684                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x64]
+	movi r4, 3548                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0d,0xdc]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r8, 0                          # encoding: [0x20,0x40,0x80,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
@@ -12539,14 +12711,15 @@ __lua.fun.__Lua_Temp_Method_10:         # @__lua.fun.__Lua_Temp_Method_10
 	jusb __lua.fun.__lua_build_table@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_table@function, kind: FK_PCRel_imm14
 	addi r2, fp, 424                        # encoding: [0x20,0x68,0x81,0xa8]
-	addi tmp1, pc, .LCPI11_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI11_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI11_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI11_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r2, 0                          # encoding: [0x20,0x10,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r3, fp, 116                        # encoding: [0x20,0x68,0xc0,0x74]
-	movi r4, 3732                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x94]
+	movi r4, 3595                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x0b]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_set_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_set_member@function, kind: FK_PCRel_imm14
@@ -12962,14 +13135,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 484                        # encoding: [0x20,0x69,0x41,0xe4]
-	addi tmp1, pc, .LCPI12_0@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_0@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_0@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_0@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 476                        # encoding: [0x20,0x69,0x81,0xdc]
-	movi r4, 3836                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xfc]
+	movi r4, 3691                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x6b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -12987,14 +13161,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 500                        # encoding: [0x20,0x69,0x41,0xf4]
-	addi tmp1, pc, .LCPI12_1@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_1@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_1@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_1@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 492                        # encoding: [0x20,0x69,0x81,0xec]
-	movi r4, 3840                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x00]
+	movi r4, 3695                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x6f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13012,14 +13187,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 516                        # encoding: [0x20,0x69,0x42,0x04]
-	addi tmp1, pc, .LCPI12_2@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_2@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_2@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_2@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 508                        # encoding: [0x20,0x69,0x81,0xfc]
-	movi r4, 3844                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x04]
+	movi r4, 3699                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x73]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13037,14 +13213,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 532                        # encoding: [0x20,0x69,0x42,0x14]
-	addi tmp1, pc, .LCPI12_3@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_3@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_3@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_3@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 524                        # encoding: [0x20,0x69,0x82,0x0c]
-	movi r4, 3848                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x08]
+	movi r4, 3703                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x77]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13062,14 +13239,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 548                        # encoding: [0x20,0x69,0x42,0x24]
-	addi tmp1, pc, .LCPI12_4@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_4@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_4@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_4@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 540                        # encoding: [0x20,0x69,0x82,0x1c]
-	movi r4, 3852                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x0c]
+	movi r4, 3707                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x7b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13087,14 +13265,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 564                        # encoding: [0x20,0x69,0x42,0x34]
-	addi tmp1, pc, .LCPI12_5@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_5@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_5@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_5@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 556                        # encoding: [0x20,0x69,0x82,0x2c]
-	movi r4, 3856                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x10]
+	movi r4, 3711                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x7f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13112,14 +13291,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 580                        # encoding: [0x20,0x69,0x42,0x44]
-	addi tmp1, pc, .LCPI12_6@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_6@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_6@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_6@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 572                        # encoding: [0x20,0x69,0x82,0x3c]
-	movi r4, 3860                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x14]
+	movi r4, 3715                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x83]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13137,14 +13317,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 596                        # encoding: [0x20,0x69,0x42,0x54]
-	addi tmp1, pc, .LCPI12_7@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_7@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_7@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_7@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 588                        # encoding: [0x20,0x69,0x82,0x4c]
-	movi r4, 3864                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x18]
+	movi r4, 3719                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x87]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13162,14 +13343,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 612                        # encoding: [0x20,0x69,0x42,0x64]
-	addi tmp1, pc, .LCPI12_8@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_8@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_8@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_8@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 604                        # encoding: [0x20,0x69,0x82,0x5c]
-	movi r4, 3868                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x1c]
+	movi r4, 3723                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x8b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13187,14 +13369,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 628                        # encoding: [0x20,0x69,0x42,0x74]
-	addi tmp1, pc, .LCPI12_9@constant_pool  # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_9@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_9@constant_pool      # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_9@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 620                        # encoding: [0x20,0x69,0x82,0x6c]
-	movi r4, 3872                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x20]
+	movi r4, 3727                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x8f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13212,14 +13395,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 644                        # encoding: [0x20,0x69,0x42,0x84]
-	addi tmp1, pc, .LCPI12_10@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_10@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_10@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_10@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 636                        # encoding: [0x20,0x69,0x82,0x7c]
-	movi r4, 3878                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x26]
+	movi r4, 3732                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x94]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13237,14 +13421,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 660                        # encoding: [0x20,0x69,0x42,0x94]
-	addi tmp1, pc, .LCPI12_11@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_11@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_11@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_11@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 652                        # encoding: [0x20,0x69,0x82,0x8c]
-	movi r4, 3883                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x2b]
+	movi r4, 3737                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x99]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13262,14 +13447,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 676                        # encoding: [0x20,0x69,0x42,0xa4]
-	addi tmp1, pc, .LCPI12_12@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_12@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_12@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_12@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 668                        # encoding: [0x20,0x69,0x82,0x9c]
-	movi r4, 3888                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x30]
+	movi r4, 3742                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0x9e]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13287,14 +13473,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 692                        # encoding: [0x20,0x69,0x42,0xb4]
-	addi tmp1, pc, .LCPI12_13@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_13@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_13@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_13@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 684                        # encoding: [0x20,0x69,0x82,0xac]
-	movi r4, 3893                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x35]
+	movi r4, 3747                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xa3]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13312,14 +13499,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 708                        # encoding: [0x20,0x69,0x42,0xc4]
-	addi tmp1, pc, .LCPI12_14@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_14@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_14@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_14@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 700                        # encoding: [0x20,0x69,0x82,0xbc]
-	movi r4, 3898                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x3a]
+	movi r4, 3752                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xa8]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13337,14 +13525,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 724                        # encoding: [0x20,0x69,0x42,0xd4]
-	addi tmp1, pc, .LCPI12_15@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_15@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_15@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_15@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 716                        # encoding: [0x20,0x69,0x82,0xcc]
-	movi r4, 3903                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x3f]
+	movi r4, 3757                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xad]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13362,14 +13551,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 740                        # encoding: [0x20,0x69,0x42,0xe4]
-	addi tmp1, pc, .LCPI12_16@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_16@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_16@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_16@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 732                        # encoding: [0x20,0x69,0x82,0xdc]
-	movi r4, 3908                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x44]
+	movi r4, 3762                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xb2]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13387,14 +13577,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 756                        # encoding: [0x20,0x69,0x42,0xf4]
-	addi tmp1, pc, .LCPI12_17@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_17@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_17@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_17@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 748                        # encoding: [0x20,0x69,0x82,0xec]
-	movi r4, 3913                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x49]
+	movi r4, 3767                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xb7]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13412,14 +13603,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 772                        # encoding: [0x20,0x69,0x43,0x04]
-	addi tmp1, pc, .LCPI12_18@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_18@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_18@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_18@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 764                        # encoding: [0x20,0x69,0x82,0xfc]
-	movi r4, 3918                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x4e]
+	movi r4, 3772                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xbc]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13437,14 +13629,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 788                        # encoding: [0x20,0x69,0x43,0x14]
-	addi tmp1, pc, .LCPI12_19@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_19@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_19@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_19@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 780                        # encoding: [0x20,0x69,0x83,0x0c]
-	movi r4, 3923                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x53]
+	movi r4, 3777                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xc1]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13462,14 +13655,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 804                        # encoding: [0x20,0x69,0x43,0x24]
-	addi tmp1, pc, .LCPI12_20@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_20@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_20@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_20@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 796                        # encoding: [0x20,0x69,0x83,0x1c]
-	movi r4, 3929                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x59]
+	movi r4, 3782                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xc6]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13487,14 +13681,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 820                        # encoding: [0x20,0x69,0x43,0x34]
-	addi tmp1, pc, .LCPI12_21@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_21@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_21@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_21@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 812                        # encoding: [0x20,0x69,0x83,0x2c]
-	movi r4, 3934                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x5e]
+	movi r4, 3787                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xcb]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13512,14 +13707,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 836                        # encoding: [0x20,0x69,0x43,0x44]
-	addi tmp1, pc, .LCPI12_22@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_22@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_22@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_22@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 828                        # encoding: [0x20,0x69,0x83,0x3c]
-	movi r4, 3939                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x63]
+	movi r4, 3792                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xd0]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13537,14 +13733,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 852                        # encoding: [0x20,0x69,0x43,0x54]
-	addi tmp1, pc, .LCPI12_23@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_23@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_23@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_23@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 844                        # encoding: [0x20,0x69,0x83,0x4c]
-	movi r4, 3944                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x68]
+	movi r4, 3797                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xd5]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13562,14 +13759,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 868                        # encoding: [0x20,0x69,0x43,0x64]
-	addi tmp1, pc, .LCPI12_24@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_24@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_24@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_24@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 860                        # encoding: [0x20,0x69,0x83,0x5c]
-	movi r4, 3949                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x6d]
+	movi r4, 3802                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xda]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13587,14 +13785,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 884                        # encoding: [0x20,0x69,0x43,0x74]
-	addi tmp1, pc, .LCPI12_25@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_25@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_25@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_25@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 876                        # encoding: [0x20,0x69,0x83,0x6c]
-	movi r4, 3954                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x72]
+	movi r4, 3807                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xdf]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13612,14 +13811,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 900                        # encoding: [0x20,0x69,0x43,0x84]
-	addi tmp1, pc, .LCPI12_26@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_26@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_26@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_26@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 892                        # encoding: [0x20,0x69,0x83,0x7c]
-	movi r4, 3959                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x77]
+	movi r4, 3812                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xe4]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13637,14 +13837,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 916                        # encoding: [0x20,0x69,0x43,0x94]
-	addi tmp1, pc, .LCPI12_27@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_27@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_27@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_27@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 908                        # encoding: [0x20,0x69,0x83,0x8c]
-	movi r4, 3964                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x7c]
+	movi r4, 3817                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xe9]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13662,14 +13863,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 932                        # encoding: [0x20,0x69,0x43,0xa4]
-	addi tmp1, pc, .LCPI12_28@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_28@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_28@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_28@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 924                        # encoding: [0x20,0x69,0x83,0x9c]
-	movi r4, 3969                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x81]
+	movi r4, 3822                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xee]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13687,14 +13889,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 948                        # encoding: [0x20,0x69,0x43,0xb4]
-	addi tmp1, pc, .LCPI12_29@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_29@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_29@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_29@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 940                        # encoding: [0x20,0x69,0x83,0xac]
-	movi r4, 3974                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x86]
+	movi r4, 3827                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xf3]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13712,14 +13915,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 964                        # encoding: [0x20,0x69,0x43,0xc4]
-	addi tmp1, pc, .LCPI12_30@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_30@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_30@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_30@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 956                        # encoding: [0x20,0x69,0x83,0xbc]
-	movi r4, 3980                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x8c]
+	movi r4, 3832                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xf8]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13737,14 +13941,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 980                        # encoding: [0x20,0x69,0x43,0xd4]
-	addi tmp1, pc, .LCPI12_31@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_31@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_31@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_31@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 972                        # encoding: [0x20,0x69,0x83,0xcc]
-	movi r4, 3985                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x91]
+	movi r4, 3837                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0e,0xfd]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13762,14 +13967,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 996                        # encoding: [0x20,0x69,0x43,0xe4]
-	addi tmp1, pc, .LCPI12_32@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_32@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_32@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_32@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 988                        # encoding: [0x20,0x69,0x83,0xdc]
-	movi r4, 3990                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x96]
+	movi r4, 3842                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x02]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13787,14 +13993,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1012                       # encoding: [0x20,0x69,0x43,0xf4]
-	addi tmp1, pc, .LCPI12_33@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_33@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_33@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_33@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1004                       # encoding: [0x20,0x69,0x83,0xec]
-	movi r4, 3995                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x9b]
+	movi r4, 3847                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x07]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13812,14 +14019,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1028                       # encoding: [0x20,0x69,0x44,0x04]
-	addi tmp1, pc, .LCPI12_34@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_34@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_34@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_34@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1020                       # encoding: [0x20,0x69,0x83,0xfc]
-	movi r4, 4000                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xa0]
+	movi r4, 3852                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x0c]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13837,14 +14045,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1044                       # encoding: [0x20,0x69,0x44,0x14]
-	addi tmp1, pc, .LCPI12_35@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_35@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_35@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_35@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1036                       # encoding: [0x20,0x69,0x84,0x0c]
-	movi r4, 4005                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xa5]
+	movi r4, 3857                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x11]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13862,14 +14071,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1060                       # encoding: [0x20,0x69,0x44,0x24]
-	addi tmp1, pc, .LCPI12_36@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_36@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_36@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_36@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1052                       # encoding: [0x20,0x69,0x84,0x1c]
-	movi r4, 4010                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xaa]
+	movi r4, 3862                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x16]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13887,14 +14097,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1076                       # encoding: [0x20,0x69,0x44,0x34]
-	addi tmp1, pc, .LCPI12_37@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_37@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_37@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_37@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1068                       # encoding: [0x20,0x69,0x84,0x2c]
-	movi r4, 4015                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xaf]
+	movi r4, 3867                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x1b]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13912,14 +14123,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1092                       # encoding: [0x20,0x69,0x44,0x44]
-	addi tmp1, pc, .LCPI12_38@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_38@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_38@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_38@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1084                       # encoding: [0x20,0x69,0x84,0x3c]
-	movi r4, 4020                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xb4]
+	movi r4, 3872                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x20]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13937,14 +14149,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1108                       # encoding: [0x20,0x69,0x44,0x54]
-	addi tmp1, pc, .LCPI12_39@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_39@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_39@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_39@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1100                       # encoding: [0x20,0x69,0x84,0x4c]
-	movi r4, 4025                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xb9]
+	movi r4, 3877                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x25]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13962,14 +14175,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1124                       # encoding: [0x20,0x69,0x44,0x64]
-	addi tmp1, pc, .LCPI12_40@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_40@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_40@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_40@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1116                       # encoding: [0x20,0x69,0x84,0x5c]
-	movi r4, 4031                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xbf]
+	movi r4, 3882                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x2a]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -13987,14 +14201,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1140                       # encoding: [0x20,0x69,0x44,0x74]
-	addi tmp1, pc, .LCPI12_41@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_41@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_41@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_41@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1132                       # encoding: [0x20,0x69,0x84,0x6c]
-	movi r4, 4036                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xc4]
+	movi r4, 3887                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x2f]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14012,14 +14227,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1156                       # encoding: [0x20,0x69,0x44,0x84]
-	addi tmp1, pc, .LCPI12_42@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_42@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_42@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_42@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1148                       # encoding: [0x20,0x69,0x84,0x7c]
-	movi r4, 4041                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xc9]
+	movi r4, 3892                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x34]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14037,14 +14253,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1172                       # encoding: [0x20,0x69,0x44,0x94]
-	addi tmp1, pc, .LCPI12_43@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_43@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_43@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_43@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1164                       # encoding: [0x20,0x69,0x84,0x8c]
-	movi r4, 4046                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xce]
+	movi r4, 3897                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x39]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14062,14 +14279,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1188                       # encoding: [0x20,0x69,0x44,0xa4]
-	addi tmp1, pc, .LCPI12_44@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_44@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_44@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_44@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1180                       # encoding: [0x20,0x69,0x84,0x9c]
-	movi r4, 4051                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xd3]
+	movi r4, 3902                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x3e]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14087,14 +14305,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1204                       # encoding: [0x20,0x69,0x44,0xb4]
-	addi tmp1, pc, .LCPI12_45@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_45@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_45@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_45@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1196                       # encoding: [0x20,0x69,0x84,0xac]
-	movi r4, 4056                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xd8]
+	movi r4, 3907                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x43]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14112,14 +14331,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1220                       # encoding: [0x20,0x69,0x44,0xc4]
-	addi tmp1, pc, .LCPI12_46@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_46@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_46@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_46@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1212                       # encoding: [0x20,0x69,0x84,0xbc]
-	movi r4, 4061                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xdd]
+	movi r4, 3912                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x48]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14137,14 +14357,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1236                       # encoding: [0x20,0x69,0x44,0xd4]
-	addi tmp1, pc, .LCPI12_47@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_47@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_47@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_47@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1228                       # encoding: [0x20,0x69,0x84,0xcc]
-	movi r4, 4066                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xe2]
+	movi r4, 3917                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x4d]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14162,14 +14383,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1252                       # encoding: [0x20,0x69,0x44,0xe4]
-	addi tmp1, pc, .LCPI12_48@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_48@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_48@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_48@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1244                       # encoding: [0x20,0x69,0x84,0xdc]
-	movi r4, 4071                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xe7]
+	movi r4, 3922                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x52]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_member@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14187,14 +14409,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	ld r2, fp, 72                           # encoding: [0x01,0x68,0x80,0x48]
 	addi r5, fp, 1268                       # encoding: [0x20,0x69,0x44,0xf4]
-	addi tmp1, pc, .LCPI12_49@constant_pool # encoding: [0x20,0xa4,0b11AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .LCPI12_49@constant_pool, kind: FK_PCRel_imm14
+	movi tmp1, .LCPI12_49@constant_pool     # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .LCPI12_49@constant_pool, kind: FK_PCRel_OFFSET_imm32
+	add tmp1, tmp1, pc                      # encoding: [0x41,0x9d,0x26,0x00]
 	ldd f0, tmp1, 0                         # encoding: [0x07,0x98,0x00,0x00]
 	addi r1, r5, 0                          # encoding: [0x20,0x28,0x40,0x00]
 	jusb __lua.fun.__lua_build_number@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_number@function, kind: FK_PCRel_imm14
 	addi r6, fp, 1260                       # encoding: [0x20,0x69,0x84,0xec]
-	movi r4, 4076                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0xec]
+	movi r4, 3927                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x57]
 	addi r1, r6, 0                          # encoding: [0x20,0x30,0x40,0x00]
 	addi r3, r5, 0                          # encoding: [0x20,0x28,0xc0,0x00]
 	jusb __lua.fun.__lua_get_ellipsis@function # encoding: [0x88,0x00,0b00AAAAAA,A]
@@ -14241,17 +14464,19 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.fun.__lua_build_nil@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_nil@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1340                       # encoding: [0x20,0x6a,0x05,0x3c]
-	addi r2, pc, .L.str.31@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.31@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.31@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.31@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r7, 2                              # encoding: [0x35,0x38,0x00,0x00,0x00,0x00,0x00,0x02]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1332                       # encoding: [0x20,0x6a,0x45,0x34]
-	movi r6, __lua.var._ENV@global          # encoding: [0x35,0x30,0x00,0x00,A,A,A,A]
+	movi tmp0, __lua.var._ENV@global        # encoding: [0x35,0x90,0x00,0x00,A,A,A,A]
                                         #   fixup A - offset: 0, value: __lua.var._ENV@global, kind: FK_DATA_imm32
-	movi r4, 4120                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x18]
+	addi r6, tmp0, 0                        # encoding: [0x20,0x91,0x80,0x00]
+	movi r4, 3969                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x81]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14269,14 +14494,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1356                       # encoding: [0x20,0x6a,0x05,0x4c]
-	addi r2, pc, .L.str.32@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.32@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.32@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.32@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1348                       # encoding: [0x20,0x69,0xc5,0x44]
-	movi r4, 4123                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x1b]
+	movi r4, 3972                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x84]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14294,15 +14520,16 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1372                       # encoding: [0x20,0x6a,0x05,0x5c]
-	addi r2, pc, .L.str.33@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.33@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.33@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.33@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	movi r7, 3                              # encoding: [0x35,0x38,0x00,0x00,0x00,0x00,0x00,0x03]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1364                       # encoding: [0x20,0x6a,0x45,0x54]
-	movi r4, 4126                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x1e]
+	movi r4, 3975                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x87]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14320,14 +14547,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1388                       # encoding: [0x20,0x6a,0x05,0x6c]
-	addi r2, pc, .L.str.34@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.34@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.34@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.34@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1380                       # encoding: [0x20,0x6a,0x45,0x64]
-	movi r4, 4130                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x22]
+	movi r4, 3979                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x8b]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14346,14 +14574,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1404                       # encoding: [0x20,0x6a,0x05,0x7c]
-	addi r2, pc, .L.str.35@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.35@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.35@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.35@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1396                       # encoding: [0x20,0x6a,0x45,0x74]
-	movi r4, 4134                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x26]
+	movi r4, 3983                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x8f]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14372,14 +14601,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1420                       # encoding: [0x20,0x6a,0x05,0x8c]
-	addi r2, pc, .L.str.36@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.36@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.36@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.36@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r9, fp, 1412                       # encoding: [0x20,0x6a,0x45,0x84]
-	movi r4, 4138                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x2a]
+	movi r4, 3987                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x93]
 	addi r1, r9, 0                          # encoding: [0x20,0x48,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14398,14 +14628,15 @@ __lua.fun.__Lua_Temp_Method_11:         # @__lua.fun.__Lua_Temp_Method_11
 	jusb __lua.cxxmethod.d__lua_object_ptr@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.cxxmethod.d__lua_object_ptr@function, kind: FK_PCRel_imm14
 	addi r8, fp, 1436                       # encoding: [0x20,0x6a,0x05,0x9c]
-	addi r2, pc, .L.str.37@global           # encoding: [0x20,0xa0,0b10AAAAAA,A]
-                                        #   fixup A - offset: 0, value: .L.str.37@global, kind: FK_PCRel_imm14
+	movi tmp1, .L.str.37@global             # encoding: [0x35,0x98,0x00,0x00,A,A,A,A]
+                                        #   fixup A - offset: 0, value: .L.str.37@global, kind: FK_PCRel_OFFSET_imm32
+	add r2, tmp1, pc                        # encoding: [0x41,0x9d,0x04,0x00]
 	addi r1, r8, 0                          # encoding: [0x20,0x40,0x40,0x00]
 	addi r3, r7, 0                          # encoding: [0x20,0x38,0xc0,0x00]
 	jusb __lua.fun.__lua_build_string@function # encoding: [0x88,0x00,0b00AAAAAA,A]
                                         #   fixup A - offset: 0, value: __lua.fun.__lua_build_string@function, kind: FK_PCRel_imm14
 	addi r7, fp, 1428                       # encoding: [0x20,0x69,0xc5,0x94]
-	movi r4, 4142                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x10,0x2e]
+	movi r4, 3991                           # encoding: [0x35,0x20,0x00,0x00,0x00,0x00,0x0f,0x97]
 	addi r1, r7, 0                          # encoding: [0x20,0x38,0x40,0x00]
 	addi r2, r6, 0                          # encoding: [0x20,0x30,0x80,0x00]
 	addi r3, r8, 0                          # encoding: [0x20,0x40,0xc0,0x00]
@@ -14761,8 +14992,8 @@ __lua.var.__Lua_Temp_Closure_11:
 
 	.type	.L.str.23,@object               # @.str.23
 .L.str.23:
-	.asciz	"[\r\n  local x = {...}\r\n  for i=1,select('#', ...) do assert(x[i] == select(i, ...)) end\r\n  assert(x[select('#', ...)+1] == nil)\r\n  return true\r\n]"
-	.size	.L.str.23, 145
+	.asciz	"[\n  local x = {...}\n  for i=1,select('#', ...) do assert(x[i] == select(i, ...)) end\n  assert(x[select('#', ...)+1] == nil)\n  return true\n]"
+	.size	.L.str.23, 140
 
 	.type	.L.str.24,@object               # @.str.24
 .L.str.24:
@@ -14837,5 +15068,5 @@ __lua.var.__Lua_Temp_Closure_11:
 	.section	.init_array,"aw",@init_array
 	.p2align	2
 	.long	_GLOBAL__sub_I_vararg.lua
-	.ident	"clang version 17.0.5 (https://github.com/jimihem/llvm-project.git ef147d970153ddb2f67284fa9f3e0aecd417f4b1)"
+	.ident	"clang version 17.0.5 (git@github.com:jimihem/llvm-project.git 837bab0edbccd6d566ed86e98f72ef606a9bfdad)"
 	.section	".note.GNU-stack","",@progbits

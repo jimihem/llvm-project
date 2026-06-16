@@ -244,7 +244,11 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
       const MCSymbol &SA = A->getSymbol();
       if ((A->getKind() != MCSymbolRefExpr::VK_None &&
            A->getKind() != MCSymbolRefExpr::VK_BLOCK &&
-           A->getKind() != MCSymbolRefExpr::VK_LABEL) ||
+           A->getKind() != MCSymbolRefExpr::VK_LABEL &&
+           A->getKind() != MCSymbolRefExpr::VK_CP &&
+           A->getKind() != MCSymbolRefExpr::VK_JT &&
+           A->getKind() != MCSymbolRefExpr::VK_GV &&
+           A->getKind() != MCSymbolRefExpr::VK_FUN) ||
           SA.isUndefined()) {
         IsResolved = false;
       } else if (auto *Writer = getWriterPtr()) {

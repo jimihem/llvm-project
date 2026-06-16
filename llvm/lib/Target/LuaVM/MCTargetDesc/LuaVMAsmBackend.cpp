@@ -5,6 +5,8 @@
 #include "llvm/MC/MCELFObjectWriter.h"
 #include "llvm/MC/MCFixupKindInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
+#include "llvm/MC/MCValue.h"
+#include "llvm/MC/MCAsmLayout.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/Endian.h"
 
@@ -19,12 +21,13 @@ public:
 
   unsigned getRelocType(MCContext& Ctx, const MCValue& Target,
       const MCFixup& Fixup, bool IsPCRel) const {
-    if (Fixup.getKind() == FK_DATA_imm14)
-      return REL_TYPE_IMM14;
     if (Fixup.getKind() == FK_DATA_imm32)
       return REL_TYPE_IMM32;
+    if (Fixup.getKind() == FK_PCRel_OFFSET_imm32)
+      return REL_TYPE_PC_IMM32;
     if (Fixup.getKind() == FK_PCRel_imm14)
       return REL_TYPE_PC_IMM14;
+    assert(Fixup.getKind() != FK_DATA_imm14);
     return 0;
   }
   virtual bool needsRelocateWithSymbol(const MCSymbol& Sym,
@@ -109,7 +112,8 @@ LuaVMAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
       {"FK_PCRel_addr24", 8, 24, MCFixupKindInfo::FKF_IsPCRel},
       {"FK_PCRel_OFFSET_imm32", 32, 32, MCFixupKindInfo::FKF_IsPCRel},
       {"FK_DATA_imm14", 18, 14, 0},
-      {"FK_PCRel_imm14", 18, 14, MCFixupKindInfo::FKF_IsPCRel},
+      {"FK_PCRel_imm14", 18, 14,
+       MCFixupKindInfo::FKF_IsPCRel | MCFixupKindInfo::FKF_IsTarget},
       {"FK_DATA_imm32", 32, 32, 0},
   };
   if (Kind < FirstTargetFixupKind)
@@ -124,4 +128,30 @@ bool LuaVMAsmBackend::shouldForceRelocation(const MCAssembler &Asm,
     const MCValue& Target) {
   return Fixup.getKind() == LuaVMMCFixupKind::FK_DATA_imm14 ||
          Fixup.getKind() == LuaVMMCFixupKind::FK_DATA_imm32;
+}
+
+bool LuaVMAsmBackend::evaluateTargetFixup(const MCAssembler &Asm,
+                                          const MCAsmLayout &Layout,
+                                          const MCFixup &Fixup,
+                                          const MCFragment *DF,
+                                          const MCValue &Target,
+                                          uint64_t &Value, bool &WasForced) {
+  Value = Target.getConstant();
+
+  if (const MCSymbolRefExpr *A = Target.getSymA()) {
+      const MCSymbol &Sym = A->getSymbol();
+      if (Sym.isDefined())
+      Value += Layout.getSymbolOffset(Sym);
+      else
+      return false;
+  } else {
+      return false;
+  }
+  uint64_t Offset = Layout.getFragmentOffset(DF) + Fixup.getOffset();
+  Value -= Offset;
+  int64_t SOffSet = *(int64_t*)&Value;
+  if (SOffSet > ((1 << 14) - 1) || SOffSet < -(1 << 14))
+      return false;
+  else
+      return true;
 }
