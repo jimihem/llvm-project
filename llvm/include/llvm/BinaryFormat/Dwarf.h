@@ -269,6 +269,7 @@ inline bool isCPlusPlus(SourceLanguage S) {
   case DW_LANG_Ada2005:
   case DW_LANG_Ada2012:
   case DW_LANG_Mojo:
+  case DW_LANG_LUA:
     result = false;
     break;
   }
@@ -336,6 +337,7 @@ inline bool isFortran(SourceLanguage S) {
   case DW_LANG_Ada2005:
   case DW_LANG_Ada2012:
   case DW_LANG_Mojo:
+  case DW_LANG_LUA:
     result = false;
     break;
   }
@@ -401,6 +403,7 @@ inline bool isC(SourceLanguage S) {
   case DW_LANG_Ada2005:
   case DW_LANG_Ada2012:
   case DW_LANG_Mojo:
+  case DW_LANG_LUA:
     return false;
   }
   llvm_unreachable("Unknown language kind.");

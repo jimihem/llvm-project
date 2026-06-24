@@ -587,6 +587,8 @@ void CGDebugInfo::CreateCompileUnit() {
       LangTag = llvm::dwarf::DW_LANG_C11;
   } else if (LO.C99) {
     LangTag = llvm::dwarf::DW_LANG_C99;
+  } else if (LO.LUA) {
+      LangTag = llvm::dwarf::DW_LANG_LUA;
   } else {
     LangTag = llvm::dwarf::DW_LANG_C89;
   }
@@ -647,6 +649,8 @@ void CGDebugInfo::CreateCompileUnit() {
     NameTableKind = llvm::DICompileUnit::DebugNameTableKind::None;
   else if (CGM.getTarget().getTriple().getVendor() == llvm::Triple::Apple)
     NameTableKind = llvm::DICompileUnit::DebugNameTableKind::Apple;
+  else if (CGM.getTarget().getTriple().getArch() == llvm::Triple::luavm)
+    NameTableKind = llvm::DICompileUnit::DebugNameTableKind::GNU;
 
   // Create new compile unit.
   TheCU = DBuilder.createCompileUnit(
