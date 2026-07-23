@@ -9,7 +9,7 @@ C:\llvm\src\luatest\lua-5.3.0-tests\vararg.o -o C:\llvm\src\luatest\lua-5.3.0-te
 -- $Id: testes/vararg.lua $
 -- See Copyright Notice in file lua.h
 ]]
---[==[]==]
+
 print('testing vararg')
 
 _G.arg = nil
@@ -19,7 +19,7 @@ function f(a, ...)
   for i=1,arg.n do assert(a[i]==arg[i]) end
   return arg.n
 end
-
+--[==[
 function c12 (...)
   assert(arg == nil)
   local x = {...}; x.n = #x
@@ -160,4 +160,4 @@ f()
 
 print('OK')
 
---[==[]==]
+]==]

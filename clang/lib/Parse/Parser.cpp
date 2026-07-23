@@ -681,23 +681,24 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result,
       Actions.ActOnEndOfTranslationUnit();
       return true;
     }
-
+    SourceLocation Loc = Tok.getLocation();
     ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
                                    Scope::CompoundStmtScope);
     SmallVector<IdentifierInfo *> parlist;
     SmallVector<SourceLocation> parLocs;
     Decl *TopFunc =
         Actions.ActOnStartOfLuaFunctionDef(getCurScope(), parlist, parLocs);
+    TopFunc->setLocation(Loc);
     TopFunc = ParseFunctionStatementBody(TopFunc, BodyScope);
 
     Expr *TopFuncRef = Actions.BuildDeclRefExpr(
         cast<FunctionDecl>(TopFunc), cast<FunctionDecl>(TopFunc)->getType(),
-        VK_LValue, SourceLocation());
+        VK_LValue, Loc);
     Expr *Init = Actions.BuildLuaBuiltinCallExpr(
-        "__lua_build_closure_with_function", {TopFuncRef}, SourceLocation()).get();
-    VarDecl * TopClosure = Actions.CreateLuaTempClosureObjPtrVar(SourceLocation(), Init);
+        "__lua_build_closure_with_function", {TopFuncRef}, Loc).get();
+    VarDecl *TopClosure = Actions.CreateLuaTempClosureObjPtrVar(Loc, Init);
     TopClosure->addAttr(VisibilityAttr::Create(
-        Actions.getASTContext(), VisibilityAttr::Hidden, SourceLocation()));
+        Actions.getASTContext(), VisibilityAttr::Hidden, Loc));
     Result = Actions.ConvertDeclToDeclGroup(TopClosure);
     return false;
   }

@@ -558,14 +558,14 @@ void Parser::GenerateAssignStmts(SourceLocation OpLoc,
 ExprResult Parser::ParseLuaExprList(SmallVector<Expr *> &Exprs,
                                     StmtVector &Stmts,
                                     ParsedStmtContext StmtCtx) {
-  VarDecl *exprs = Actions.CreateLuaTempTableObjPtrObjVar(SourceLocation());
-  Stmts.push_back(Actions
-                      .ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(exprs),
-                                     SourceLocation(), SourceLocation())
-                      .get());
+  SourceLocation Loc = Tok.getLocation();
+  VarDecl *exprs = Actions.CreateLuaTempTableObjPtrObjVar(Loc);
+  Stmts.push_back(
+      Actions.ActOnDeclStmt(Actions.ConvertDeclToDeclGroup(exprs), Loc, Loc)
+          .get());
 
-  Expr *exprsRef = Actions.BuildDeclRefExpr(exprs, exprs->getType(), VK_LValue,
-                                            SourceLocation());
+  Expr *exprsRef =
+      Actions.BuildDeclRefExpr(exprs, exprs->getType(), VK_LValue, Loc);
   double index = 1.0;
 
   for (auto E : Exprs) {
@@ -1397,7 +1397,7 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
   BalancedDelimiterTracker T(*this, tok::l_brace);
   if (!getLangOpts().LUA && T.consumeOpen())
     return StmtError();
-
+  SourceLocation OpenLoc = Tok.getLocation();
   Sema::CompoundScopeRAII CompoundScope(Actions, isStmtExpr);
 
   // Parse any pragmas at the beginning of the compound statement.
@@ -1619,8 +1619,7 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
     Diag(Tok.getLocation(),
          diag::warn_no_support_for_eval_method_source_on_m32);
 
-  SourceLocation CloseLoc =
-      getLangOpts().LUA ? T.getOpenLocation() : Tok.getLocation();
+  SourceLocation CloseLoc = Tok.getLocation();
 
   // We broke out of the while loop because we found a '}' or EOF.
   if (!getLangOpts().LUA && !T.consumeClose()) {
@@ -1636,7 +1635,7 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
   if (!getLangOpts().LUA && T.getCloseLocation().isValid())
     CloseLoc = T.getCloseLocation();
 
-  return Actions.ActOnCompoundStmt(T.getOpenLocation(), CloseLoc,
+  return Actions.ActOnCompoundStmt(getLangOpts().LUA ? OpenLoc : T.getOpenLocation(), CloseLoc,
                                    Stmts, isStmtExpr);
 }
 
