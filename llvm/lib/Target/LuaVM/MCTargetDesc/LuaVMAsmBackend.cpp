@@ -63,6 +63,15 @@ void LuaVMAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup, c
       Val &= ~0xffffffff;
       Val |= (Value - 8) & 0xffffffff;
       write32be(ptr, Val);
+    } else if (Fixup.getKind() == FK_PCRel_imm14) {
+      uint64_t *ptr = (uint64_t *)(Data.data() + Fixup.getOffset());
+      uint64_t Val = read64be(ptr);
+      Val &= ~0x00003fff;
+      Val |= Value & 0x00003fff;
+      write32be(ptr, Val);
+    } else if (Fixup.getKind() == FK_Data_4) {
+      uint32_t *ptr = (uint32_t *)(Data.data() + Fixup.getOffset());
+      write32be(ptr, Value);
     } else {
       llvm_unreachable("Not support fixup kind");
     }

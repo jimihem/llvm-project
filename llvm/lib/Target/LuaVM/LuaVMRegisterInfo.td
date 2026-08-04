@@ -14,6 +14,7 @@ let Namespace = "LuaVM" in {
   foreach i = 0-31 in {
     def F#i : Register<"f"#i>{
        let HWEncoding = i;
+       let DwarfNumbers = [i];
     }
   }
 
@@ -22,27 +23,35 @@ let Namespace = "LuaVM" in {
   def STR : Register<"str">;
   def FP : Register<"fp">{
     let HWEncoding = 13;
+    let DwarfNumbers = [13];
   }
   def SP : Register<"sp">{
     let HWEncoding = 14;
+    let DwarfNumbers = [14];
   }
   def LINK : Register<"link">{
     let HWEncoding = 15;
+    let DwarfNumbers = [15];
   }
   def PDC0 : Register<"pdc0">{
     let HWEncoding = 16;
+    let DwarfNumbers = [16];
   }
   def PDC1 : Register<"pdc1">{
     let HWEncoding = 17;
+    let DwarfNumbers = [17];
   }
   def TMP0 : Register<"tmp0">{
     let HWEncoding = 18;
+    let DwarfNumbers = [18];
   }
   def TMP1 : Register<"tmp1">{
     let HWEncoding = 19;
+    let DwarfNumbers = [19];
   }
   def PC : Register<"pc">{
     let HWEncoding = 20;
+    let DwarfNumbers = [20];
   }
 }
   

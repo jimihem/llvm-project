@@ -32,6 +32,8 @@ public:
   }
 
   virtual bool targetHandlesStackFrameRounding() const { return true; }
+  virtual StackOffset getFrameIndexReference(const MachineFunction &MF, int FI,
+                                             Register &FrameReg) const;
 };
 
 } // End llvm namespace

@@ -77,3 +77,10 @@ MachineBasicBlock::iterator LuaVMFrameLowering::eliminateCallFramePseudoInstr(
   }
   return MBB.erase(MI);
 }
+
+StackOffset
+LuaVMFrameLowering::getFrameIndexReference(const MachineFunction &MF, int FI,
+                                           Register &FrameReg) const {
+  FrameReg = LuaVM::FP;
+  return StackOffset::getFixed(MF.getFrameInfo().getObjectOffset(FI));
+}

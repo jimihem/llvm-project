@@ -650,7 +650,7 @@ void CGDebugInfo::CreateCompileUnit() {
   else if (CGM.getTarget().getTriple().getVendor() == llvm::Triple::Apple)
     NameTableKind = llvm::DICompileUnit::DebugNameTableKind::Apple;
   else if (CGM.getTarget().getTriple().getArch() == llvm::Triple::luavm)
-    NameTableKind = llvm::DICompileUnit::DebugNameTableKind::GNU;
+    NameTableKind = llvm::DICompileUnit::DebugNameTableKind::Default;
 
   // Create new compile unit.
   TheCU = DBuilder.createCompileUnit(
